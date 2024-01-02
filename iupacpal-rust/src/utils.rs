@@ -1,30 +1,9 @@
-use linked_list::LinkedList;
+// use linked_list::LinkedList;
 use std::collections::BTreeSet;
 
 use crate::matrix::MatchMatrix;
-
-// TODO: delete
-use std::fmt::Display;
-
-// TODO: make this a compilation parameter
-type INT = i64;
-
-pub fn print_array<T: Display>(title: &str, seq: &[T], n: usize, print_indices: bool) {
-    // pub fn print_array(title: &str, seq: &[u8], n: usize, print_indices: bool) {
-    if print_indices {
-        print!("{:>width$}", "", width = title.len() + 2);
-        for i in 0..n {
-            print!("{:>width$}", i, width = seq[i].to_string().len() + 2);
-        }
-        println!();
-    }
-
-    println!("{}:", title);
-    for i in 0..n {
-        print!("{}  ", seq[i]);
-    }
-    println!("\n");
-}
+use crate::INT;
+// use crate::debug::print_array;
 
 // Helper log function
 #[inline(always)]
@@ -46,11 +25,6 @@ fn rmq(m: &Vec<INT>, v: &Vec<INT>, n: INT, mut i: INT, mut j: INT) -> INT {
     // println!("Printing n: {}", n);
 
     let lgn: INT = flog2(n);
-    // dbg!(m);
-    // dbg!(m.len());
-    // dbg!(i);
-    // dbg!(j);
-    // dbg!(lgn);
 
     if i > j {
         let tmp = j;
@@ -59,7 +33,6 @@ fn rmq(m: &Vec<INT>, v: &Vec<INT>, n: INT, mut i: INT, mut j: INT) -> INT {
     }
     i += 1;
     if i == j {
-        // println!("Quick exit because i == j => i={}", i);
         return i;
     }
 
@@ -122,7 +95,6 @@ pub fn lcp_array(text: &Vec<u8>, n: INT, sa: &[INT], inv_sa: &[INT]) -> Vec<INT>
     // TODO: use I for i and j
 
     let mut j: usize;
-    lcp[0] = 0;
 
     for i in 0..(n as usize) {
         if inv_sa[i] != 0 {
@@ -159,18 +131,9 @@ fn lce(i: INT, j: INT, n: INT, inv_sa: &Vec<INT>, lcp: &Vec<INT>, A: &Vec<INT>) 
 
     // print_array("from LCE    invSA", &inv_sa, n as usize, false);
 
+    // TODO: FIX THIS ITS HARDCODED
     // let a_val = inv_sa[i as usize];
     // let b_val = inv_sa[j as usize];
-
-    // Assuming inv_sa is an array or slice
-    // let a_val = inv_sa
-    // .get(i as usize)
-    // .expect(format!{"OOB: {}", i}.as_str());
-    // let b_val = inv_sa
-    // .get(j as usize)
-    // .expect(format!{"OOB: {}", j}.as_str());
-
-    // TODO: FIX THIS ITS HARDCODED
     let a_val = inv_sa.get(i as usize).unwrap_or(&21); // temporary fix
     let b_val = inv_sa.get(j as usize).unwrap_or(&21); // temporary fix
 
@@ -257,8 +220,7 @@ pub fn real_lce_mismatches(
 // - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
 // - Tuple of parameters for palindromes to be found (minimum_length, maximum_length, maximum_allowed_number_of_mismatches, maximum_gap)
 pub fn add_palindromes(
-    palindromes: &mut BTreeSet<(i32, i32, i32)>,
-    s: Vec<u8>,
+    s: &Vec<u8>,
     s_n: INT,
     n: INT,
     inv_sa: &Vec<INT>,
@@ -269,8 +231,9 @@ pub fn add_palindromes(
     mismatches: i32,
     max_gap: i32,
     matrix: &MatchMatrix,
-) {
+) -> BTreeSet<(i32, i32, i32)> {
     // print_array("from AP    A", &A, s_n as usize, false);
+    let mut palindromes: BTreeSet<(i32, i32, i32)> = BTreeSet::new();
 
     for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
         let is_odd = c.fract() == 0.0;
@@ -415,8 +378,6 @@ pub fn add_palindromes(
                     break;
                 }
 
-                let (left, right, gap): (i32, i32, i32);
-
                 if is_odd {
                     left = (c - end_mismatch as f64) as i32;
                     right = (c + end_mismatch as f64) as i32;
@@ -461,5 +422,17 @@ pub fn add_palindromes(
                 start_it_ptr += 1;
             }
         }
+    }
+
+    palindromes
+}
+
+
+#[cfg(test)]
+mod tests {
+
+    #[test]
+    fn test_simple() {
+        todo!()
     }
 }

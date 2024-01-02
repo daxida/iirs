@@ -3,6 +3,7 @@ from time import time
 import os
 from test_equality import test_equality
 import subprocess
+from statistics import mean
 
 IUPAC_SYMBOLS = "acgturyswkmbdhvn*-"
 FILE_NAME = "rand.fasta"
@@ -37,7 +38,12 @@ def run(folder: str, cmd_beginning:str):
     original_folder = "/".join([".."] * (1 + folder.count("/")))
     os.chdir(original_folder)
     elapsed = time() - start
-    binary = "rust" if "rust" in folder else "cpp"
+    if "rust" in folder:
+        binary = "rust"
+        rust_timings.append(elapsed)
+    else:
+        binary = "cpp"
+        cpp_timings.append(elapsed)
     print(f"{binary} took {elapsed}")
 
 def test(n: int):
@@ -48,5 +54,12 @@ def test(n: int):
     # run(RUST_FOLDER, "./iupacpal")
     test_equality(CPP_FOLDER, RUST_FOLDER)
 
-for _ in range(1):
+cpp_timings = []
+rust_timings = []
+for _ in range(10):
     test(int(1e5))
+
+cpp_avg_time = mean(cpp_timings)
+rust_avg_time = mean(rust_timings)
+print(f"cpp average: {cpp_avg_time}")
+print(f"rust average: {rust_avg_time}")

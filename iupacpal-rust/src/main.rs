@@ -2,15 +2,13 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
-#![allow(unused_variables)]
-#![allow(unused_imports)]
+// #![allow(unused_variables)]
+// #![allow(unused_imports)]
 
 use libdivsufsort_rs::*;
 use std::collections::BTreeSet; // Ordered
-use std::collections::HashMap;
 use std::fs::File;
-use std::io::{self, Write};
-use std::process;
+use std::io::Write;
 use std::time::Instant;
 mod config;
 mod debug;
@@ -18,23 +16,20 @@ mod format;
 mod matrix;
 mod utils;
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use config::Config;
 use debug::print_array;
 use format::fmt;
-use matrix::*;
 use utils::add_palindromes;
-use utils::flog2;
 use utils::lcp_array;
-use utils::real_lce_mismatches;
 use utils::rmq_preprocess;
 
-const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
 const DEBUG: bool = false;
 
-type I_map = HashMap<char, BTreeSet<char>>;
-type Palindrome = (i32, i32, i32);
-type INT = i64;
+pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
+pub const IUPAC_SYMBOLS_COUNT: usize = 20;
+pub type Palindrome = (i32, i32, i32);
+pub type INT = i64;
 
 fn build_complement_array() -> [char; 128] {
     let complement_rules = vec![
@@ -81,7 +76,7 @@ fn main() -> Result<()> {
     assert!(string.chars().all(|c| IUPAC_SYMBOLS.contains(c)), "Not all chars are in IUPAC");
 
     // Build matchmatrix
-    let matrix = MatchMatrix::new();
+    let matrix = matrix::MatchMatrix::new();
     let complement = build_complement_array();
     // Optionally print match matrix
     // println!("{}", matrix.display(&complement)); 
@@ -119,13 +114,11 @@ fn main() -> Result<()> {
     }
 
     // Calculate palidromes
-    let mut palindromes: BTreeSet<Palindrome> = BTreeSet::new();
     // TODO: fix types
-    add_palindromes(
-        &mut palindromes,
-        S,
-        S_n.try_into().unwrap(),
-        n.try_into().unwrap(),
+    let palindromes: BTreeSet<(i32, i32, i32)> = add_palindromes(
+        &S,
+        S_n as INT,
+        n as INT,
         &invSA,
         &LCP,
         &A,
@@ -138,7 +131,7 @@ fn main() -> Result<()> {
 
     // Print palindromes
     println!("Found n={} palindromes", palindromes.len());
-    let palindromes_out = fmt(&config, &palindromes, seq, n, &matrix, &complement);
+    let palindromes_out = fmt(&config, &palindromes, &seq, n, &matrix, &complement);
     let mut file = File::create(&config.output_file)?;
     writeln!(&mut file, "{}", palindromes_out)?;
     println!("Search complete!");

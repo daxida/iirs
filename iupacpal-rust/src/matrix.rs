@@ -1,11 +1,7 @@
 use std::collections::{BTreeSet, HashMap};
 
-type I_map = HashMap<char, BTreeSet<char>>;
+use crate::{IUPAC_SYMBOLS, IUPAC_SYMBOLS_COUNT};
 
-const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
-const IUPAC_SYMBOLS_COUNT: usize = 20;
-
-// Struct to store preprocessed information relating to the match status of IUPAC characters
 #[derive(Clone, Debug)]
 pub struct MatchMatrix {
     match_matrix: Vec<bool>,    // 1D-array of bool for faster access (than 2D)
@@ -15,7 +11,7 @@ pub struct MatchMatrix {
 impl MatchMatrix {
     /// Doesn't need complements!!!
     pub fn new() -> Self {
-        // Vector of the meaning of each IUPAC symbol
+        // Vector with the meaning of each IUPAC symbol
         let iupac_rules: Vec<(char, BTreeSet<char>)> = vec![
             ('a', BTreeSet::from(['a'])),
             ('c', BTreeSet::from(['c'])),

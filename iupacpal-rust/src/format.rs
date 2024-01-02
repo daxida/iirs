@@ -2,7 +2,7 @@ use std::collections::BTreeSet; // Ordered
 
 use crate::{
     config::Config,
-    matrix::{self, MatchMatrix},
+    matrix::MatchMatrix,
 };
 
 type Palindrome = (i32, i32, i32);
@@ -10,7 +10,7 @@ type Palindrome = (i32, i32, i32);
 pub fn fmt(
     config: &Config,
     palindromes: &BTreeSet<Palindrome>,
-    seq: Vec<u8>,
+    seq: &Vec<u8>,
     n: usize,
     matrix: &MatchMatrix,
     complement: &[char; 128],
