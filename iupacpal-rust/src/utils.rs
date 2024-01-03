@@ -20,17 +20,16 @@ pub fn flog2(v: INT) -> INT {
 
 // Range Minimum Query (Type 1)
 // GETS CALLED LIKE THIS: LCP[rmq(A, LCP, n, a, b)] -- only in LCE
-fn rmq(m: &Vec<INT>, v: &Vec<INT>, n: INT, mut i: INT, mut j: INT) -> INT {
+fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> INT {
     // print_array("from RMQ    A", &m, n as usize, false);
     // println!("Printing n: {}", n);
 
     let lgn: INT = flog2(n);
 
     if i > j {
-        let tmp = j;
-        j = i;
-        i = tmp;
+        std::mem::swap(&mut i, &mut j);
     }
+
     i += 1;
     if i == j {
         return i;
@@ -46,17 +45,19 @@ fn rmq(m: &Vec<INT>, v: &Vec<INT>, n: INT, mut i: INT, mut j: INT) -> INT {
     let a: INT = m[(i * lgn + k) as usize];
     let shift = 1 << k;
     let b = m[((j - shift + 1) * lgn + k) as usize];
-    let ans = if v[a as usize] > v[b as usize] { b } else { a };
-    // println!("rmq res={}", ans);
 
-    ans
+    if v[a as usize] > v[b as usize] {
+        b
+    } else {
+        a
+    }
 }
 
 // O(nlogn)-time preprocessing function for Type 1 Range Minimum Queries
-pub fn rmq_preprocess(v: &Vec<INT>, n: INT) -> Vec<INT> {
+pub fn rmq_preprocess(v: &[INT], n: INT) -> Vec<INT> {
     let lgn: INT = flog2(n);
     let mut m: Vec<INT> = vec![0; (n * lgn) as usize];
-    
+
     for i in 0..(n as usize) {
         m[i * lgn as usize] = i as INT;
     }
@@ -90,7 +91,7 @@ pub fn rmq_preprocess(v: &Vec<INT>, n: INT) -> Vec<INT> {
 // - Text length
 // - Suffix Array
 // - Longest Common Prefix data structure (empty)
-pub fn lcp_array(text: &Vec<u8>, n: INT, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> {
+pub fn lcp_array(text: &[u8], n: INT, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> {
     let mut lcp: Vec<INT> = vec![0; n as usize];
     // TODO: use I for i and j
 
@@ -101,11 +102,11 @@ pub fn lcp_array(text: &Vec<u8>, n: INT, sa: &[INT], inv_sa: &[INT]) -> Vec<INT>
             if i == 0 {
                 j = 0;
             } else {
-                let tmp: INT = lcp[inv_sa[(i - 1) as usize] as usize];
+                let tmp: INT = lcp[inv_sa[i - 1] as usize];
                 j = if tmp >= 2 { (tmp - 1) as usize } else { 0 };
             }
 
-            while text[i + j] == text[(sa[inv_sa[i] as usize - 1] as usize + j) as usize] {
+            while text[i + j] == text[sa[inv_sa[i] as usize - 1] as usize + j] {
                 j += 1;
             }
 
@@ -124,7 +125,7 @@ pub fn lcp_array(text: &Vec<u8>, n: INT, sa: &[INT], inv_sa: &[INT]) -> Vec<INT>
 // - Inverse Suffix Array
 // - Longest Common Prefix Array data structure (filled)
 // - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
-fn lce(i: INT, j: INT, n: INT, inv_sa: &Vec<INT>, lcp: &Vec<INT>, A: &Vec<INT>) -> INT {
+fn lce(i: INT, j: INT, n: INT, inv_sa: &[INT], lcp: &[INT], ary: &[INT]) -> INT {
     if i == j {
         return (n - i) as INT;
     }
@@ -145,7 +146,7 @@ fn lce(i: INT, j: INT, n: INT, inv_sa: &Vec<INT>, lcp: &Vec<INT>, A: &Vec<INT>) 
         std::mem::swap(&mut a, &mut b);
     }
 
-    let idx = rmq(A, lcp, n, *a, *b);
+    let idx = rmq(ary, lcp, n, *a, *b);
     lcp[idx as usize]
 }
 
@@ -168,14 +169,15 @@ fn lce(i: INT, j: INT, n: INT, inv_sa: &Vec<INT>, lcp: &Vec<INT>, A: &Vec<INT>) 
 // - Maximum number of allowed mismatches
 // - Initial gap
 // - Data structure to store resulting mismatch locations
+#[allow(clippy::too_many_arguments)]
 pub fn real_lce_mismatches(
-    text: &Vec<u8>,
+    text: &[u8],
     i: INT,
     j: INT,
     n: INT,
-    inv_sa: &Vec<INT>,
-    lcp: &Vec<INT>,
-    A: &Vec<INT>,
+    inv_sa: &[INT],
+    lcp: &[INT],
+    ary: &[INT],
     mut mismatches: i32,
     initial_gap: i32,
     mismatch_locs: &mut Vec<i32>,
@@ -187,7 +189,7 @@ pub fn real_lce_mismatches(
         let mut real_lce: INT = 0;
 
         while mismatches >= 0 {
-            real_lce += lce(i + real_lce, j + real_lce, n, inv_sa, lcp, A);
+            real_lce += lce(i + real_lce, j + real_lce, n, inv_sa, lcp, ary);
 
             if i + real_lce >= (n / 2) || j + real_lce >= n {
                 break;
@@ -219,13 +221,14 @@ pub fn real_lce_mismatches(
 // - Longest Common Prefix Array (LCP)
 // - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
 // - Tuple of parameters for palindromes to be found (minimum_length, maximum_length, maximum_allowed_number_of_mismatches, maximum_gap)
+#[allow(clippy::too_many_arguments)]
 pub fn add_palindromes(
-    s: &Vec<u8>,
+    s: &[u8],
     s_n: INT,
     n: INT,
-    inv_sa: &Vec<INT>,
-    lcp: &Vec<INT>,
-    A: &Vec<INT>,
+    inv_sa: &[INT],
+    lcp: &[INT],
+    ary: &[INT],
     min_len: i32,
     max_len: i32,
     mismatches: i32,
@@ -257,17 +260,17 @@ pub fn add_palindromes(
         // println!("Calling RLCM with i={} j={} n=s_n={}", i, j, s_n);
 
         real_lce_mismatches(
-            &s,
+            s,
             i as INT,
             j as INT,
             s_n as INT,
             inv_sa,
             lcp,
-            A,
+            ary,
             mismatches,
             initial_gap,
             &mut mismatch_locs,
-            &matrix,
+            matrix,
         );
 
         // This is why it originally uses a LinkedList I guess??
@@ -300,7 +303,7 @@ pub fn add_palindromes(
         // Optional printing of mismatch locations relative to centre, valid start locations
         // and valid end locations
         if false {
-            print!("centre = {}\n", c);
+            println!("centre = {}", c);
             print!("mismatches: \t[ ");
             for it in mismatch_locs.iter() {
                 print!("{} ", it);
@@ -425,14 +428,4 @@ pub fn add_palindromes(
     }
 
     palindromes
-}
-
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn test_simple() {
-        todo!()
-    }
 }

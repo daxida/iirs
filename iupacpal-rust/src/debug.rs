@@ -1,17 +1,17 @@
 use std::fmt::Display;
 
-pub fn print_array<T: Display>(title: &str, seq: &[T], n: usize, print_indices: bool) {
+pub fn print_array<T: Display>(title: &str, seq: &[T], print_indices: bool) {
     if print_indices {
         print!("{:>width$}", "", width = title.len() + 2);
-        for i in 0..n {
-            print!("{:>width$}", i, width = seq[i].to_string().len() + 2);
+        for (i, ch) in seq.iter().enumerate() {
+            print!("{:>width$}", i, width = ch.to_string().len() + 2);
         }
         println!();
     }
 
     println!("{}:", title);
-    for i in 0..n {
-        print!("{}  ", seq[i]);
+    for ch in seq {
+        print!("{}  ", ch);
     }
     println!("\n");
 }

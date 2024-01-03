@@ -10,5 +10,5 @@ linked-list = "0.0.3"
 clap = { version = "4.4.12", features = ["derive"] }
 seq_io = "0.3.2"
 
-# [profile.dev]
-# opt-level = 3
+[profile.dev]
+opt-level = 3

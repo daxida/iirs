@@ -1,6 +1,7 @@
 use std::collections::{BTreeSet, HashMap};
 
-use crate::{IUPAC_SYMBOLS, IUPAC_SYMBOLS_COUNT};
+const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
+const ALL_SYMBOLS_COUNT: usize = 20;
 
 #[derive(Clone, Debug)]
 pub struct MatchMatrix {
@@ -50,7 +51,7 @@ impl MatchMatrix {
         // dbg!(&iupac_to_value);
 
         // Build match matrix
-        let mut match_matrix: Vec<bool> = vec![false; IUPAC_SYMBOLS_COUNT * IUPAC_SYMBOLS_COUNT];
+        let mut match_matrix: Vec<bool> = vec![false; ALL_SYMBOLS_COUNT * ALL_SYMBOLS_COUNT];
         for (it1_char, it1_set) in iupac_map.iter() {
             let i = iupac_to_value[*it1_char as usize];
 
@@ -66,7 +67,7 @@ impl MatchMatrix {
                 //     }
                 // }
                 let matching = !it1_set.is_disjoint(it2_set);
-                match_matrix[i + i * (IUPAC_SYMBOLS_COUNT - 1) + j] = matching;
+                match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j] = matching;
             }
         }
 
@@ -82,14 +83,15 @@ impl MatchMatrix {
         let j = self.iupac_to_value[ch2 as usize];
         assert!(i <= 20, "{}", ch1);
         assert!(j <= 20, "{}", ch2);
-        self.match_matrix[i + i * (IUPAC_SYMBOLS_COUNT - 1) + j]
+        self.match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j]
     }
 
     // Optionally print match matrix
+    #[allow(dead_code)]
     pub fn display(&self, complement: &[char; 128]) -> String {
         let header = format!(
             "Match Matrix:\n  {}\n",
-            IUPAC_SYMBOLS
+            ALL_SYMBOLS
                 .chars()
                 .map(|c| c.to_string())
                 .collect::<Vec<String>>()
@@ -97,9 +99,9 @@ impl MatchMatrix {
         );
 
         let mut matrix_str = String::new();
-        for si in IUPAC_SYMBOLS.chars() {
+        for si in ALL_SYMBOLS.chars() {
             matrix_str += &format!("{} ", si);
-            for sj in IUPAC_SYMBOLS.chars() {
+            for sj in ALL_SYMBOLS.chars() {
                 // Check for special cases ($ and # behavior)
                 let matched = if si == '$' || si == '#' || sj == '$' || sj == '#' {
                     false
@@ -152,7 +154,7 @@ mod tests {
 
     #[test]
     fn test_constants() {
-        assert_eq!(IUPAC_SYMBOLS.len(), IUPAC_SYMBOLS_COUNT);
+        assert_eq!(ALL_SYMBOLS.len(), ALL_SYMBOLS_COUNT);
     }
 
     #[test]
@@ -180,8 +182,6 @@ mod tests {
             - 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 \n\
             $ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 \n\
             # 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
-
-
 
         let matrix = MatchMatrix::new();
         let complement = get_complement();

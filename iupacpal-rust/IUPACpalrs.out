@@ -1,70 +1,8554 @@
-Palindromes of: input.fasta
-Sequence name: MCHU
-Sequence length is: 48
+Palindromes of: test_data/alys.fna
+Sequence name: NZ_CP059564.1
+Sequence length is: 2432079
 Start at position: 1
-End at position: 48
+End at position: 2432079
 Minimum length of Palindromes is: 10
 Maximum length of Palindromes is: 100
-Maximum gap between elements is: 10
+Maximum gap between elements is: 100
 Number of mismatches allowed in Palindrome: 0
 
 
 
 Palindromes:
-7        twgtgtgtwkmm       18
-         ||||||||||||
-31       ah*nn-nddbkk       20
+2886     cggtcattgtc     2896
+         |||||||||||
+2958     gccagtaacag     2948
 
-8        wgtgtgtwkmmm       19
-         ||||||||||||
-31       ah*nn-nddbkk       20
+3317     gctgcctgaaa     3327
+         |||||||||||
+3350     cgacggacttt     3340
 
-10       tgtgtwkmmm       19
+3340     tttcaggcag     3349
          ||||||||||
-30       h*nn-nddbk       21
+3430     aaagtccgtc     3421
 
-10       tgtgtwkmmm       19
+4711     atatgatttt     4720
          ||||||||||
-31       ah*nn-nddb       22
+4737     tatactaaaa     4728
 
-12       tgtwkmmmkk       21
+6062     ccctctccctgtgggagaggg     6082
+         |||||||||||||||||||||
+6154     gggagagggacaccctctccc     6134
+
+6122     ccctctccct     6131
          ||||||||||
-31       ah*nn-nddb       22
+6154     gggagaggga     6145
 
-16       kmmmkkbddn       25
-         ||||||||||
-35       wttgah*nn-       26
-
-17       mmmkkbddn-nn*h       30
+7291     tgtagggtgcgtac     7304
          ||||||||||||||
-46       gugannvvvugwtt       33
+7360     acatcccacgcatg     7347
 
-19       mkkbddn-nn*h       30
-         ||||||||||||
-42       nnvvvugwttga       31
-
-20       kkbddn-nn*h       30
-         |||||||||||
-42       nnvvvugwttg       32
-
-21       kbddn-nn*ha       31
-         |||||||||||
-43       annvvvugwtt       33
-
-22       bddn-nn*ha       31
+9791     tttgcgccaa     9800
          ||||||||||
-43       annvvvugwt       34
+9868     aaacgcggtt     9859
 
-22       bddn-nn*ha       31
-         ||||||||||
-44       gannvvvugw       35
-
-24       dn-nn*hagttw       35
-         ||||||||||||
-48       atgugannvvvu       37
-
-25       n-nn*hagttw       35
+10400    acaaaaaaccg    10410
          |||||||||||
-48       atgugannvvv       38
+10436    tgttttttggc    10426
+
+11712    tttcaggcagcctgaa    11727
+         ||||||||||||||||
+11749    aaagtccgtcggactt    11734
+
+13408    atgaaattgct    13418
+         |||||||||||
+13521    tactttaacga    13511
+
+13669    tattttttat    13678
+         ||||||||||
+13761    ataaaaaata    13752
+
+13752    ataaaaaata    13761
+         ||||||||||
+13792    tattttttat    13783
+
+13756    aaaatactaa    13765
+         ||||||||||
+13848    ttttatgatt    13839
+
+14295    aaaaagcaaat    14305
+         |||||||||||
+14327    tttttcgttta    14317
+
+14968    tttcaggcagc    14978
+         |||||||||||
+15004    aaagtccgtcg    14994
+
+17134    acaacgccca    17143
+         ||||||||||
+17166    tgttgcgggt    17157
+
+18197    gccctctctc    18206
+         ||||||||||
+18233    cgggagagag    18224
+
+18441    ccctccccct    18450
+         ||||||||||
+18465    gggaggggga    18456
+
+18512    aaagccacagt    18522
+         |||||||||||
+18541    tttcggtgtca    18531
+
+22347    caacaatttg    22356
+         ||||||||||
+22434    gttgttaaac    22425
+
+22763    ttgatgattt    22772
+         ||||||||||
+22865    aactactaaa    22856
+
+23246    aaaaaccatttaa    23258
+         |||||||||||||
+23281    tttttggtaaatt    23269
+
+25598    aaccaaatca    25607
+         ||||||||||
+25663    ttggtttagt    25654
+
+28056    aaatcggcaa    28065
+         ||||||||||
+28173    tttagccgtt    28164
+
+32213    gcgccaaacgc    32223
+         |||||||||||
+32304    cgcggtttgcg    32294
+
+33278    accgtcatag    33287
+         ||||||||||
+33305    tggcagtatc    33296
+
+33472    gtaaagattttt    33483
+         ||||||||||||
+33499    catttctaaaaa    33488
+
+38898    gttttgagaacacacg    38913
+         ||||||||||||||||
+38945    caaaactcttgtgtgc    38930
+
+39851    caaggcaaaa    39860
+         ||||||||||
+39913    gttccgtttt    39904
+
+40121    gctgcctgaaaag    40133
+         |||||||||||||
+40155    cgacggacttttc    40143
+
+42611    cggttaaaat    42620
+         ||||||||||
+42637    gccaatttta    42628
+
+45058    gggtgggggt    45067
+         ||||||||||
+45094    cccaccccca    45085
+
+45098    ccctccccct    45107
+         ||||||||||
+45122    gggaggggga    45113
+
+46187    tttcaggctgcctga    46201
+         |||||||||||||||
+46218    aaagtccgacggact    46204
+
+46331    ctctccctatggga    46344
+         ||||||||||||||
+46408    gagagggataccct    46395
+
+48384    aggctgcctgaaa    48396
+         |||||||||||||
+48411    tccgacggacttt    48399
+
+48573    agccctctctcc    48584
+         ||||||||||||
+48611    tcgggagagagg    48600
+
+50903    ggctttggcg    50912
+         ||||||||||
+51019    ccgaaaccgc    51010
+
+52961    ccctccccct    52970
+         ||||||||||
+52984    gggaggggga    52975
+
+55056    tgatgttggcg    55066
+         |||||||||||
+55127    actacaaccgc    55117
+
+55905    gcattttgct    55914
+         ||||||||||
+55972    cgtaaaacga    55963
+
+60894    tttttgatta    60903
+         ||||||||||
+61004    aaaaactaat    60995
+
+61699    agcaccaaag    61708
+         ||||||||||
+61769    tcgtggtttc    61760
+
+62698    aacaccgcat    62707
+         ||||||||||
+62788    ttgtggcgta    62779
+
+64024    gcatttcaggc    64034
+         |||||||||||
+64046    cgtaaagtccg    64036
+
+64570    aaattgggca    64579
+         ||||||||||
+64667    tttaacccgt    64658
+
+64867    ttttcatcgc    64876
+         ||||||||||
+64886    aaaagtagcg    64877
+
+67992    gtgatttcag    68001
+         ||||||||||
+68016    cactaaagtc    68007
+
+70779    tttatccaca    70788
+         ||||||||||
+70827    aaataggtgt    70818
+
+78374    tttcatttaa    78383
+         ||||||||||
+78431    aaagtaaatt    78422
+
+81579    aataaaatgg    81588
+         ||||||||||
+81685    ttattttacc    81676
+
+81627    cttacttttt    81636
+         ||||||||||
+81646    gaatgaaaaa    81637
+
+81872    gccctctctcc    81882
+         |||||||||||
+81908    cgggagagagg    81898
+
+82007    aggggcggat    82016
+         ||||||||||
+82031    tccccgccta    82022
+
+84060    ttcaggcagc    84069
+         ||||||||||
+84096    aagtccgtcg    84087
+
+84791    agaggcggat    84800
+         ||||||||||
+84815    tctccgccta    84806
+
+84843    tgtagggtgcaacttgttgcacca    84866
+         ||||||||||||||||||||||||
+84912    acatcccacgttgaacaacgtggt    84889
+
+88861    gttttcaggc    88870
+         ||||||||||
+88881    caaaagtccg    88872
+
+89465    aaaagctgcctgaaaa    89480
+         ||||||||||||||||
+89508    ttttcgacggactttt    89493
+
+90036    aaaccgcgtgaaa    90048
+         |||||||||||||
+90068    tttggcgcacttt    90056
+
+90076    ttcaggctgcctgaa    90090
+         |||||||||||||||
+90112    aagtccgacggactt    90098
+
+92866    aaatgttttcaggc    92879
+         ||||||||||||||
+92894    tttacaaaagtccg    92881
+
+94959    tttttcaggc    94968
+         ||||||||||
+94979    aaaaagtccg    94970
+
+96406    ccctctctcc    96415
+         ||||||||||
+96440    gggagagagg    96431
+
+96414    ccctgtggga    96423
+         ||||||||||
+96481    gggacaccct    96472
+
+96546    ttttcaggctg    96556
+         |||||||||||
+96592    aaaagtccgac    96582
+
+97732    gatttcatatc    97742
+         |||||||||||
+97810    ctaaagtatag    97800
+
+98605    ttgcacaatg    98614
+         ||||||||||
+98703    aacgtgttac    98694
+
+99011    ggcaaatttg    99020
+         ||||||||||
+99069    ccgtttaaac    99060
+
+99693    tcccctctcc    99702
+         ||||||||||
+99728    aggggagagg    99719
+
+99695    ccctctcctttgggagaggg    99714
+         ||||||||||||||||||||
+99784    gggagaggaaaccctctccc    99765
+
+102397   ccctccccct   102406
+         ||||||||||
+102421   gggaggggga   102412
+
+104304   caatgatttg   104313
+         ||||||||||
+104332   gttactaaac   104323
+
+104863   gcagcctgaa   104872
+         ||||||||||
+104889   cgtcggactt   104880
+
+104940   gatttcatatc   104950
+         |||||||||||
+105017   ctaaagtatag   105007
+
+106797   ttcaggcagc   106806
+         ||||||||||
+106891   aagtccgtcg   106882
+
+107897   aatgcaaacgc   107907
+         |||||||||||
+107994   ttacgtttgcg   107984
+
+110189   aaaccgtgat   110198
+         ||||||||||
+110222   tttggcacta   110213
+
+113783   ggtaacgaaac   113793
+         |||||||||||
+113870   ccattgctttg   113860
+
+113783   ggtaacgaaac   113793
+         |||||||||||
+113891   ccattgctttg   113881
+
+113784   gtaacgaaac   113793
+         ||||||||||
+113816   cattgctttg   113807
+
+113784   gtaacgaaac   113793
+         ||||||||||
+113856   cattgctttg   113847
+
+113784   gtaacgaaac   113793
+         ||||||||||
+113902   cattgctttg   113893
+
+117856   ttaaatattt   117865
+         ||||||||||
+117884   aatttataaa   117875
+
+118025   ccccttacga   118034
+         ||||||||||
+118049   ggggaatgct   118040
+
+119280   tttttacggtat   119291
+         ||||||||||||
+119323   aaaaatgccata   119312
+
+119282   tttacggtatttttt   119296
+         |||||||||||||||
+119333   aaatgccataaaaaa   119319
+
+121380   aaaaaatcgg   121389
+         ||||||||||
+121484   ttttttagcc   121475
+
+122410   cattcaggcagccaaaa   122426
+         |||||||||||||||||
+122449   gtaagtccgtcggtttt   122433
+
+122525   gatttcatatc   122535
+         |||||||||||
+122603   ctaaagtatag   122593
+
+122646   attgatggca   122655
+         ||||||||||
+122685   taactaccgt   122676
+
+124560   tttcaggcagcctgaa   124575
+         ||||||||||||||||
+124600   aaagtccgtcggactt   124585
+
+125093   ttcaggctgcctgaa   125107
+         |||||||||||||||
+125128   aagtccgacggactt   125114
+
+126545   tgggagaggg   126554
+         ||||||||||
+126615   accctctccc   126606
+
+126648   gatttcaggc   126657
+         ||||||||||
+126700   ctaaagtccg   126691
+
+127443   atttcaggcagcc   127455
+         |||||||||||||
+127493   taaagtccgtcgg   127481
+
+127498   tccctccccct   127508
+         |||||||||||
+127524   agggaggggga   127514
+
+129560   ctgcctgaaaa   129570
+         |||||||||||
+129602   gacggactttt   129592
+
+129929   atgtagggtgcaacttgttgcacca   129953
+         |||||||||||||||||||||||||
+130000   tacatcccacgttgaacaacgtggt   129976
+
+130788   cgtcattcccgcgtaggcgggaatcca   130814
+         |||||||||||||||||||||||||||
+130881   gcagtaagggcgcatccgcccttaggt   130855
+
+131558   cacattcaggc   131568
+         |||||||||||
+131580   gtgtaagtccg   131570
+
+131642   taaaaatata   131651
+         ||||||||||
+131685   atttttatat   131676
+
+131677   atatttttat   131686
+         ||||||||||
+131701   tataaaaata   131692
+
+132082   gtaggttgggttg   132094
+         |||||||||||||
+132149   catccaacccaac   132137
+
+132160   attcaggcagcctgaa   132175
+         ||||||||||||||||
+132210   taagtccgtcggactt   132195
+
+134909   gtaggttgggttg   134921
+         |||||||||||||
+134984   catccaacccaac   134972
+
+137556   ggttttcaggc   137566
+         |||||||||||
+137578   ccaaaagtccg   137568
+
+138572   tccctctctcc   138582
+         |||||||||||
+138608   agggagagagg   138598
+
+138962   cgctttgcaaca   138973
+         ||||||||||||
+139076   gcgaaacgttgt   139065
+
+139936   aaatgtagggtg   139947
+         ||||||||||||
+140010   tttacatcccac   139999
+
+143186   ctgtttcatt   143195
+         ||||||||||
+143209   gacaaagtaa   143200
+
+147024   tttcaggctgcctgaaa   147040
+         |||||||||||||||||
+147073   aaagtccgacggacttt   147057
+
+147058   ttcaggcagc   147067
+         ||||||||||
+147163   aagtccgtcg   147154
+
+150256   gatttcatatc   150266
+         |||||||||||
+150334   ctaaagtatag   150324
+
+150324   gatatgaaatc   150334
+         |||||||||||
+150441   ctatactttag   150431
+
+150369   gctgcctgaaaa   150380
+         ||||||||||||
+150393   cgacggactttt   150382
+
+150422   gtaggggcggatttcatatccgccc   150446
+         |||||||||||||||||||||||||
+150497   catccccgcctaaagtataggcggg   150473
+
+150987   tttttcaggc   150996
+         ||||||||||
+151007   aaaaagtccg   150998
+
+153065   ggctgcctgaaatg   153078
+         ||||||||||||||
+153104   ccgacggactttac   153091
+
+153070   cctgaaatgt   153079
+         ||||||||||
+153168   ggactttaca   153159
+
+155541   tttcaggcagcc   155552
+         ||||||||||||
+155577   aaagtccgtcgg   155566
+
+156305   caggcagcct   156314
+         ||||||||||
+156335   gtccgtcgga   156326
+
+156320   catttcaggc   156329
+         ||||||||||
+156340   gtaaagtccg   156331
+
+156380   cttacttttt   156389
+         ||||||||||
+156400   gaatgaaaaa   156391
+
+157911   ccctctccca   157920
+         ||||||||||
+157931   gggagagggt   157922
+
+159175   caaaaggctg   159184
+         ||||||||||
+159213   gttttccgac   159204
+
+159994   gatttcatatc   160004
+         |||||||||||
+160072   ctaaagtatag   160062
+
+160171   caacaaaccc   160180
+         ||||||||||
+160223   gttgtttggg   160214
+
+160182   ccctctctcc   160191
+         ||||||||||
+160216   gggagagagg   160207
+
+161044   tttcaggctgcctgaa   161059
+         ||||||||||||||||
+161126   aaagtccgacggactt   161111
+
+161102   aattttgttttcaggc   161117
+         ||||||||||||||||
+161134   ttaaaacaaaagtccg   161119
+
+163335   ggctgcctgaaaa   163347
+         |||||||||||||
+163398   ccgacggactttt   163386
+
+163675   gtttgaaaat   163684
+         ||||||||||
+163788   caaactttta   163779
+
+164569   tttcaggctgc   164579
+         |||||||||||
+164668   aaagtccgacg   164658
+
+165080   atttgggcat   165089
+         ||||||||||
+165164   taaacccgta   165155
+
+165613   gggtgggggt   165622
+         ||||||||||
+165649   cccaccccca   165640
+
+165653   ccctcccccg   165662
+         ||||||||||
+165677   gggagggggc   165668
+
+168617   aggctgcctgaaa   168629
+         |||||||||||||
+168663   tccgacggacttt   168651
+
+169201   gggtggaaaa   169210
+         ||||||||||
+169245   cccacctttt   169236
+
+169297   gatttcatatc   169307
+         |||||||||||
+169375   ctaaagtatag   169365
+
+171470   ctcccctccccct   171482
+         |||||||||||||
+171500   gaggggaggggga   171488
+
+172233   aaaatcatca   172242
+         ||||||||||
+172265   ttttagtagt   172256
+
+172346   gggtgggggt   172355
+         ||||||||||
+172382   cccaccccca   172373
+
+172386   ccctccccct   172395
+         ||||||||||
+172410   gggaggggga   172401
+
+173745   aaaaaagcaacct   173757
+         |||||||||||||
+173773   ttttttcgttgga   173761
+
+173905   tgttggtaaaa   173915
+         |||||||||||
+173945   acaaccatttt   173935
+
+175672   tcattttttc   175681
+         ||||||||||
+175758   agtaaaaaag   175749
+
+176461   ataggttgttat   176472
+         ||||||||||||
+176566   tatccaacaata   176555
+
+176496   ggttgttata   176505
+         ||||||||||
+176563   ccaacaatat   176554
+
+176555   ataacaacct   176564
+         ||||||||||
+176584   tattgttgga   176575
+
+176575   aggttgttatga   176586
+         ||||||||||||
+176630   tccaacaatact   176619
+
+176576   ggttgttatg   176585
+         ||||||||||
+176646   ccaacaatac   176637
+
+176670   ttttcaggca   176679
+         ||||||||||
+176701   aaaagtccgt   176692
+
+181836   tggctggtgt   181845
+         ||||||||||
+181872   accgaccaca   181863
+
+183779   aaaaccgatga   183789
+         |||||||||||
+183807   ttttggctact   183797
+
+183927   gctgcctgaa   183936
+         ||||||||||
+183962   cgacggactt   183953
+
+187413   agaggcggat   187422
+         ||||||||||
+187437   tctccgccta   187428
+
+187465   tgtagggtgcaa   187476
+         ||||||||||||
+187534   acatcccacgtt   187523
+
+187478   ttgttgcacca   187488
+         |||||||||||
+187521   aacaacgtggt   187511
+
+189010   aaaatggctt   189019
+         ||||||||||
+189080   ttttaccgaa   189071
+
+189011   aaatggcttgtg   189022
+         ||||||||||||
+189044   tttaccgaacac   189033
+
+189241   gccctctctcc   189251
+         |||||||||||
+189277   cgggagagagg   189267
+
+190293   tcaggctgcctgaaa   190307
+         |||||||||||||||
+190403   agtccgacggacttt   190389
+
+191072   tttcaggcagcctg   191085
+         ||||||||||||||
+191110   aaagtccgtcggac   191097
+
+191514   aggaaatcgc   191523
+         ||||||||||
+191603   tcctttagcg   191594
+
+191824   caaagccaaac   191834
+         |||||||||||
+191902   gtttcggtttg   191892
+
+195115   gtagggtgcgt   195125
+         |||||||||||
+195181   catcccacgca   195171
+
+196061   gtagggtgcgta   196072
+         ||||||||||||
+196127   catcccacgcat   196116
+
+197128   atttggttgat   197138
+         |||||||||||
+197207   taaaccaacta   197197
+
+197179   tggctgcctg   197188
+         ||||||||||
+197273   accgacggac   197264
+
+197906   gcatgattttg   197916
+         |||||||||||
+198022   cgtactaaaac   198012
+
+198746   gcgattttgg   198755
+         ||||||||||
+198855   cgctaaaacc   198846
+
+199300   ttaccctacaa   199310
+         |||||||||||
+199420   aatgggatgtt   199410
+
+199570   aaattggcgg   199579
+         ||||||||||
+199607   tttaaccgcc   199598
+
+201077   tttcaggcagcc   201088
+         ||||||||||||
+201113   aaagtccgtcgg   201102
+
+201083   gcagcctgaa   201092
+         ||||||||||
+201177   cgtcggactt   201168
+
+202026   gctgcctgaaaac   202038
+         |||||||||||||
+202062   cgacggacttttg   202050
+
+204683   catggacgaa   204692
+         ||||||||||
+204734   gtacctgctt   204725
+
+205908   attttatttt   205917
+         ||||||||||
+205939   taaaataaaa   205930
+
+206622   tgaattaaaatc   206633
+         ||||||||||||
+206714   acttaattttag   206703
+
+206711   ttcagtagggtgc   206723
+         |||||||||||||
+206826   aagtcatcccacg   206814
+
+206969   caacttgttgcacca   206983
+         |||||||||||||||
+207020   gttgaacaacgtggt   207006
+
+208255   ttgcgtggca   208264
+         ||||||||||
+208325   aacgcaccgt   208316
+
+208277   ttcaggctgcctgaaa   208292
+         ||||||||||||||||
+208383   aagtccgacggacttt   208368
+
+210522   cttttcaggc   210531
+         ||||||||||
+210542   gaaaagtccg   210533
+
+212293   tccctctcctgtgggagaggg   212313
+         |||||||||||||||||||||
+212387   agggagaggacaccctctccc   212367
+
+212331   gtgccacaaa   212340
+         ||||||||||
+212403   cacggtgttt   212394
+
+213770   gagagggctgg   213780
+         |||||||||||
+213811   ctctcccgacc   213801
+
+213805   ccctctctcc   213814
+         ||||||||||
+213839   gggagagagg   213830
+
+215344   gtcgggcatt   215353
+         ||||||||||
+215405   cagcccgtaa   215396
+
+215932   gcttgatttt   215941
+         ||||||||||
+216038   cgaactaaaa   216029
+
+216275   aaatgtagggtgcaacttgttgcacc   216300
+         ||||||||||||||||||||||||||
+216344   tttacatcccacgttgaacaacgtgg   216319
+
+216366   aaaaaatctt   216375
+         ||||||||||
+216424   ttttttagaa   216415
+
+217611   ttcaggctgcc   217621
+         |||||||||||
+217716   aagtccgacgg   217706
+
+220656   aaaaaacaccgtttaaa   220672
+         |||||||||||||||||
+220696   ttttttgtggcaaattt   220680
+
+221932   atatgtttaaa   221942
+         |||||||||||
+221955   tatacaaattt   221945
+
+225395   gtaccacgcaccaaat   225410
+         ||||||||||||||||
+225444   catggtgcgtggttta   225429
+
+225913   tttgcccatt   225922
+         ||||||||||
+225961   aaacgggtaa   225952
+
+227452   aggctgccaa   227461
+         ||||||||||
+227502   tccgacggtt   227493
+
+229118   accgtttaatt   229128
+         |||||||||||
+229144   tggcaaattaa   229134
+
+230333   ttttcaggcagcc   230345
+         |||||||||||||
+230404   aaaagtccgtcgg   230392
+
+230793   gttttcaggc   230802
+         ||||||||||
+230813   caaaagtccg   230804
+
+230796   ttcaggcagcctgaaa   230811
+         ||||||||||||||||
+230841   aagtccgtcggacttt   230826
+
+235937   tgcaacgcga   235946
+         ||||||||||
+235992   acgttgcgct   235983
+
+236102   ttcaggcagcc   236112
+         |||||||||||
+236137   aagtccgtcgg   236127
+
+236901   ttttcaggcagc   236912
+         ||||||||||||
+236937   aaaagtccgtcg   236926
+
+238991   gctgcctgaaaatga   239005
+         |||||||||||||||
+239025   cgacggacttttact   239011
+
+239267   gctgcctgaaaacg   239280
+         ||||||||||||||
+239302   cgacggacttttgc   239289
+
+240242   agaacctgtat   240252
+         |||||||||||
+240333   tcttggacata   240323
+
+244855   gatttcatatc   244865
+         |||||||||||
+244933   ctaaagtatag   244923
+
+246070   cgggggaggg   246079
+         ||||||||||
+246154   gccccctccc   246145
+
+246081   tagggtggggg   246091
+         |||||||||||
+246143   atcccaccccc   246133
+
+246583   tgctggaaaat   246593
+         |||||||||||
+246619   acgacctttta   246609
+
+248240   tgtagggtgcaacttgttgcacca   248263
+         ||||||||||||||||||||||||
+248309   acatcccacgttgaacaacgtggt   248286
+
+248337   agaggcggat   248346
+         ||||||||||
+248361   tctccgccta   248352
+
+248414   aaaaagccatttgat   248428
+         |||||||||||||||
+248450   tttttcggtaaacta   248436
+
+250896   aaaaagcccaaat   250908
+         |||||||||||||
+250928   tttttcgggttta   250916
+
+251392   ttcaggcagcctgaaa   251407
+         ||||||||||||||||
+251437   aagtccgtcggacttt   251422
+
+253251   ccctcccctgc   253261
+         |||||||||||
+253274   gggaggggacg   253264
+
+253267   ggggagggtt   253276
+         ||||||||||
+253348   cccctcccaa   253339
+
+253341   ccctccccctt   253351
+         |||||||||||
+253364   gggagggggaa   253354
+
+253417   cagggcaacacat   253429
+         |||||||||||||
+253455   gtcccgttgtgta   253443
+
+254427   gcagcttttca   254437
+         |||||||||||
+254464   cgtcgaaaagt   254454
+
+255697   atttttattg   255706
+         ||||||||||
+255716   taaaaataac   255707
+
+256754   aggctgcctgaa   256765
+         ||||||||||||
+256785   tccgacggactt   256774
+
+256880   ttgaacaaaa   256889
+         ||||||||||
+256903   aacttgtttt   256894
+
+257003   tttcaggcagc   257013
+         |||||||||||
+257042   aaagtccgtcg   257032
+
+258712   tgccaatgccg   258722
+         |||||||||||
+258754   acggttacggc   258744
+
+259004   ccctccccct   259013
+         ||||||||||
+259028   gggaggggga   259019
+
+259032   gggtgggggt   259041
+         ||||||||||
+259068   cccaccccca   259059
+
+260824   gctgcctgaaa   260834
+         |||||||||||
+260872   cgacggacttt   260862
+
+262061   gccctctctcc   262071
+         |||||||||||
+262097   cgggagagagg   262087
+
+262788   tggcgttcaggc   262799
+         ||||||||||||
+262812   accgcaagtccg   262801
+
+263020   cgcgccaaat   263029
+         ||||||||||
+263104   gcgcggttta   263095
+
+263387   gcctgtttca   263396
+         ||||||||||
+263502   cggacaaagt   263493
+
+263724   cttacttttt   263733
+         ||||||||||
+263744   gaatgaaaaa   263735
+
+263787   ttcaggcagc   263796
+         ||||||||||
+263896   aagtccgtcg   263887
+
+265117   gcctgaaaac   265126
+         ||||||||||
+265145   cggacttttg   265136
+
+266669   ttttcaggcagc   266680
+         ||||||||||||
+266705   aaaagtccgtcg   266694
+
+266709   gcaaacgtggcgtatcgccgccacacccactct   266741
+         |||||||||||||||||||||||||||||||||
+266812   cgtttgcaccgcatagcggcggtgtgggtgaga   266780
+
+267063   gttttcaggc   267072
+         ||||||||||
+267083   caaaagtccg   267074
+
+268312   gtgtagggtgca   268323
+         ||||||||||||
+268376   cacatcccacgt   268365
+
+268838   aggctgcctgaaac   268851
+         ||||||||||||||
+268881   tccgacggactttg   268868
+
+269228   gctgcctgaa   269237
+         ||||||||||
+269287   cgacggactt   269278
+
+272409   caggctgcctgaaa   272422
+         ||||||||||||||
+272494   gtccgacggacttt   272481
+
+272538   ccctccccct   272547
+         ||||||||||
+272562   gggaggggga   272553
+
+272566   gggtgggggt   272575
+         ||||||||||
+272601   cccaccccca   272592
+
+275639   tctaaccccc   275648
+         ||||||||||
+275687   agattggggg   275678
+
+275646   ccctccccct   275655
+         ||||||||||
+275670   gggaggggga   275661
+
+275674   gggtgggggt   275683
+         ||||||||||
+275710   cccaccccca   275701
+
+276497   aaagctgcctgaaaa   276511
+         |||||||||||||||
+276535   tttcgacggactttt   276521
+
+276884   caacacattg   276893
+         ||||||||||
+276913   gttgtgtaac   276904
+
+277454   gcccaaaacc   277463
+         ||||||||||
+277572   cgggttttgg   277563
+
+277599   aaagctgcctgaaaacg   277615
+         |||||||||||||||||
+277640   tttcgacggacttttgc   277624
+
+279576   tgggagaggg   279585
+         ||||||||||
+279638   accctctccc   279629
+
+279617   ccctctcccc   279626
+         ||||||||||
+279649   gggagagggg   279640
+
+280802   ttccctctcc   280811
+         ||||||||||
+280838   aagggagagg   280829
+
+280828   gggagaggga   280837
+         ||||||||||
+280867   ccctctccct   280858
+
+281960   gccgtttgcca   281970
+         |||||||||||
+282051   cggcaaacggt   282041
+
+284133   aaaattatgg   284142
+         ||||||||||
+284193   ttttaatacc   284184
+
+284803   aaacccaacaca   284814
+         ||||||||||||
+284850   tttgggttgtgt   284839
+
+284985   gtcgtttaaaat   284996
+         ||||||||||||
+285083   cagcaaatttta   285072
+
+286596   aacagcaaat   286605
+         ||||||||||
+286686   ttgtcgttta   286677
+
+290669   tctaaccccc   290678
+         ||||||||||
+290717   agattggggg   290708
+
+290676   ccctccccct   290685
+         ||||||||||
+290700   gggaggggga   290691
+
+290704   gggtgggggt   290713
+         ||||||||||
+290740   cccaccccca   290731
+
+290744   ccctcccccg   290753
+         ||||||||||
+290768   gggagggggc   290759
+
+291922   aaaaagctgcctgaaaacc   291940
+         |||||||||||||||||||
+291969   tttttcgacggacttttgg   291951
+
+292734   cgattgtgga   292743
+         ||||||||||
+292848   gctaacacct   292839
+
+294178   attcaggcagcctgaaa   294194
+         |||||||||||||||||
+294217   taagtccgtcggacttt   294201
+
+294232   aattaagcaa   294241
+         ||||||||||
+294283   ttaattcgtt   294274
+
+298899   cttacttttt   298908
+         ||||||||||
+298919   gaatgaaaaa   298910
+
+299017   gatttcatatc   299027
+         |||||||||||
+299095   ctaaagtatag   299085
+
+301312   gctgcctgaa   301321
+         ||||||||||
+301423   cgacggactt   301414
+
+302847   aattcaggctgcctgaaa   302864
+         ||||||||||||||||||
+302897   ttaagtccgacggacttt   302880
+
+303863   aaaccgcctaaac   303875
+         |||||||||||||
+303892   tttggcggatttg   303880
+
+305537   cttacttttt   305546
+         ||||||||||
+305557   gaatgaaaaa   305548
+
+305607   cagcctgaaa   305616
+         ||||||||||
+305663   gtcggacttt   305654
+
+305654   tttcaggctgcct   305666
+         |||||||||||||
+305770   aaagtccgacgga   305758
+
+305713   cttacttttt   305722
+         ||||||||||
+305733   gaatgaaaaa   305724
+
+307177   caggtcggatttt   307189
+         |||||||||||||
+307203   gtccagcctaaaa   307191
+
+308213   gggtgggggt   308222
+         ||||||||||
+308249   cccaccccca   308240
+
+308253   ccctccccct   308262
+         ||||||||||
+308277   gggaggggga   308268
+
+308317   aaggctgcctgaaa   308330
+         ||||||||||||||
+308360   ttccgacggacttt   308347
+
+308896   attcaggctgc   308906
+         |||||||||||
+308943   taagtccgacg   308933
+
+310351   ctgcctgaaaa   310361
+         |||||||||||
+310468   gacggactttt   310458
+
+310732   tgccaacaaa   310741
+         ||||||||||
+310763   acggttgttt   310754
+
+311290   caggctgcctgaaa   311303
+         ||||||||||||||
+311321   gtccgacggacttt   311308
+
+312236   caaaaatgctgcctgaaa   312253
+         ||||||||||||||||||
+312277   gtttttacgacggacttt   312260
+
+312972   caccaatttgg   312982
+         |||||||||||
+313059   gtggttaaacc   313049
+
+313326   atttcaggcagc   313337
+         ||||||||||||
+313362   taaagtccgtcg   313351
+
+313832   aggcagcctgaa   313843
+         ||||||||||||
+313861   tccgtcggactt   313850
+
+320582   ttgttcaaagcg   320593
+         ||||||||||||
+320700   aacaagtttcgc   320689
+
+320809   tttcaggcagc   320819
+         |||||||||||
+320852   aaagtccgtcg   320842
+
+320809   tttcaggcagcctgaa   320824
+         ||||||||||||||||
+320907   aaagtccgtcggactt   320892
+
+324107   tgttgtcgtc   324116
+         ||||||||||
+324196   acaacagcag   324187
+
+325761   ttttaaaaca   325770
+         ||||||||||
+325849   aaaattttgt   325840
+
+328493   ctgcctgaaaac   328504
+         ||||||||||||
+328550   gacggacttttg   328539
+
+329347   ggtttgaatg   329356
+         ||||||||||
+329457   ccaaacttac   329448
+
+331801   tgaaaatgaa   331810
+         ||||||||||
+331850   acttttactt   331841
+
+332054   cttacttttt   332063
+         ||||||||||
+332074   gaatgaaaaa   332065
+
+335320   ttcggtaaacg   335330
+         |||||||||||
+335398   aagccatttgc   335388
+
+336209   tttcaggcagcc   336220
+         ||||||||||||
+336245   aaagtccgtcgg   336234
+
+336230   ttcaggctgcct   336241
+         ||||||||||||
+336273   aagtccgacgga   336262
+
+336964   tagggtgcaactt   336976
+         |||||||||||||
+337028   atcccacgttgaa   337016
+
+338034   tgcattgcca   338043
+         ||||||||||
+338104   acgtaacggt   338095
+
+340699   aaaaaagccagc   340710
+         ||||||||||||
+340744   ttttttcggtcg   340733
+
+340904   cattggcggt   340913
+         ||||||||||
+341022   gtaaccgcca   341013
+
+340913   tggcggtttc   340922
+         ||||||||||
+341019   accgccaaag   341010
+
+341343   aggctgcctgaaa   341355
+         |||||||||||||
+341377   tccgacggacttt   341365
+
+341374   gcctattgtgc   341384
+         |||||||||||
+341425   cggataacacg   341415
+
+342947   tttgaattca   342956
+         ||||||||||
+343049   aaacttaagt   343040
+
+343484   aggcagcctgaaaag   343498
+         |||||||||||||||
+343524   tccgtcggacttttc   343510
+
+343487   cagcctgaaa   343496
+         ||||||||||
+343553   gtcggacttt   343544
+
+343594   gggtgggggt   343603
+         ||||||||||
+343630   cccaccccca   343621
+
+343634   ccctccccct   343643
+         ||||||||||
+343658   gggaggggga   343649
+
+344232   tttcaggcagcc   344243
+         ||||||||||||
+344318   aaagtccgtcgg   344307
+
+344281   tttcaggcagcc   344292
+         ||||||||||||
+344318   aaagtccgtcgg   344307
+
+345215   acatcacattg   345225
+         |||||||||||
+345307   tgtagtgtaac   345297
+
+345988   gctgcctgaa   345997
+         ||||||||||
+346023   cgacggactt   346014
+
+347046   ttttcaggcagcc   347058
+         |||||||||||||
+347082   aaaagtccgtcgg   347070
+
+349217   caaaaaacaaaatgccgt   349234
+         ||||||||||||||||||
+349257   gttttttgttttacggca   349240
+
+352696   tgaaatcagtttg   352708
+         |||||||||||||
+352721   actttagtcaaac   352709
+
+352816   aaattgcaaattaaa   352830
+         |||||||||||||||
+352877   tttaacgtttaattt   352863
+
+352895   aaaaataaaa   352904
+         ||||||||||
+352955   tttttatttt   352946
+
+352896   aaaataaaaaa   352906
+         |||||||||||
+352949   ttttatttttt   352939
+
+355235   aaagcgtgggta   355246
+         ||||||||||||
+355326   tttcgcacccat   355315
+
+355601   tgcacaaaat   355610
+         ||||||||||
+355639   acgtgtttta   355630
+
+355868   tttcaggcagcctgaa   355883
+         ||||||||||||||||
+355906   aaagtccgtcggactt   355891
+
+357363   aagccgatgcg   357373
+         |||||||||||
+357416   ttcggctacgc   357406
+
+357911   agctctctcc   357920
+         ||||||||||
+357945   tcgagagagg   357936
+
+359247   gtgttttcaggc   359258
+         ||||||||||||
+359271   cacaaaagtccg   359260
+
+359251   tttcaggcagcctgaaaa   359268
+         ||||||||||||||||||
+359308   aaagtccgtcggactttt   359291
+
+360782   aaccgccttgt   360792
+         |||||||||||
+360807   ttggcggaaca   360797
+
+360987   aaggggatagatg   360999
+         |||||||||||||
+361015   ttcccctatctac   361003
+
+362321   ccctctctcc   362330
+         ||||||||||
+362355   gggagagagg   362346
+
+363513   ttcaggcagc   363522
+         ||||||||||
+363601   aagtccgtcg   363592
+
+364285   aaatcgtcca   364294
+         ||||||||||
+364396   tttagcaggt   364387
+
+364564   tcaatttattgat   364576
+         |||||||||||||
+364653   agttaaataacta   364641
+
+365753   gatttcatatc   365763
+         |||||||||||
+365831   ctaaagtatag   365821
+
+365873   gtacacgaca   365882
+         ||||||||||
+365943   catgtgctgt   365934
+
+365950   gctgcctgaaa   365960
+         |||||||||||
+366044   cgacggacttt   366034
+
+366013   accaagctgcctgaa   366027
+         |||||||||||||||
+366049   tggttcgacggactt   366035
+
+366215   gtgccaaaag   366224
+         ||||||||||
+366303   cacggttttc   366294
+
+367474   caacatcaaa   367483
+         ||||||||||
+367585   gttgtagttt   367576
+
+370373   aggcgatgtg   370382
+         ||||||||||
+370488   tccgctacac   370479
+
+370628   agggcagata   370637
+         ||||||||||
+370653   tcccgtctat   370644
+
+372072   aaaccctgttc   372082
+         |||||||||||
+372098   tttgggacaag   372088
+
+372547   ccctccccct   372556
+         ||||||||||
+372571   gggaggggga   372562
+
+372575   gggtgggggt   372584
+         ||||||||||
+372611   cccaccccca   372602
+
+374102   ggtttcaggc   374111
+         ||||||||||
+374220   ccaaagtccg   374211
+
+377692   ttttcaggcagccaaa   377707
+         ||||||||||||||||
+377730   aaaagtccgtcggttt   377715
+
+379592   aaggttttgcc   379602
+         |||||||||||
+379625   ttccaaaacgg   379615
+
+379996   aaacagtcgt   380005
+         ||||||||||
+380022   tttgtcagca   380013
+
+381976   catgaaaaac   381985
+         ||||||||||
+382019   gtactttttg   382010
+
+382481   gcggtacgca   382490
+         ||||||||||
+382527   cgccatgcgt   382518
+
+384001   ttcaggcagcctgaa   384015
+         |||||||||||||||
+384047   aagtccgtcggactt   384033
+
+385588   ttaaaggacttt   385599
+         ||||||||||||
+385649   aatttcctgaaa   385638
+
+387162   aaccgaacaattta   387175
+         ||||||||||||||
+387194   ttggcttgttaaat   387181
+
+388931   ccctctctcc   388940
+         ||||||||||
+388965   gggagagagg   388956
+
+389073   cttacttttt   389082
+         ||||||||||
+389093   gaatgaaaaa   389084
+
+389583   tcaaaatcaggt   389594
+         ||||||||||||
+389689   agttttagtcca   389678
+
+390194   aggctgcctgaaaac   390208
+         |||||||||||||||
+390234   tccgacggacttttg   390220
+
+392513   tttggcggaa   392522
+         ||||||||||
+392613   aaaccgcctt   392604
+
+394016   aagcaaaaaat   394026
+         |||||||||||
+394054   ttcgtttttta   394044
+
+394663   cccaaagtatg   394673
+         |||||||||||
+394773   gggtttcatac   394763
+
+397539   aaacaccgcttg   397550
+         ||||||||||||
+397569   tttgtggcgaac   397558
+
+398022   agatttgattt   398032
+         |||||||||||
+398136   tctaaactaaa   398126
+
+399475   aaaaacaccg   399484
+         ||||||||||
+399511   tttttgtggc   399502
+
+401346   aaaaacaccg   401355
+         ||||||||||
+401393   tttttgtggc   401384
+
+402587   attttcaggc   402596
+         ||||||||||
+402607   taaaagtccg   402598
+
+403464   ttttatcaaa   403473
+         ||||||||||
+403544   aaaatagttt   403535
+
+404414   aaaaacaccg   404423
+         ||||||||||
+404448   tttttgtggc   404439
+
+406518   aaaccctgttc   406528
+         |||||||||||
+406543   tttgggacaag   406533
+
+406578   gttttcaggc   406587
+         ||||||||||
+406598   caaaagtccg   406589
+
+407825   caaaagcagcctgaa   407839
+         |||||||||||||||
+407872   gttttcgtcggactt   407858
+
+408897   ttcaggctgcctgaa   408911
+         |||||||||||||||
+408994   aagtccgacggactt   408980
+
+410537   ccctctccccatgggagaggg   410557
+         |||||||||||||||||||||
+410622   gggagaggggtaccctctccc   410602
+
+410588   cgccctctcccc   410599
+         ||||||||||||
+410624   gcgggagagggg   410613
+
+411972   aaaagcagcctgaaaac   411988
+         |||||||||||||||||
+412016   ttttcgtcggacttttg   412000
+
+412150   gatttcatatc   412160
+         |||||||||||
+412228   ctaaagtatag   412218
+
+413167   gggacgaatca   413177
+         |||||||||||
+413189   ccctgcttagt   413179
+
+413212   cttgttgcacca   413223
+         ||||||||||||
+413257   gaacaacgtggt   413246
+
+413432   gccctctctc   413441
+         ||||||||||
+413468   cgggagagag   413459
+
+417785   aaattgggca   417794
+         ||||||||||
+417890   tttaacccgt   417881
+
+419742   cttacttttt   419751
+         ||||||||||
+419762   gaatgaaaaa   419753
+
+419977   gccctctctcc   419987
+         |||||||||||
+420013   cgggagagagg   420003
+
+420098   gatgtgaaat   420107
+         ||||||||||
+420196   ctacacttta   420187
+
+420127   tttgcaaaggt   420137
+         |||||||||||
+420159   aaacgtttcca   420149
+
+427033   tgaaatcagtttg   427045
+         |||||||||||||
+427058   actttagtcaaac   427046
+
+427153   aaattgcaaattaaa   427167
+         |||||||||||||||
+427214   tttaacgtttaattt   427200
+
+427232   aaaaataaaa   427241
+         ||||||||||
+427292   tttttatttt   427283
+
+427233   aaaataaaaaa   427243
+         |||||||||||
+427286   ttttatttttt   427276
+
+431189   aaaacggcataaaa   431202
+         ||||||||||||||
+431223   ttttgccgtatttt   431210
+
+433600   aacggcatgaaat   433612
+         |||||||||||||
+433632   ttgccgtacttta   433620
+
+433809   agccctctctcc   433820
+         ||||||||||||
+433847   tcgggagagagg   433836
+
+435866   atttgtggcgt   435876
+         |||||||||||
+435900   taaacaccgca   435890
+
+435918   aacctgtgttcatc   435931
+         ||||||||||||||
+436016   ttggacacaagtag   436003
+
+437151   cattcaggcagcctgaa   437167
+         |||||||||||||||||
+437192   gtaagtccgtcggactt   437176
+
+437869   ggctgcctgaaaa   437881
+         |||||||||||||
+437921   ccgacggactttt   437909
+
+439434   taaaattcaggcagcctga   439452
+         |||||||||||||||||||
+439482   attttaagtccgtcggact   439464
+
+445266   tgaaatcagtttg   445278
+         |||||||||||||
+445291   actttagtcaaac   445279
+
+445386   aaattgcaaattaaa   445400
+         |||||||||||||||
+445447   tttaacgtttaattt   445433
+
+445465   aaaaataaaa   445474
+         ||||||||||
+445525   tttttatttt   445516
+
+445466   aaaataaaaaa   445476
+         |||||||||||
+445519   ttttatttttt   445509
+
+447910   acgtgggtgt   447919
+         ||||||||||
+447931   tgcacccaca   447922
+
+451098   aaaaaggctg   451107
+         ||||||||||
+451135   tttttccgac   451126
+
+452301   atttatttaaaataat   452316
+         ||||||||||||||||
+452339   taaataaattttatta   452324
+
+452520   tgccattttc   452529
+         ||||||||||
+452573   acggtaaaag   452564
+
+452695   tttaaaataa   452704
+         ||||||||||
+452758   aaattttatt   452749
+
+452982   tttttcaggc   452991
+         ||||||||||
+453002   aaaaagtccg   452993
+
+454914   tttcaggcagcct   454926
+         |||||||||||||
+455028   aaagtccgtcgga   455016
+
+455271   gttgttttttc   455281
+         |||||||||||
+455380   caacaaaaaag   455370
+
+456921   tgtagggtgcgtac   456934
+         ||||||||||||||
+456989   acatcccacgcatg   456976
+
+456936   acgcaccaaa   456945
+         ||||||||||
+456974   tgcgtggttt   456965
+
+457221   gtaggtcggat   457231
+         |||||||||||
+457297   catccagccta   457287
+
+457238   atccgacatt   457247
+         ||||||||||
+457280   taggctgtaa   457271
+
+459445   ttcaggctgcct   459456
+         ||||||||||||
+459490   aagtccgacgga   459479
+
+459528   cagatttcat   459537
+         ||||||||||
+459610   gtctaaagta   459601
+
+463093   taaatttaat   463102
+         ||||||||||
+463184   atttaaatta   463175
+
+464969   ttggcaattt   464978
+         ||||||||||
+465037   aaccgttaaa   465028
+
+470319   cattgtgcgt   470328
+         ||||||||||
+470385   gtaacacgca   470376
+
+471061   cacttggggcaaa   471073
+         |||||||||||||
+471096   gtgaaccccgttt   471084
+
+471472   aaattcaggctgcctgaaa   471490
+         |||||||||||||||||||
+471523   tttaagtccgacggacttt   471505
+
+471660   tttgggcgat   471669
+         ||||||||||
+471708   aaacccgcta   471699
+
+471660   tttgggcgat   471669
+         ||||||||||
+471759   aaacccgcta   471750
+
+473209   cacacggttt   473218
+         ||||||||||
+473326   gtgtgccaaa   473317
+
+474366   aggcagcctgaa   474377
+         ||||||||||||
+474439   tccgtcggactt   474428
+
+475441   gcttttcaggcagc   475454
+         ||||||||||||||
+475481   cgaaaagtccgtcg   475468
+
+475686   gtggtgcaaca   475696
+         |||||||||||
+475734   caccacgttgt   475724
+
+476208   aaagcgaatgtttca   476222
+         |||||||||||||||
+476239   tttcgcttacaaagt   476225
+
+477316   ctccaaaata   477325
+         ||||||||||
+477432   gaggttttat   477423
+
+477642   ttttcaggcagcct   477655
+         ||||||||||||||
+477678   aaaagtccgtcgga   477665
+
+478701   ttcaggctgc   478710
+         ||||||||||
+478794   aagtccgacg   478785
+
+480175   aaaacgccatttcaa   480189
+         |||||||||||||||
+480210   ttttgcggtaaagtt   480196
+
+480562   aatattaata   480571
+         ||||||||||
+480624   ttataattat   480615
+
+482010   gccctctctcc   482020
+         |||||||||||
+482046   cgggagagagg   482036
+
+482192   aaaccgtgtgaaaa   482205
+         ||||||||||||||
+482226   tttggcacactttt   482213
+
+483584   aataaggcaaatc   483596
+         |||||||||||||
+483616   ttattccgtttag   483604
+
+484374   ccctccccct   484383
+         ||||||||||
+484398   gggaggggga   484389
+
+484442   ccctcccccg   484451
+         ||||||||||
+484466   gggagggggc   484457
+
+484472   atttcaggcagcc   484484
+         |||||||||||||
+484522   taaagtccgtcgg   484510
+
+485128   aggggcgaat   485137
+         ||||||||||
+485152   tccccgctta   485143
+
+485582   gattttgact   485591
+         ||||||||||
+485645   ctaaaactga   485636
+
+488015   tttcaggcagc   488025
+         |||||||||||
+488122   aaagtccgtcg   488112
+
+488234   cttacttttt   488243
+         ||||||||||
+488254   gaatgaaaaa   488245
+
+488709   gtttcacgtgaaacat   488724
+         ||||||||||||||||
+488763   caaagtgcactttgta   488748
+
+489795   cttacttttt   489804
+         ||||||||||
+489815   gaatgaaaaa   489806
+
+489900   tttttatcaa   489909
+         ||||||||||
+489924   aaaaatagtt   489915
+
+490883   ttattttgattt   490894
+         ||||||||||||
+491006   aataaaactaaa   490995
+
+490930   actttcaggc   490939
+         ||||||||||
+490981   tgaaagtccg   490972
+
+491613   gtttgcgcgt   491622
+         ||||||||||
+491699   caaacgcgca   491690
+
+492063   aacgctgcctgaa   492075
+         |||||||||||||
+492096   ttgcgacggactt   492084
+
+493717   aggcagcctgaaa   493729
+         |||||||||||||
+493792   tccgtcggacttt   493780
+
+493833   ccctccccct   493842
+         ||||||||||
+493857   gggaggggga   493848
+
+493861   gggtgggggt   493870
+         ||||||||||
+493896   cccaccccca   493887
+
+493930   tttcaggcagcc   493941
+         ||||||||||||
+493978   aaagtccgtcgg   493967
+
+498000   aggctgcctgaa   498011
+         ||||||||||||
+498029   tccgacggactt   498018
+
+498856   cttacttttt   498865
+         ||||||||||
+498876   gaatgaaaaa   498867
+
+502324   caaattccac   502333
+         ||||||||||
+502403   gtttaaggtg   502394
+
+502982   tttcaggcagcctgaaaa   502999
+         ||||||||||||||||||
+503028   aaagtccgtcggactttt   503011
+
+505085   ggctgcctgaaa   505096
+         ||||||||||||
+505142   ccgacggacttt   505131
+
+505853   gcgcattttgtg   505864
+         ||||||||||||
+505886   cgcgtaaaacac   505875
+
+505895   cgttttcaggc   505905
+         |||||||||||
+505917   gcaaaagtccg   505907
+
+507321   gtagggtgcaacttgttgcacca   507343
+         |||||||||||||||||||||||
+507387   catcccacgttgaacaacgtggt   507365
+
+508118   gtgccacaaa   508127
+         ||||||||||
+508190   cacggtgttt   508181
+
+508158   agggagaggg   508167
+         ||||||||||
+508217   tccctctccc   508208
+
+508207   gccctctccct   508217
+         |||||||||||
+508229   cgggagaggga   508219
+
+509069   ttcaggctgcctgaa   509083
+         |||||||||||||||
+509175   aagtccgacggactt   509161
+
+509158   cgtttcaggc   509167
+         ||||||||||
+509178   gcaaagtccg   509169
+
+511379   cgtgcgcacccaa   511391
+         |||||||||||||
+511435   gcacgcgtgggtt   511423
+
+512890   ggtcaaattc   512899
+         ||||||||||
+512945   ccagtttaag   512936
+
+513883   gctgcctgaa   513892
+         ||||||||||
+513990   cgacggactt   513981
+
+513952   gctgcctgaa   513961
+         ||||||||||
+513990   cgacggactt   513981
+
+514435   gatgatttgcctg   514447
+         |||||||||||||
+514545   ctactaaacggac   514533
+
+514660   tttgccacgtt   514670
+         |||||||||||
+514721   aaacggtgcaa   514711
+
+516532   gaattttgct   516541
+         ||||||||||
+516595   cttaaaacga   516586
+
+516598   tttttcaggc   516607
+         ||||||||||
+516618   aaaaagtccg   516609
+
+519580   cagcctgaaaa   519590
+         |||||||||||
+519615   gtcggactttt   519605
+
+520103   atgctcaccgaagg   520116
+         ||||||||||||||
+520185   tacgagtggcttcc   520172
+
+520738   attatccaca   520747
+         ||||||||||
+520852   taataggtgt   520843
+
+521290   aaaaagcagcctgaaaag   521307
+         ||||||||||||||||||
+521333   tttttcgtcggacttttc   521316
+
+523203   tgggggataa   523212
+         ||||||||||
+523230   accccctatt   523221
+
+523574   caaaaaaccgattgc   523588
+         |||||||||||||||
+523615   gttttttggctaacg   523601
+
+523618   tttcaggcagcctga   523632
+         |||||||||||||||
+523729   aaagtccgtcggact   523715
+
+524682   gtgccgccca   524691
+         ||||||||||
+524748   cacggcgggt   524739
+
+525451   cttgcaccac   525460
+         ||||||||||
+525516   gaacgtggtg   525507
+
+526093   gatttcatatc   526103
+         |||||||||||
+526171   ctaaagtatag   526161
+
+526154   aggggcggat   526163
+         ||||||||||
+526178   tccccgccta   526169
+
+526264   ccctcccccg   526273
+         ||||||||||
+526288   gggagggggc   526279
+
+526292   gggtgggggt   526301
+         ||||||||||
+526328   cccaccccca   526319
+
+526332   ccctccccct   526341
+         ||||||||||
+526356   gggaggggga   526347
+
+528884   ttcaggctgcctgaa   528898
+         |||||||||||||||
+528950   aagtccgacggactt   528936
+
+529226   tgctgcctgaa   529236
+         |||||||||||
+529323   acgacggactt   529313
+
+529866   cgttttcaggc   529876
+         |||||||||||
+529888   gcaaaagtccg   529878
+
+531491   tgattaaacg   531500
+         ||||||||||
+531559   actaatttgc   531550
+
+531530   tttcaggcagcc   531541
+         ||||||||||||
+531634   aaagtccgtcgg   531623
+
+532116   tttattttta   532125
+         ||||||||||
+532148   aaataaaaat   532139
+
+532510   gatttcatatc   532520
+         |||||||||||
+532588   ctaaagtatag   532578
+
+534653   ttcaggctgcctgaa   534667
+         |||||||||||||||
+534732   aagtccgacggactt   534718
+
+534656   aggctgcctgaaa   534668
+         |||||||||||||
+534686   tccgacggacttt   534674
+
+535068   cattgcccaa   535077
+         ||||||||||
+535167   gtaacgggtt   535158
+
+537403   aaaaactaaccaag   537416
+         ||||||||||||||
+537438   tttttgattggttc   537425
+
+541076   tttggcttct   541085
+         ||||||||||
+541157   aaaccgaaga   541148
+
+541296   ggctggtggt   541305
+         ||||||||||
+541321   ccgaccacca   541312
+
+545809   ccctcccctgcttgcgggggagggtt   545834
+         ||||||||||||||||||||||||||
+545925   gggaggggacgaacgccccctcccaa   545900
+
+545949   gttttcaggc   545958
+         ||||||||||
+545969   caaaagtccg   545960
+
+550238   ttcaggcagc   550247
+         ||||||||||
+550286   aagtccgtcg   550277
+
+550246   gcctgaaaaa   550255
+         ||||||||||
+550327   cggacttttt   550318
+
+550274   caagctgcctgaaaacc   550290
+         |||||||||||||||||
+550316   gttcgacggacttttgg   550300
+
+550277   gctgcctgaaaa   550288
+         ||||||||||||
+550330   cgacggactttt   550319
+
+551196   gccaacgccaaac   551208
+         |||||||||||||
+551296   cggttgcggtttg   551284
+
+554518   ttcaggctgcctgaaa   554533
+         ||||||||||||||||
+554563   aagtccgacggacttt   554548
+
+554590   gtaggtcggct   554600
+         |||||||||||
+554665   catccagccga   554655
+
+556021   ttttgtgatg   556030
+         ||||||||||
+556135   aaaacactac   556126
+
+556788   aaggcattgg   556797
+         ||||||||||
+556821   ttccgtaacc   556812
+
+556873   aaatatgatt   556882
+         ||||||||||
+556941   tttatactaa   556932
+
+558636   caaaatcccc   558645
+         ||||||||||
+558673   gttttagggg   558664
+
+558763   actctctccc   558772
+         ||||||||||
+558785   tgagagaggg   558776
+
+558773   tgtgggagag   558782
+         ||||||||||
+558834   acaccctctc   558825
+
+559631   attgatttga   559640
+         ||||||||||
+559708   taactaaact   559699
+
+561238   ttgccaagttct   561249
+         ||||||||||||
+561361   aacggttcaaga   561350
+
+561257   tcgtaggggc   561266
+         ||||||||||
+561344   agcatccccg   561335
+
+561372   agggtgggggt   561382
+         |||||||||||
+561410   tcccaccccca   561400
+
+563375   ccctccccct   563384
+         ||||||||||
+563399   gggaggggga   563390
+
+563403   gggtgggggt   563412
+         ||||||||||
+563439   cccaccccca   563430
+
+563482   gcctgaaagt   563491
+         ||||||||||
+563512   cggactttca   563503
+
+565264   aggggcggat   565273
+         ||||||||||
+565288   tccccgccta   565279
+
+565355   tctccctgtggga   565367
+         |||||||||||||
+565428   agagggacaccct   565416
+
+566148   aaaaaccaagtc   566159
+         ||||||||||||
+566176   tttttggttcag   566165
+
+568120   gcgtgtggtaa   568130
+         |||||||||||
+568225   cgcacaccatt   568215
+
+571108   aaaagcgaagtt   571119
+         ||||||||||||
+571150   ttttcgcttcaa   571139
+
+572189   ttttcaggctgcctgaaaaa   572208
+         ||||||||||||||||||||
+572295   aaaagtccgacggacttttt   572276
+
+572276   tttttcaggc   572285
+         ||||||||||
+572296   aaaaagtccg   572287
+
+573869   tgggagaggg   573878
+         ||||||||||
+573929   accctctccc   573920
+
+573870   gggagagggtt   573880
+         |||||||||||
+573916   ccctctcccaa   573906
+
+573882   gggagagggc   573891
+         ||||||||||
+573928   ccctctcccg   573919
+
+580825   aacgccaaat   580834
+         ||||||||||
+580897   ttgcggttta   580888
+
+580867   gctttcaggc   580876
+         ||||||||||
+580887   cgaaagtccg   580878
+
+583787   aaaataacccaaaca   583801
+         |||||||||||||||
+583826   ttttattgggtttgt   583812
+
+585931   tgccaagttct   585941
+         |||||||||||
+586052   acggttcaaga   586042
+
+585949   tcgtaggggc   585958
+         ||||||||||
+586036   agcatccccg   586027
+
+586065   tgggagaggg   586074
+         ||||||||||
+586135   accctctccc   586126
+
+586224   aaaatcacgtcaaaa   586238
+         |||||||||||||||
+586259   ttttagtgcagtttt   586245
+
+586582   ttcaggcagc   586591
+         ||||||||||
+586618   aagtccgtcg   586609
+
+587155   cttttcaggc   587164
+         ||||||||||
+587175   gaaaagtccg   587166
+
+588760   gtagggtgcgccgtgcgcacc   588780
+         |||||||||||||||||||||
+588837   catcccacgcggcacgcgtgg   588817
+
+588878   aaggtgcgtaa   588888
+         |||||||||||
+588909   ttccacgcatt   588899
+
+589817   atttttcaggc   589827
+         |||||||||||
+589839   taaaaagtccg   589829
+
+592634   tgccaagttct   592644
+         |||||||||||
+592755   acggttcaaga   592745
+
+592652   tcgtaggggc   592661
+         ||||||||||
+592739   agcatccccg   592730
+
+592818   ggcagcctgaaa   592829
+         ||||||||||||
+592848   ccgtcggacttt   592837
+
+593080   aaaagccgcc   593089
+         ||||||||||
+593177   ttttcggcgg   593168
+
+594138   gccctctccc   594147
+         ||||||||||
+594172   cgggagaggg   594163
+
+594150   gccctctccc   594159
+         ||||||||||
+594172   cgggagaggg   594163
+
+594602   ccctctccct   594611
+         ||||||||||
+594634   gggagaggga   594625
+
+594614   ccctctcccac   594624
+         |||||||||||
+594700   gggagagggtg   594690
+
+594626   gggagaggga   594635
+         ||||||||||
+594688   ccctctccct   594679
+
+594680   ccctctcccc   594689
+         ||||||||||
+594712   gggagagggg   594703
+
+594903   attttgccat   594912
+         ||||||||||
+595011   taaaacggta   595002
+
+596263   caggcagcctgaa   596275
+         |||||||||||||
+596379   gtccgtcggactt   596367
+
+596339   gcagcctgaaaaac   596352
+         ||||||||||||||
+596376   cgtcggactttttg   596363
+
+596769   ctgctgaaat   596778
+         ||||||||||
+596867   gacgacttta   596858
+
+601406   ttcaggcagcc   601416
+         |||||||||||
+601495   aagtccgtcgg   601485
+
+602436   gcacattgagc   602446
+         |||||||||||
+602471   cgtgtaactcg   602461
+
+602992   aaattcaggctgcctgaaa   603010
+         |||||||||||||||||||
+603044   tttaagtccgacggacttt   603026
+
+605132   caggcagccc   605141
+         ||||||||||
+605161   gtccgtcggg   605152
+
+606461   gggtgggggt   606470
+         ||||||||||
+606497   cccaccccca   606488
+
+608064   gctttcaggc   608073
+         ||||||||||
+608084   cgaaagtccg   608075
+
+615304   tcacaggcgta   615314
+         |||||||||||
+615381   agtgtccgcat   615371
+
+624124   ctttcaggcagcctg   624138
+         |||||||||||||||
+624164   gaaagtccgtcggac   624150
+
+626191   tttcaggcagc   626201
+         |||||||||||
+626250   aaagtccgtcg   626240
+
+627660   ttttcaggcagcc   627672
+         |||||||||||||
+627763   aaaagtccgtcgg   627751
+
+628713   aaaaggcggat   628723
+         |||||||||||
+628739   ttttccgccta   628729
+
+630323   ttcaggcagcctgaaag   630339
+         |||||||||||||||||
+630367   aagtccgtcggactttc   630351
+
+632885   cattgccacac   632895
+         |||||||||||
+632983   gtaacggtgtg   632973
+
+633308   aaaatggattt   633318
+         |||||||||||
+633378   ttttacctaaa   633368
+
+633331   cttacttttt   633340
+         ||||||||||
+633351   gaatgaaaaa   633342
+
+633458   ccctccccct   633467
+         ||||||||||
+633482   gggaggggga   633473
+
+633486   gggtgggggt   633495
+         ||||||||||
+633522   cccaccccca   633513
+
+633818   cttacttttt   633827
+         ||||||||||
+633838   gaatgaaaaa   633829
+
+633923   gatttcatatc   633933
+         |||||||||||
+634001   ctaaagtatag   633991
+
+644544   aaaccttgca   644553
+         ||||||||||
+644643   tttggaacgt   644634
+
+645900   ttcaggcagcctgaaa   645915
+         ||||||||||||||||
+645945   aagtccgtcggacttt   645930
+
+646412   aaaaagctgcctgaa   646426
+         |||||||||||||||
+646447   tttttcgacggactt   646433
+
+646953   cgccaaattgg   646963
+         |||||||||||
+647047   gcggtttaacc   647037
+
+652198   tggcgcaaaa   652207
+         ||||||||||
+652261   accgcgtttt   652252
+
+655810   atcaaatacaa   655820
+         |||||||||||
+655901   tagtttatgtt   655891
+
+657189   tttggcgtacgat   657201
+         |||||||||||||
+657220   aaaccgcatgcta   657208
+
+659104   attggataaa   659113
+         ||||||||||
+659161   taacctattt   659152
+
+659173   ttgaaaataa   659182
+         ||||||||||
+659246   aacttttatt   659237
+
+664422   ttttcaggcagctt   664435
+         ||||||||||||||
+664459   aaaagtccgtcgaa   664446
+
+664994   attttgtgca   665003
+         ||||||||||
+665073   taaaacacgt   665064
+
+665259   tggggcaaat   665268
+         ||||||||||
+665355   accccgttta   665346
+
+670814   ttgattttattg   670825
+         ||||||||||||
+670929   aactaaaataac   670918
+
+672077   ctttttcaggc   672087
+         |||||||||||
+672132   gaaaaagtccg   672122
+
+673812   aacaagcgtaggtt   673825
+         ||||||||||||||
+673852   ttgttcgcatccaa   673839
+
+679964   gggaatatgc   679973
+         ||||||||||
+680082   cccttatacg   680073
+
+683597   tgaaggtaaa   683606
+         ||||||||||
+683636   acttccattt   683627
+
+685333   cgattgggcg   685342
+         ||||||||||
+685393   gctaacccgc   685384
+
+686960   ttggcaagcg   686969
+         ||||||||||
+686989   aaccgttcgc   686980
+
+690544   caaaacattg   690553
+         ||||||||||
+690604   gttttgtaac   690595
+
+691249   cttacttttt   691258
+         ||||||||||
+691269   gaatgaaaaa   691260
+
+692875   ctctccctatgggagag   692891
+         |||||||||||||||||
+692952   gagagggataccctctc   692936
+
+692921   gccctctctcc   692931
+         |||||||||||
+692957   cgggagagagg   692947
+
+693377   aagagtgtaa   693386
+         ||||||||||
+693424   ttctcacatt   693415
+
+694024   aaacggtctattgt   694037
+         ||||||||||||||
+694056   tttgccagataaca   694043
+
+697303   tgtttttgtt   697312
+         ||||||||||
+697349   acaaaaacaa   697340
+
+700065   tgtagggtgcaacttgttgcacca   700088
+         ||||||||||||||||||||||||
+700134   acatcccacgttgaacaacgtggt   700111
+
+700162   agaggcggat   700171
+         ||||||||||
+700186   tctccgccta   700177
+
+700169   gatatgaaatc   700179
+         |||||||||||
+700268   ctatactttag   700258
+
+700388   gccctctctcc   700398
+         |||||||||||
+700424   cgggagagagg   700414
+
+700552   aggctgcctgaa   700563
+         ||||||||||||
+700582   tccgacggactt   700571
+
+701442   caaaaatcccacccc   701456
+         |||||||||||||||
+701487   gtttttagggtgggg   701473
+
+702114   gcgcgtgttg   702123
+         ||||||||||
+702201   cgcgcacaac   702192
+
+703759   tttgggtgtt   703768
+         ||||||||||
+703841   aaacccacaa   703832
+
+703998   gtaaacaaac   704007
+         ||||||||||
+704046   catttgtttg   704037
+
+704082   tttttattcaat   704093
+         ||||||||||||
+704130   aaaaataagtta   704119
+
+704260   ctgaaacctttgcccccccaaaaatcctct   704289
+         ||||||||||||||||||||||||||||||
+704342   gactttggaaacgggggggtttttaggaga   704313
+
+711315   atttcaggcagc   711326
+         ||||||||||||
+711365   taaagtccgtcg   711354
+
+712011   caggcagcaa   712020
+         ||||||||||
+712106   gtccgtcgtt   712097
+
+712597   tattttgatga   712607
+         |||||||||||
+712657   ataaaactact   712647
+
+713612   gctgcctgaaa   713622
+         |||||||||||
+713638   cgacggacttt   713628
+
+714177   cattgaataaa   714187
+         |||||||||||
+714283   gtaacttattt   714273
+
+714351   cttacttttt   714360
+         ||||||||||
+714371   gaatgaaaaa   714362
+
+715837   tcccctcccccgtct   715851
+         |||||||||||||||
+715962   aggggagggggcaga   715948
+
+715839   ccctcccccg   715848
+         ||||||||||
+715863   gggagggggc   715854
+
+715854   cgggggaggg   715863
+         ||||||||||
+715943   gccccctccc   715934
+
+715865   tagggtggggg   715875
+         |||||||||||
+715932   atcccaccccc   715922
+
+715934   ccctcccccgt   715944
+         |||||||||||
+715960   gggagggggca   715950
+
+720780   aatcgtttca   720789
+         ||||||||||
+720898   ttagcaaagt   720889
+
+721187   gattttcaaa   721196
+         ||||||||||
+721252   ctaaaagttt   721243
+
+721376   ctctccctgtggga   721389
+         ||||||||||||||
+721434   gagagggacaccct   721421
+
+723167   attgaatttt   723176
+         ||||||||||
+723237   taacttaaaa   723228
+
+724060   tccctctccct   724070
+         |||||||||||
+724146   agggagaggga   724136
+
+724061   ccctctccct   724070
+         ||||||||||
+724093   gggagaggga   724084
+
+724072   tgggagaggg   724081
+         ||||||||||
+724134   accctctccc   724125
+
+724073   gggagagggtt   724083
+         |||||||||||
+724121   ccctctcccaa   724111
+
+725440   aagcaagcgtaggt   725453
+         ||||||||||||||
+725482   ttcgttcgcatcca   725469
+
+726283   cggtctattgt   726293
+         |||||||||||
+726309   gccagataaca   726299
+
+726714   ttgtttcaggc   726724
+         |||||||||||
+726736   aacaaagtccg   726726
+
+727999   tttcaggcagc   728009
+         |||||||||||
+728034   aaagtccgtcg   728024
+
+728773   taatttcattt   728783
+         |||||||||||
+728804   attaaagtaaa   728794
+
+729099   aaatcccttgat   729110
+         ||||||||||||
+729127   tttagggaacta   729116
+
+729559   aagccgatga   729568
+         ||||||||||
+729664   ttcggctact   729655
+
+730529   tttcaggctgcct   730541
+         |||||||||||||
+730641   aaagtccgacgga   730629
+
+730868   tttaagcaat   730877
+         ||||||||||
+730898   aaattcgtta   730889
+
+731034   tcagatgaat   731043
+         ||||||||||
+731077   agtctactta   731068
+
+731132   gctgcctgaa   731141
+         ||||||||||
+731171   cgacggactt   731162
+
+731989   tgttcaattt   731998
+         ||||||||||
+732072   acaagttaaa   732063
+
+732031   atttgctgtt   732040
+         ||||||||||
+732078   taaacgacaa   732069
+
+732501   ccctccccct   732510
+         ||||||||||
+732525   gggaggggga   732516
+
+732529   gggtgggggt   732538
+         ||||||||||
+732565   cccaccccca   732556
+
+732702   cttacttttt   732711
+         ||||||||||
+732722   gaatgaaaaa   732713
+
+733062   acaaatggca   733071
+         ||||||||||
+733165   tgtttaccgt   733156
+
+733469   aaaagccgcct   733479
+         |||||||||||
+733504   ttttcggcgga   733494
+
+734375   tctaaccccc   734384
+         ||||||||||
+734423   agattggggg   734414
+
+734382   ccctcccccg   734391
+         ||||||||||
+734406   gggagggggc   734397
+
+734382   ccctcccccgtctggcgggggaggg   734406
+         |||||||||||||||||||||||||
+734474   gggagggggcagaccgccccctccc   734450
+
+734410   gggtgggggt   734419
+         ||||||||||
+734446   cccaccccca   734437
+
+734450   ccctcccccg   734459
+         ||||||||||
+734474   gggagggggc   734465
+
+734479   gatttcaggc   734488
+         ||||||||||
+734531   ctaaagtccg   734522
+
+736754   ctgccctacaaaaaa   736768
+         |||||||||||||||
+736835   gacgggatgtttttt   736821
+
+739386   tgtagggggcaac   739398
+         |||||||||||||
+739456   acatcccccgttg   739444
+
+739473   aaaaaaccgttgtt   739486
+         ||||||||||||||
+739509   ttttttggcaacaa   739496
+
+742795   ccctctccct   742804
+         ||||||||||
+742827   gggagaggga   742818
+
+742803   ctgtgggagaggg   742815
+         |||||||||||||
+742879   gacaccctctccc   742867
+
+744226   atcgctgccgc   744236
+         |||||||||||
+744327   tagcgacggcg   744317
+
+744563   aaaatactcggttt   744576
+         ||||||||||||||
+744598   ttttatgagccaaa   744585
+
+744651   ccctcccccg   744660
+         ||||||||||
+744675   gggagggggc   744666
+
+744816   aggggcgaat   744825
+         ||||||||||
+744840   tccccgctta   744831
+
+745199   aaaaaggctgcctgaa   745214
+         ||||||||||||||||
+745235   tttttccgacggactt   745220
+
+746951   tttttattcaat   746962
+         ||||||||||||
+746999   aaaaataagtta   746988
+
+747035   gtaaacaaac   747044
+         ||||||||||
+747083   catttgtttg   747074
+
+747240   tttgggtgtt   747249
+         ||||||||||
+747322   aaacccacaa   747313
+
+748071   gtaggtcggctc   748082
+         ||||||||||||
+748097   catccagccgag   748086
+
+749552   cttacttttt   749561
+         ||||||||||
+749572   gaatgaaaaa   749563
+
+749684   cttacttttt   749693
+         ||||||||||
+749704   gaatgaaaaa   749695
+
+751225   gccctctctcc   751235
+         |||||||||||
+751261   cgggagagagg   751251
+
+751550   atcaacagcg   751559
+         ||||||||||
+751592   tagttgtcgc   751583
+
+751994   tgtcgtggctg   752004
+         |||||||||||
+752071   acagcaccgac   752061
+
+752796   tgtagggtgcaacttgttgcacca   752819
+         ||||||||||||||||||||||||
+752865   acatcccacgttgaacaacgtggt   752842
+
+752893   agaggcggat   752902
+         ||||||||||
+752917   tctccgccta   752908
+
+753021   ccctccccct   753030
+         ||||||||||
+753045   gggaggggga   753036
+
+754726   gggtgggggt   754735
+         ||||||||||
+754761   cccaccccca   754752
+
+754795   tttcaggcagcc   754806
+         ||||||||||||
+754850   aaagtccgtcgg   754839
+
+754830   tactgttcaggctgcctgaaaa   754851
+         ||||||||||||||||||||||
+754886   atgacaagtccgacggactttt   754865
+
+756374   caggcagcct   756383
+         ||||||||||
+756417   gtccgtcgga   756408
+
+756454   gggtgggggt   756463
+         ||||||||||
+756490   cccaccccca   756481
+
+756494   ccctccccct   756503
+         ||||||||||
+756518   gggaggggga   756509
+
+756724   gccctctctcc   756734
+         |||||||||||
+756760   cgggagagagg   756750
+
+757433   aaaagctgcc   757442
+         ||||||||||
+757460   ttttcgacgg   757451
+
+763405   tgaaacctttgcgaaaccccaaagca   763430
+         ||||||||||||||||||||||||||
+763463   actttggaaacgctttggggtttcgt   763438
+
+764400   gtttcaggcagc   764411
+         ||||||||||||
+764441   caaagtccgtcg   764430
+
+765237   ttcaggctgcctgaaaac   765254
+         ||||||||||||||||||
+765312   aagtccgacggacttttg   765295
+
+766162   tgtagggtgcaacttgttgcacca   766185
+         ||||||||||||||||||||||||
+766231   acatcccacgttgaacaacgtggt   766208
+
+767246   aaaaaccaccga   767257
+         ||||||||||||
+767284   tttttggtggct   767273
+
+769113   gggtgggggt   769122
+         ||||||||||
+769149   cccaccccca   769140
+
+769225   ccctccccct   769234
+         ||||||||||
+769249   gggaggggga   769240
+
+769253   gggtgggggt   769262
+         ||||||||||
+769289   cccaccccca   769280
+
+769291   aaccctccccc   769301
+         |||||||||||
+769391   ttgggaggggg   769381
+
+769365   ccctccccct   769374
+         ||||||||||
+769389   gggaggggga   769380
+
+772629   aggggcggat   772638
+         ||||||||||
+772653   tccccgccta   772644
+
+772692   tgtagggtgcaacttgttgcacca   772715
+         ||||||||||||||||||||||||
+772761   acatcccacgttgaacaacgtggt   772738
+
+772977   ggagagaggg   772986
+         ||||||||||
+773087   cctctctccc   773078
+
+773076   aaccctctctcc   773087
+         ||||||||||||
+773114   ttgggagagagg   773103
+
+773208   aggggcggat   773217
+         ||||||||||
+773232   tccccgccta   773223
+
+773271   tgtagggtgcaac   773283
+         |||||||||||||
+773298   acatcccacgttg   773286
+
+774125   ttcaggctgccttg   774138
+         ||||||||||||||
+774212   aagtccgacggaac   774199
+
+774263   aaattgttgc   774272
+         ||||||||||
+774303   tttaacaacg   774294
+
+775481   tgcggtttttt   775491
+         |||||||||||
+775582   acgccaaaaaa   775572
+
+775572   aaaaaaccgcattg   775585
+         ||||||||||||||
+775606   ttttttggcgtaac   775593
+
+775992   ttgaaatgggg   776002
+         |||||||||||
+776043   aactttacccc   776033
+
+777838   aaaaaagctgcctgaaaaac   777857
+         ||||||||||||||||||||
+777885   ttttttcgacggactttttg   777866
+
+777951   gatttcatatc   777961
+         |||||||||||
+778028   ctaaagtatag   778018
+
+779801   gctgcctgaaaa   779812
+         ||||||||||||
+779836   cgacggactttt   779825
+
+780708   tgggagaggg   780717
+         ||||||||||
+780765   accctctccc   780756
+
+780721   gggagagggc   780730
+         ||||||||||
+780764   ccctctcccg   780755
+
+780743   tccctctccc   780752
+         ||||||||||
+780777   agggagaggg   780768
+
+783774   aaaatgggtaaa   783785
+         ||||||||||||
+783807   ttttacccattt   783796
+
+784315   taccaaaatg   784324
+         ||||||||||
+784407   atggttttac   784398
+
+788463   atccctgaaac   788473
+         |||||||||||
+788491   tagggactttg   788481
+
+788540   gatttcatatc   788550
+         |||||||||||
+788618   ctaaagtatag   788608
+
+788659   caggctgcctgaaa   788672
+         ||||||||||||||
+788699   gtccgacggacttt   788686
+
+792930   tttggcaaat   792939
+         ||||||||||
+792964   aaaccgttta   792955
+
+793007   tttttcaggc   793016
+         ||||||||||
+793027   aaaaagtccg   793018
+
+793028   gtagggtgca   793037
+         ||||||||||
+793098   catcccacgt   793089
+
+795978   gtagggtggaca   795989
+         ||||||||||||
+796045   catcccacctgt   796034
+
+796060   attttcaggc   796069
+         ||||||||||
+796080   taaaagtccg   796071
+
+796927   ccctcccccgt   796937
+         |||||||||||
+796953   gggagggggca   796943
+
+797055   ccctcccccgt   797065
+         |||||||||||
+797081   gggagggggca   797071
+
+797471   ccctcccccgt   797481
+         |||||||||||
+797497   gggagggggca   797487
+
+799504   tttcaggctgcctgaaaa   799521
+         ||||||||||||||||||
+799573   aaagtccgacggactttt   799556
+
+801499   ctgcctgaaa   801508
+         ||||||||||
+801554   gacggacttt   801545
+
+804153   gtagggtgcaa   804163
+         |||||||||||
+804213   catcccacgtt   804203
+
+804724   ggcagccatt   804733
+         ||||||||||
+804838   ccgtcggtaa   804829
+
+805199   gtagggtgcaacttgttgcac   805219
+         |||||||||||||||||||||
+805259   catcccacgttgaacaacgtg   805239
+
+808747   aaataaacaa   808756
+         ||||||||||
+808803   tttatttgtt   808794
+
+812154   cattgaaata   812163
+         ||||||||||
+812215   gtaactttat   812206
+
+813153   tggctgcctgaaa   813165
+         |||||||||||||
+813181   accgacggacttt   813169
+
+813154   ggctgcctgaa   813164
+         |||||||||||
+813211   ccgacggactt   813201
+
+814282   gttgcgtact   814291
+         ||||||||||
+814335   caacgcatga   814326
+
+814873   cgccactttg   814882
+         ||||||||||
+814957   gcggtgaaac   814948
+
+815701   tttcaggcagc   815711
+         |||||||||||
+815803   aaagtccgtcg   815793
+
+816386   gatttcatatc   816396
+         |||||||||||
+816464   ctaaagtatag   816454
+
+816517   tgaaatacaa   816526
+         ||||||||||
+816548   actttatgtt   816539
+
+816559   ctgacttttt   816568
+         ||||||||||
+816579   gactgaaaaa   816570
+
+817098   ttggaaaaacc   817108
+         |||||||||||
+817142   aacctttttgg   817132
+
+817681   aattcaggctgcctgaa   817697
+         |||||||||||||||||
+817721   ttaagtccgacggactt   817705
+
+818220   aaatcgcccaatt   818232
+         |||||||||||||
+818255   tttagcgggttaa   818243
+
+819868   aaaggggcggat   819879
+         ||||||||||||
+819896   tttccccgccta   819885
+
+821467   gctttcaggc   821476
+         ||||||||||
+821487   cgaaagtccg   821478
+
+822622   aagcagcctgaaaac   822636
+         |||||||||||||||
+822659   ttcgtcggacttttg   822645
+
+825183   aagaaaaacaataa   825196
+         ||||||||||||||
+825238   ttctttttgttatt   825225
+
+830054   ttttgattttca   830065
+         ||||||||||||
+830111   aaaactaaaagt   830100
+
+830414   aagctgcctgaaa   830426
+         |||||||||||||
+830442   ttcgacggacttt   830430
+
+833491   cttacttttt   833500
+         ||||||||||
+833511   gaatgaaaaa   833502
+
+833562   tgcctgaaaat   833572
+         |||||||||||
+833618   acggactttta   833608
+
+833608   attttcaggca   833618
+         |||||||||||
+833661   taaaagtccgt   833651
+
+835956   gatttcatatc   835966
+         |||||||||||
+836072   ctaaagtatag   836062
+
+837365   cggtttcaggcagcc   837379
+         |||||||||||||||
+837407   gccaaagtccgtcgg   837393
+
+838904   aaaaacgctgcctgaa   838919
+         ||||||||||||||||
+838942   tttttgcgacggactt   838927
+
+839641   gggcattttaca   839652
+         ||||||||||||
+839680   cccgtaaaatgt   839669
+
+840331   gctttcaggc   840340
+         ||||||||||
+840351   cgaaagtccg   840342
+
+840342   gcctgaaagc   840351
+         ||||||||||
+840451   cggactttcg   840442
+
+845553   gatttcatatc   845563
+         |||||||||||
+845631   ctaaagtatag   845621
+
+849842   tttcaggctgcct   849854
+         |||||||||||||
+849941   aaagtccgacgga   849929
+
+849851   gcctttcagtacacgaca   849868
+         ||||||||||||||||||
+849965   cggaaagtcatgtgctgt   849948
+
+849928   caggcagcct   849937
+         ||||||||||
+849971   gtccgtcgga   849962
+
+850615   ttcaggcagc   850624
+         ||||||||||
+850652   aagtccgtcg   850643
+
+851442   aaaaaacgtg   851451
+         ||||||||||
+851479   ttttttgcac   851470
+
+852599   ttggcgggca   852608
+         ||||||||||
+852711   aaccgcccgt   852702
+
+857123   ccacctaaac   857132
+         ||||||||||
+857146   ggtggatttg   857137
+
+857589   atttgcccaa   857598
+         ||||||||||
+857696   taaacgggtt   857687
+
+858782   ccaatttgtgt   858792
+         |||||||||||
+858844   ggttaaacaca   858834
+
+859037   cggcatttga   859046
+         ||||||||||
+859119   gccgtaaact   859110
+
+859514   tcaatttgca   859523
+         ||||||||||
+859619   agttaaacgt   859610
+
+861132   acacatcgcc   861141
+         ||||||||||
+861211   tgtgtagcgg   861202
+
+863221   ttttttgtttttca   863234
+         ||||||||||||||
+863255   aaaaaacaaaaagt   863242
+
+866302   tttttcaggc   866311
+         ||||||||||
+866366   aaaaagtccg   866357
+
+866304   tttcaggctg   866313
+         ||||||||||
+866394   aaagtccgac   866385
+
+867939   tttcaggcagc   867949
+         |||||||||||
+867971   aaagtccgtcg   867961
+
+868144   gcaaaaaaccgt   868155
+         ||||||||||||
+868187   cgttttttggca   868176
+
+870172   cgtaggggcg   870181
+         ||||||||||
+870269   gcatccccgc   870260
+
+870354   tagggagaggg   870364
+         |||||||||||
+870402   atccctctccc   870392
+
+872162   ccctctccct   872171
+         ||||||||||
+872194   gggagaggga   872185
+
+872172   gtgggagaggg   872182
+         |||||||||||
+872244   caccctctccc   872234
+
+872186   gggagagggc   872195
+         ||||||||||
+872242   ccctctcccg   872233
+
+872222   ccctctcccc   872231
+         ||||||||||
+872254   gggagagggg   872245
+
+872735   caacatttca   872744
+         ||||||||||
+872786   gttgtaaagt   872777
+
+874183   aagcagcctgattt   874196
+         ||||||||||||||
+874229   ttcgtcggactaaa   874216
+
+875737   gcctgaaaaa   875746
+         ||||||||||
+875830   cggacttttt   875821
+
+875983   gtttcaggcagc   875994
+         ||||||||||||
+876080   caaagtccgtcg   876069
+
+876263   ggcattgcca   876272
+         ||||||||||
+876344   ccgtaacggt   876335
+
+876994   aaaagccaatg   877004
+         |||||||||||
+877077   ttttcggttac   877067
+
+877634   ccatttcaata   877644
+         |||||||||||
+877682   ggtaaagttat   877672
+
+877983   aagctgcctgaa   877994
+         ||||||||||||
+878012   ttcgacggactt   878001
+
+880685   ttcaggcagc   880694
+         ||||||||||
+880752   aagtccgtcg   880743
+
+881303   aggggcggat   881312
+         ||||||||||
+881327   tccccgccta   881318
+
+882482   gctgcctgaaaaca   882495
+         ||||||||||||||
+882521   cgacggacttttgt   882508
+
+885322   tttcaggcagcct   885334
+         |||||||||||||
+885394   aaagtccgtcgga   885382
+
+886169   ggcttggatttt   886180
+         ||||||||||||
+886246   ccgaacctaaaa   886235
+
+886962   gccctctccc   886971
+         ||||||||||
+886984   cgggagaggg   886975
+
+886963   ccctctcccc   886972
+         ||||||||||
+886995   gggagagggg   886986
+
+887012   ccctctctcc   887021
+         ||||||||||
+887046   gggagagagg   887037
+
+887847   gcaaacccaa   887856
+         ||||||||||
+887960   cgtttgggtt   887951
+
+888422   aaagctgcctgaaaa   888436
+         |||||||||||||||
+888458   tttcgacggactttt   888444
+
+890084   ccctccccct   890093
+         ||||||||||
+890108   gggaggggga   890099
+
+890112   gggtgggggt   890121
+         ||||||||||
+890148   cccaccccca   890139
+
+893521   aatttcaggcagctttt   893537
+         |||||||||||||||||
+893561   ttaaagtccgtcgaaaa   893545
+
+894705   ttaaaaaaaca   894715
+         |||||||||||
+894781   aatttttttgt   894771
+
+894959   ccacaaaatc   894968
+         ||||||||||
+895032   ggtgttttag   895023
+
+897455   aaattgtcgt   897464
+         ||||||||||
+897533   tttaacagca   897524
+
+897556   ccctccccct   897565
+         ||||||||||
+897580   gggaggggga   897571
+
+897584   gggtgggggtg   897594
+         |||||||||||
+897620   cccacccccac   897610
+
+899725   tgtagggtgcaacttgttgcacca   899748
+         ||||||||||||||||||||||||
+899794   acatcccacgttgaacaacgtggt   899771
+
+899833   aggggcggat   899842
+         ||||||||||
+899857   tccccgccta   899848
+
+903151   tttttcaggc   903160
+         ||||||||||
+903171   aaaaagtccg   903162
+
+903153   tttcaggcagcct   903165
+         |||||||||||||
+903190   aaagtccgtcgga   903178
+
+905463   ggtgttgcgc   905472
+         ||||||||||
+905549   ccacaacgcg   905540
+
+906671   cttacttttt   906680
+         ||||||||||
+906691   gaatgaaaaa   906682
+
+908193   gctgcctgaaaa   908204
+         ||||||||||||
+908227   cgacggactttt   908216
+
+908268   tccctctcctgtgggagaggg   908288
+         |||||||||||||||||||||
+908360   agggagaggacaccctctccc   908340
+
+911489   tcgtaggggc   911498
+         ||||||||||
+911574   agcatccccg   911565
+
+911546   aggggcggat   911555
+         ||||||||||
+911570   tccccgccta   911561
+
+912568   cgtaggggcggatttcatatccgccct   912594
+         |||||||||||||||||||||||||||
+912667   gcatccccgcctaaagtataggcggga   912641
+
+912819   ttttttgatt   912828
+         ||||||||||
+912898   aaaaaactaa   912889
+
+913361   cttacttttt   913370
+         ||||||||||
+913381   gaatgaaaaa   913372
+
+913460   gatttcatatc   913470
+         |||||||||||
+913538   ctaaagtatag   913528
+
+913634   cttacttttt   913643
+         ||||||||||
+913654   gaatgaaaaa   913645
+
+915075   ttcaggcagcct   915086
+         ||||||||||||
+915108   aagtccgtcgga   915097
+
+917981   tttgggtgtt   917990
+         ||||||||||
+918062   aaacccacaa   918053
+
+918233   gtaaacaaac   918242
+         ||||||||||
+918281   catttgtttg   918272
+
+918317   tttttattca   918326
+         ||||||||||
+918365   aaaaataagt   918356
+
+918950   tatccccatt   918959
+         ||||||||||
+918993   ataggggtaa   918984
+
+927426   tttaatttta   927435
+         ||||||||||
+927478   aaattaaaat   927469
+
+927735   tttgggtgtt   927744
+         ||||||||||
+927817   aaacccacaa   927808
+
+927974   gtaaacaaac   927983
+         ||||||||||
+928022   catttgtttg   928013
+
+928058   tttttattcaat   928069
+         ||||||||||||
+928106   aaaaataagtta   928095
+
+928628   aaaaaacaccg   928638
+         |||||||||||
+928666   ttttttgtggc   928656
+
+933583   aaacaccgtttga   933595
+         |||||||||||||
+933613   tttgtggcaaact   933601
+
+936501   aaaacaccgc   936510
+         ||||||||||
+936530   ttttgtggcg   936521
+
+937572   ttgggcattg   937581
+         ||||||||||
+937649   aacccgtaac   937640
+
+937728   ataaaaacacc   937738
+         |||||||||||
+937766   tatttttgtgg   937756
+
+940242   aaaacaccgttt   940253
+         ||||||||||||
+940275   ttttgtggcaaa   940264
+
+944152   aaacagcttgg   944162
+         |||||||||||
+944255   tttgtcgaacc   944245
+
+944881   tcgcgccaaaat   944892
+         ||||||||||||
+944924   agcgcggtttta   944913
+
+946087   ttcaggcagc   946096
+         ||||||||||
+946118   aagtccgtcg   946109
+
+946108   ggctgcctgaa   946118
+         |||||||||||
+946186   ccgacggactt   946176
+
+948168   aaaatttcaa   948177
+         ||||||||||
+948252   ttttaaagtt   948243
+
+950894   aaaaataaaa   950903
+         ||||||||||
+950954   tttttatttt   950945
+
+950900   aaaataaaaaa   950910
+         |||||||||||
+950953   ttttatttttt   950943
+
+950972   aaattgcaaattaaa   950986
+         |||||||||||||||
+951033   tttaacgtttaattt   951019
+
+951128   tgaaatcagtttg   951140
+         |||||||||||||
+951153   actttagtcaaac   951141
+
+954588   aacaaaatgccgt   954600
+         |||||||||||||
+954618   ttgttttacggca   954606
+
+956708   aaaacagtacttt   956720
+         |||||||||||||
+956734   ttttgtcatgaaa   956722
+
+956757   aggctgcctgaa   956768
+         ||||||||||||
+956794   tccgacggactt   956783
+
+960218   aaaacgtgtttgca   960231
+         ||||||||||||||
+960255   ttttgcacaaacgt   960242
+
+960286   aggcagcctgaa   960297
+         ||||||||||||
+960377   tccgtcggactt   960366
+
+962176   acacagccgtt   962186
+         |||||||||||
+962212   tgtgtcggcaa   962202
+
+963114   gttttcaggc   963123
+         ||||||||||
+963134   caaaagtccg   963125
+
+963950   cagcctttcagtacacgaca   963969
+         ||||||||||||||||||||
+964074   gtcggaaagtcatgtgctgt   964055
+
+963983   gtaggtcgggcattcatgcccgaca   964007
+         |||||||||||||||||||||||||
+964050   catccagcccgtaagtacgggctgt   964026
+
+964106   gatttcatatc   964116
+         |||||||||||
+964184   ctaaagtatag   964174
+
+964220   ggtttcaggc   964229
+         ||||||||||
+964240   ccaaagtccg   964231
+
+965824   aaaatcaaacagcgaaaaca   965843
+         ||||||||||||||||||||
+965871   ttttagtttgtcgcttttgt   965852
+
+966329   gtttggaaaa   966338
+         ||||||||||
+966355   caaacctttt   966346
+
+967634   gttttcaggc   967643
+         ||||||||||
+967654   caaaagtccg   967645
+
+970548   gtggcaaaat   970557
+         ||||||||||
+970583   caccgtttta   970574
+
+971113   ccctctccca   971122
+         ||||||||||
+971133   gggagagggt   971124
+
+971979   tgccgccaaaa   971989
+         |||||||||||
+972096   acggcggtttt   972086
+
+972041   caggcagcctgaat   972054
+         ||||||||||||||
+972149   gtccgtcggactta   972136
+
+972600   tgccgatttg   972609
+         ||||||||||
+972700   acggctaaac   972691
+
+974137   ggctgcctgaaa   974148
+         ||||||||||||
+974223   ccgacggacttt   974212
+
+977535   gcaacaagcc   977544
+         ||||||||||
+977614   cgttgttcgg   977605
+
+977641   ttcgcccaat   977650
+         ||||||||||
+977700   aagcgggtta   977691
+
+983152   accctccccct   983162
+         |||||||||||
+983178   tgggaggggga   983168
+
+983181   gggtgggggt   983190
+         ||||||||||
+983217   cccaccccca   983208
+
+985116   ttcaggcagc   985125
+         ||||||||||
+985195   aagtccgtcg   985186
+
+985182   aaaagctgcctgaa   985195
+         ||||||||||||||
+985214   ttttcgacggactt   985201
+
+986490   gtcaaaaaagc   986500
+         |||||||||||
+986597   cagttttttcg   986587
+
+987177   aaaaaacgctg   987187
+         |||||||||||
+987218   ttttttgcgac   987208
+
+990023   aaaagctgcctgaaacag   990040
+         ||||||||||||||||||
+990066   ttttcgacggactttgtc   990049
+
+990027   gctgcctgaaa   990037
+         |||||||||||
+990138   cgacggacttt   990128
+
+990257   ctctccctatggga   990270
+         ||||||||||||||
+990336   gagagggataccct   990323
+
+991493   gctgcctgaaa   991503
+         |||||||||||
+991595   cgacggacttt   991585
+
+991760   gccctctctcc   991770
+         |||||||||||
+991796   cgggagagagg   991786
+
+993837   gcgtttcaggc   993847
+         |||||||||||
+993859   cgcaaagtccg   993849
+
+994146   aaaaccaaccga   994157
+         ||||||||||||
+994173   ttttggttggct   994162
+
+994235   gatttcatatc   994245
+         |||||||||||
+994313   ctaaagtatag   994303
+
+994352   ttcaggctgcctgaaaa   994368
+         |||||||||||||||||
+994400   aagtccgacggactttt   994384
+
+995391   ctgaaagcggc   995401
+         |||||||||||
+995477   gactttcgccg   995467
+
+997046   tttgggtgtt   997055
+         ||||||||||
+997128   aaacccacaa   997119
+
+997285   gtaaacaaac   997294
+         ||||||||||
+997333   catttgtttg   997324
+
+997369   tttttattcaat   997380
+         ||||||||||||
+997417   aaaaataagtta   997406
+
+999197   cttacttttt   999206
+         ||||||||||
+999217   gaatgaaaaa   999208
+
+1002375  tttcaggctgcctgaaa  1002391
+         |||||||||||||||||
+1002422  aaagtccgacggacttt  1002406
+
+1008867  aacgcatttc  1008876
+         ||||||||||
+1008921  ttgcgtaaag  1008912
+
+1008942  caagccgcgt  1008951
+         ||||||||||
+1009054  gttcggcgca  1009045
+
+1009843  gtttcaggcagc  1009854
+         ||||||||||||
+1009927  caaagtccgtcg  1009916
+
+1009844  tttcaggcagcct  1009856
+         |||||||||||||
+1009892  aaagtccgtcgga  1009880
+
+1009882  gctgcctgaaaa  1009893
+         ||||||||||||
+1009941  cgacggactttt  1009930
+
+1009916  gctgcctgaaa  1009926
+         |||||||||||
+1009941  cgacggacttt  1009931
+
+1010030  tgtagggtgcaacttgttgcacca  1010053
+         ||||||||||||||||||||||||
+1010099  acatcccacgttgaacaacgtggt  1010076
+
+1010213  tagggtgcgcc  1010223
+         |||||||||||
+1010288  atcccacgcgg  1010278
+
+1010225  tgcgcaccaaatg  1010237
+         |||||||||||||
+1010276  acgcgtggtttac  1010264
+
+1010857  ttttgcattt  1010866
+         ||||||||||
+1010933  aaaacgtaaa  1010924
+
+1011337  gctgcctgaaa  1011347
+         |||||||||||
+1011395  cgacggacttt  1011385
+
+1011367  aaacgctgcctgaaa  1011381
+         |||||||||||||||
+1011399  tttgcgacggacttt  1011385
+
+1011435  ccatgcgcaccaaatg  1011450
+         ||||||||||||||||
+1011492  ggtacgcgtggtttac  1011477
+
+1012958  ccaataaaag  1012967
+         ||||||||||
+1012991  ggttattttc  1012982
+
+1013361  atttttcaggc  1013371
+         |||||||||||
+1013383  taaaaagtccg  1013373
+
+1015073  tgattaaaaa  1015082
+         ||||||||||
+1015108  actaattttt  1015099
+
+1015193  ttttcaggctgcctgaaaa  1015211
+         |||||||||||||||||||
+1015291  aaaagtccgacggactttt  1015273
+
+1015663  tttgggtgtt  1015672
+         ||||||||||
+1015745  aaacccacaa  1015736
+
+1015916  gtaaacaaac  1015925
+         ||||||||||
+1015964  catttgtttg  1015955
+
+1016000  tttttattca  1016009
+         ||||||||||
+1016048  aaaaataagt  1016039
+
+1016559  aaaccccaaagca  1016571
+         |||||||||||||
+1016591  tttggggtttcgt  1016579
+
+1017407  gttggcagac  1017416
+         ||||||||||
+1017526  caaccgtctg  1017517
+
+1017822  ttcaggctgcctgaaa  1017837
+         ||||||||||||||||
+1017864  aagtccgacggacttt  1017849
+
+1017989  gccctctctcc  1017999
+         |||||||||||
+1018025  cgggagagagg  1018015
+
+1018212  tgtagggtgcaacttgttgcacca  1018235
+         ||||||||||||||||||||||||
+1018281  acatcccacgttgaacaacgtggt  1018258
+
+1019189  gcgtaggtcggctctc  1019204
+         ||||||||||||||||
+1019278  cgcatccagccgagag  1019263
+
+1020572  attattgttg  1020581
+         ||||||||||
+1020661  taataacaac  1020652
+
+1020609  ttggtcaagt  1020618
+         ||||||||||
+1020695  aaccagttca  1020686
+
+1021261  ttttcaggctg  1021271
+         |||||||||||
+1021297  aaaagtccgac  1021287
+
+1023199  ttttcaggctgcctgaatcaaaaaat  1023224
+         ||||||||||||||||||||||||||
+1023307  aaaagtccgacggacttagtttttta  1023282
+
+1028952  ctaggggctaat  1028963
+         ||||||||||||
+1029007  gatccccgatta  1028996
+
+1031434  caaaaacctg  1031443
+         ||||||||||
+1031525  gtttttggac  1031516
+
+1032795  ttttgggcga  1032804
+         ||||||||||
+1032888  aaaacccgct  1032879
+
+1034194  gatttcatat  1034203
+         ||||||||||
+1034272  ctaaagtata  1034263
+
+1038474  tgtggtggtgt  1038484
+         |||||||||||
+1038590  acaccaccaca  1038580
+
+1039852  aaaaggctgcctgaaaacc  1039870
+         |||||||||||||||||||
+1039897  ttttccgacggacttttgg  1039879
+
+1039880  gttttcaggcagc  1039892
+         |||||||||||||
+1039931  caaaagtccgtcg  1039919
+
+1041651  caaatcattg  1041660
+         ||||||||||
+1041749  gtttagtaac  1041740
+
+1041837  aaataaaaaa  1041846
+         ||||||||||
+1041877  tttatttttt  1041868
+
+1045806  ggctgcctgaaa  1045817
+         ||||||||||||
+1045845  ccgacggacttt  1045834
+
+1047493  taaatacatt  1047502
+         ||||||||||
+1047566  atttatgtaa  1047557
+
+1050209  aagctgcctgaaaagt  1050224
+         ||||||||||||||||
+1050248  ttcgacggacttttca  1050233
+
+1050288  aaaggacttggtt  1050300
+         |||||||||||||
+1050317  tttcctgaaccaa  1050305
+
+1051265  ggggaaaatg  1051274
+         ||||||||||
+1051295  ccccttttac  1051286
+
+1054096  ccctcccctgct  1054107
+         ||||||||||||
+1054215  gggaggggacga  1054204
+
+1054109  gcgggggagggtt  1054121
+         |||||||||||||
+1054202  cgccccctcccaa  1054190
+
+1055857  ggcaatttgg  1055866
+         ||||||||||
+1055934  ccgttaaacc  1055925
+
+1056796  gcattttggaa  1056806
+         |||||||||||
+1056916  cgtaaaacctt  1056906
+
+1059445  gatttcatatc  1059455
+         |||||||||||
+1059523  ctaaagtatag  1059513
+
+1059555  cagcctgaaaacca  1059568
+         ||||||||||||||
+1059588  gtcggacttttggt  1059575
+
+1061481  tgtagggtgcaacttgttgcacca  1061504
+         ||||||||||||||||||||||||
+1061550  acatcccacgttgaacaacgtggt  1061527
+
+1062309  tttcaaaaca  1062318
+         ||||||||||
+1062359  aaagttttgt  1062350
+
+1063924  cgtcattcccgcgtaggcgggaatcca  1063950
+         |||||||||||||||||||||||||||
+1064017  gcagtaagggcgcatccgcccttaggt  1063991
+
+1064030  tttcaggcaa  1064039
+         ||||||||||
+1064077  aaagtccgtt  1064068
+
+1065989  tcaggcagcc  1065998
+         ||||||||||
+1066066  agtccgtcgg  1066057
+
+1068642  catggaaatg  1068651
+         ||||||||||
+1068705  gtacctttac  1068696
+
+1069053  aaaaagctgcctgaaaacaa  1069072
+         ||||||||||||||||||||
+1069100  tttttcgacggacttttgtt  1069081
+
+1069337  gttttcaggc  1069346
+         ||||||||||
+1069442  caaaagtccg  1069433
+
+1069361  cccctcccccg  1069371
+         |||||||||||
+1069387  ggggagggggc  1069377
+
+1070266  tttggcattgggc  1070278
+         |||||||||||||
+1070375  aaaccgtaacccg  1070363
+
+1070656  ccctccccct  1070665
+         ||||||||||
+1070680  gggaggggga  1070671
+
+1070656  ccctccccct  1070665
+         ||||||||||
+1070686  gggaggggga  1070677
+
+1071203  aaaaatggtg  1071212
+         ||||||||||
+1071251  tttttaccac  1071242
+
+1071927  atacggcttt  1071936
+         ||||||||||
+1072000  tatgccgaaa  1071991
+
+1075234  ttcaggcagc  1075243
+         ||||||||||
+1075283  aagtccgtcg  1075274
+
+1075430  atcgcccaaa  1075439
+         ||||||||||
+1075487  tagcgggttt  1075478
+
+1075674  aaaaaggcggat  1075685
+         ||||||||||||
+1075702  tttttccgccta  1075691
+
+1075794  ccctccccct  1075803
+         ||||||||||
+1075818  gggaggggga  1075809
+
+1075822  gggtgggggt  1075831
+         ||||||||||
+1075858  cccaccccca  1075849
+
+1077208  aaatcttgaaa  1077218
+         |||||||||||
+1077280  tttagaacttt  1077270
+
+1078294  ggcagcctgaaaa  1078306
+         |||||||||||||
+1078390  ccgtcggactttt  1078378
+
+1080010  cttacttttt  1080019
+         ||||||||||
+1080030  gaatgaaaaa  1080021
+
+1081514  aagtaagccaaata  1081527
+         ||||||||||||||
+1081638  ttcattcggtttat  1081625
+
+1081632  cttacttttt  1081641
+         ||||||||||
+1081652  gaatgaaaaa  1081643
+
+1085199  tttcaggcagcc  1085210
+         ||||||||||||
+1085313  aaagtccgtcgg  1085302
+
+1086222  aggcagcctgaaa  1086234
+         |||||||||||||
+1086321  tccgtcggacttt  1086309
+
+1086321  taaaatattt  1086330
+         ||||||||||
+1086413  attttataaa  1086404
+
+1087500  ccctctccca  1087509
+         ||||||||||
+1087520  gggagagggt  1087511
+
+1087511  tgggagaggg  1087520
+         ||||||||||
+1087582  accctctccc  1087573
+
+1087524  gggagagggc  1087533
+         ||||||||||
+1087581  ccctctcccg  1087572
+
+1088665  tcaggcagcc  1088674
+         ||||||||||
+1088697  agtccgtcgg  1088688
+
+1088945  ttcaggcagcctgaaa  1088960
+         ||||||||||||||||
+1089030  aagtccgtcggacttt  1089015
+
+1090857  atcgggcggt  1090866
+         ||||||||||
+1090940  tagcccgcca  1090931
+
+1092469  aggcagcctg  1092478
+         ||||||||||
+1092495  tccgtcggac  1092486
+
+1092483  tttcaggctg  1092492
+         ||||||||||
+1092544  aaagtccgac  1092535
+
+1093049  ttgcaacacg  1093058
+         ||||||||||
+1093168  aacgttgtgc  1093159
+
+1093384  gatttcatatc  1093394
+         |||||||||||
+1093461  ctaaagtatag  1093451
+
+1093701  tgtagggtgcaacttgttgcacca  1093724
+         ||||||||||||||||||||||||
+1093770  acatcccacgttgaacaacgtggt  1093747
+
+1093808  gcagcctgaacc  1093819
+         ||||||||||||
+1093921  cgtcggacttgg  1093910
+
+1095697  tttcaggcagccaaaa  1095712
+         ||||||||||||||||
+1095735  aaagtccgtcggtttt  1095720
+
+1096715  attttcaggc  1096724
+         ||||||||||
+1096735  taaaagtccg  1096726
+
+1099164  aaaaccgcattatcc  1099178
+         |||||||||||||||
+1099204  ttttggcgtaatagg  1099190
+
+1099327  ccctctctcc  1099336
+         ||||||||||
+1099361  gggagagagg  1099352
+
+1099338  tgtgggagag  1099347
+         ||||||||||
+1099399  acaccctctc  1099390
+
+1099562  ctgacttttt  1099571
+         ||||||||||
+1099582  gactgaaaaa  1099573
+
+1100299  tccctctccc  1100308
+         ||||||||||
+1100333  agggagaggg  1100324
+
+1100300  ccctctccctgtgggagaggg  1100320
+         |||||||||||||||||||||
+1100380  gggagagggacaccctctccc  1100360
+
+1102516  aatcgctcaacaa  1102528
+         |||||||||||||
+1102554  ttagcgagttgtt  1102542
+
+1104339  ttcaggcagc  1104348
+         ||||||||||
+1104387  aagtccgtcg  1104378
+
+1105721  ccctccccct  1105730
+         ||||||||||
+1105745  gggaggggga  1105736
+
+1105818  tttcaggcagc  1105828
+         |||||||||||
+1105866  aaagtccgtcg  1105856
+
+1108656  ttcaggcagcct  1108667
+         ||||||||||||
+1108692  aagtccgtcgga  1108681
+
+1109170  aaattttgtcc  1109180
+         |||||||||||
+1109197  tttaaaacagg  1109187
+
+1109946  gggtgggggt  1109955
+         ||||||||||
+1109982  cccaccccca  1109973
+
+1110069  ccctccccct  1110078
+         ||||||||||
+1110093  gggaggggga  1110084
+
+1110239  cgtaggggcggatttcatatccgccct  1110265
+         |||||||||||||||||||||||||||
+1110337  gcatccccgcctaaagtataggcggga  1110311
+
+1110354  ggtttcaggc  1110363
+         ||||||||||
+1110374  ccaaagtccg  1110365
+
+1111854  ccctctcctgtgggagaggg  1111873
+         ||||||||||||||||||||
+1111944  gggagaggacaccctctccc  1111925
+
+1113304  tgtagggtgcaacttgttgcacca  1113327
+         ||||||||||||||||||||||||
+1113373  acatcccacgttgaacaacgtggt  1113350
+
+1117845  ctcaatgtga  1117854
+         ||||||||||
+1117939  gagttacact  1117930
+
+1118472  aaaaagctgcctgaaaaa  1118489
+         ||||||||||||||||||
+1118515  tttttcgacggacttttt  1118498
+
+1119887  tcaggctgcctgaaa  1119901
+         |||||||||||||||
+1119924  agtccgacggacttt  1119910
+
+1122231  tcaactgatt  1122240
+         ||||||||||
+1122268  agttgactaa  1122259
+
+1127326  agaacctgtgttc  1127338
+         |||||||||||||
+1127414  tcttggacacaag  1127402
+
+1127790  aatgcgccca  1127799
+         ||||||||||
+1127893  ttacgcgggt  1127884
+
+1128367  agcattttgg  1128376
+         ||||||||||
+1128398  tcgtaaaacc  1128389
+
+1128654  ccctccccct  1128663
+         ||||||||||
+1128678  gggaggggga  1128669
+
+1128682  gggtgggggt  1128691
+         ||||||||||
+1128718  cccaccccca  1128709
+
+1129846  gcaaacccgtg  1129856
+         |||||||||||
+1129949  cgtttgggcac  1129939
+
+1131510  caggataaat  1131519
+         ||||||||||
+1131607  gtcctattta  1131598
+
+1131532  atgattttaa  1131541
+         ||||||||||
+1131566  tactaaaatt  1131557
+
+1133925  ttcaggctgcctgaaa  1133940
+         ||||||||||||||||
+1134034  aagtccgacggacttt  1134019
+
+1134779  tttttcaggc  1134788
+         ||||||||||
+1134799  aaaaagtccg  1134790
+
+1134803  cccctctccc  1134812
+         ||||||||||
+1134875  ggggagaggg  1134866
+
+1134804  ccctctccca  1134813
+         ||||||||||
+1134824  gggagagggt  1134815
+
+1134815  tgggagagggc  1134825
+         |||||||||||
+1134863  accctctcccg  1134853
+
+1134841  cccctctccc  1134850
+         ||||||||||
+1134875  ggggagaggg  1134866
+
+1137281  tcaatgattt  1137290
+         ||||||||||
+1137368  agttactaaa  1137359
+
+1137474  caggcagcctgaaa  1137487
+         ||||||||||||||
+1137504  gtccgtcggacttt  1137491
+
+1138209  tttgcaaaacc  1138219
+         |||||||||||
+1138285  aaacgttttgg  1138275
+
+1138561  attttggaca  1138570
+         ||||||||||
+1138596  taaaacctgt  1138587
+
+1139441  tgtccaacgg  1139450
+         ||||||||||
+1139534  acaggttgcc  1139525
+
+1143691  ttttcaggcagcc  1143703
+         |||||||||||||
+1143728  aaaagtccgtcgg  1143716
+
+1143717  gctgcctgaaa  1143727
+         |||||||||||
+1143813  cgacggacttt  1143803
+
+1144719  attcagccgca  1144729
+         |||||||||||
+1144755  taagtcggcgt  1144745
+
+1144759  gaccccacgaag  1144770
+         ||||||||||||
+1144799  ctggggtgcttc  1144788
+
+1144837  aaaaacggaacatt  1144850
+         ||||||||||||||
+1144875  tttttgccttgtaa  1144862
+
+1146106  cgattgggcg  1146115
+         ||||||||||
+1146181  gctaacccgc  1146172
+
+1147296  aaaaaatcta  1147305
+         ||||||||||
+1147318  ttttttagat  1147309
+
+1147725  tataaattca  1147734
+         ||||||||||
+1147835  atatttaagt  1147826
+
+1148613  tctaaatttt  1148622
+         ||||||||||
+1148722  agatttaaaa  1148713
+
+1151348  ttttcaggcag  1151358
+         |||||||||||
+1151413  aaaagtccgtc  1151403
+
+1151403  ctgcctgaaaagc  1151415
+         |||||||||||||
+1151437  gacggacttttcg  1151425
+
+1153181  aaattttgga  1153190
+         ||||||||||
+1153255  tttaaaacct  1153246
+
+1153757  ttttttaaaa  1153766
+         ||||||||||
+1153876  aaaaaatttt  1153867
+
+1154053  ggcattgccaca  1154064
+         ||||||||||||
+1154175  ccgtaacggtgt  1154164
+
+1159050  tgcctgctatg  1159060
+         |||||||||||
+1159079  acggacgatac  1159069
+
+1159593  aaaaaagcgtttcaggc  1159609
+         |||||||||||||||||
+1159627  ttttttcgcaaagtccg  1159611
+
+1159694  agcctgaaaa  1159703
+         ||||||||||
+1159788  tcggactttt  1159779
+
+1160550  cccaaaggcaa  1160560
+         |||||||||||
+1160629  gggtttccgtt  1160619
+
+1161065  ttttcaggcag  1161075
+         |||||||||||
+1161118  aaaagtccgtc  1161108
+
+1163650  tttcaggcagcctgaa  1163665
+         ||||||||||||||||
+1163699  aaagtccgtcggactt  1163684
+
+1167397  ataatctgtattgatt  1167412
+         ||||||||||||||||
+1167446  tattagacataactaa  1167431
+
+1168055  tgaaaacagg  1168064
+         ||||||||||
+1168093  acttttgtcc  1168084
+
+1168061  caggctgcctgaaaac  1168076
+         ||||||||||||||||
+1168102  gtccgacggacttttg  1168087
+
+1170112  aacaaatcgc  1170121
+         ||||||||||
+1170184  ttgtttagcg  1170175
+
+1170896  gtagggtgcaacttgttgcacc  1170917
+         ||||||||||||||||||||||
+1170965  catcccacgttgaacaacgtgg  1170944
+
+1172001  gcagcctgaa  1172010
+         ||||||||||
+1172096  cgtcggactt  1172087
+
+1173152  cgtttcaggc  1173161
+         ||||||||||
+1173221  gcaaagtccg  1173212
+
+1173201  cgtttcaggc  1173210
+         ||||||||||
+1173221  gcaaagtccg  1173212
+
+1175677  gggcgatttg  1175686
+         ||||||||||
+1175735  cccgctaaac  1175726
+
+1176119  cccattcaaa  1176128
+         ||||||||||
+1176223  gggtaagttt  1176214
+
+1176902  acctttgcaaaac  1176914
+         |||||||||||||
+1177005  tggaaacgttttg  1176993
+
+1177054  ccctccccct  1177063
+         ||||||||||
+1177078  gggaggggga  1177069
+
+1177118  ccctcccccg  1177127
+         ||||||||||
+1177142  gggagggggc  1177133
+
+1178150  gcagctttgg  1178159
+         ||||||||||
+1178234  cgtcgaaacc  1178225
+
+1178194  tttcaggcagc  1178204
+         |||||||||||
+1178240  aaagtccgtcg  1178230
+
+1180578  ggctgcctgaac  1180589
+         ||||||||||||
+1180608  ccgacggacttg  1180597
+
+1185321  ggtttcagac  1185330
+         ||||||||||
+1185398  ccaaagtctg  1185389
+
+1185402  cccctccccct  1185412
+         |||||||||||
+1185428  ggggaggggga  1185418
+
+1186721  tggctttgggc  1186731
+         |||||||||||
+1186792  accgaaacccg  1186782
+
+1187406  aaaaacgatg  1187415
+         ||||||||||
+1187439  tttttgctac  1187430
+
+1188334  gatttcatatc  1188344
+         |||||||||||
+1188412  ctaaagtatag  1188402
+
+1194529  ttcaggcagctt  1194540
+         ||||||||||||
+1194567  aagtccgtcgaa  1194556
+
+1196720  aggcagcctgaaa  1196732
+         |||||||||||||
+1196759  tccgtcggacttt  1196747
+
+1196873  ttggcaaaac  1196882
+         ||||||||||
+1196956  aaccgttttg  1196947
+
+1197492  ttgggcagcctga  1197504
+         |||||||||||||
+1197600  aacccgtcggact  1197588
+
+1197507  attgccaaccc  1197517
+         |||||||||||
+1197538  taacggttggg  1197528
+
+1197712  ggtgttggcg  1197721
+         ||||||||||
+1197784  ccacaaccgc  1197775
+
+1198861  gatttcatatc  1198871
+         |||||||||||
+1198939  ctaaagtatag  1198929
+
+1199166  ggctgcctgaaa  1199177
+         ||||||||||||
+1199219  ccgacggacttt  1199208
+
+1199303  tttcgggatt  1199312
+         ||||||||||
+1199342  aaagccctaa  1199333
+
+1199669  gctgcctgaa  1199678
+         ||||||||||
+1199739  cgacggactt  1199730
+
+1200874  ccctccccct  1200883
+         ||||||||||
+1200898  gggaggggga  1200889
+
+1200902  gggtgggggt  1200911
+         ||||||||||
+1200938  cccaccccca  1200929
+
+1200942  ccctcccccg  1200951
+         ||||||||||
+1200966  gggagggggc  1200957
+
+1201145  gccctctctcc  1201155
+         |||||||||||
+1201181  cgggagagagg  1201171
+
+1202446  taatgattttt  1202456
+         |||||||||||
+1202564  attactaaaaa  1202554
+
+1202453  ttttcaggctgc  1202464
+         ||||||||||||
+1202513  aaaagtccgacg  1202502
+
+1204100  tcaggcagcctgaaa  1204114
+         |||||||||||||||
+1204143  agtccgtcggacttt  1204129
+
+1206397  ttcaggctgcctgaaaa  1206413
+         |||||||||||||||||
+1206442  aagtccgacggactttt  1206426
+
+1207708  accccatttt  1207717
+         ||||||||||
+1207767  tggggtaaaa  1207758
+
+1208150  caattcgcgc  1208159
+         ||||||||||
+1208201  gttaagcgcg  1208192
+
+1208767  ctttcagtac  1208776
+         ||||||||||
+1208882  gaaagtcatg  1208873
+
+1208795  gtaggtcgggcattcatgcccgac  1208818
+         ||||||||||||||||||||||||
+1208862  catccagcccgtaagtacgggctg  1208839
+
+1209350  tgggagaggg  1209359
+         ||||||||||
+1209420  accctctccc  1209411
+
+1209837  gtttgccaatt  1209847
+         |||||||||||
+1209882  caaacggttaa  1209872
+
+1210624  atttcaggcagcctgaa  1210640
+         |||||||||||||||||
+1210675  taaagtccgtcggactt  1210659
+
+1213875  caggcagcctgaa  1213887
+         |||||||||||||
+1213902  gtccgtcggactt  1213890
+
+1215300  gccacatcat  1215309
+         ||||||||||
+1215357  cggtgtagta  1215348
+
+1215698  gctgcctgaaa  1215708
+         |||||||||||
+1215795  cgacggacttt  1215785
+
+1215812  tgtaaaaata  1215821
+         ||||||||||
+1215904  acatttttat  1215895
+
+1217200  aaacgagttgccga  1217213
+         ||||||||||||||
+1217237  tttgctcaacggct  1217224
+
+1217351  aatttcacaa  1217360
+         ||||||||||
+1217411  ttaaagtgtt  1217402
+
+1217475  tttaattttt  1217484
+         ||||||||||
+1217512  aaattaaaaa  1217503
+
+1217537  aaaataaattcaa  1217549
+         |||||||||||||
+1217568  ttttatttaagtt  1217556
+
+1217693  caactgctgc  1217702
+         ||||||||||
+1217767  gttgacgacg  1217758
+
+1217894  aagcacccaaaa  1217905
+         ||||||||||||
+1217922  ttcgtgggtttt  1217911
+
+1217983  gattttatatc  1217993
+         |||||||||||
+1218058  ctaaaatatag  1218048
+
+1220188  acctttgcaaaac  1220200
+         |||||||||||||
+1220291  tggaaacgttttg  1220279
+
+1221549  ttttcaggctgctt  1221562
+         ||||||||||||||
+1221596  aaaagtccgacgaa  1221583
+
+1224882  gctgcctgaaa  1224892
+         |||||||||||
+1224936  cgacggacttt  1224926
+
+1226157  tttcaggcagc  1226167
+         |||||||||||
+1226214  aaagtccgtcg  1226204
+
+1226198  tttcaggctg  1226207
+         ||||||||||
+1226267  aaagtccgac  1226258
+
+1228490  gctgcctgaa  1228499
+         ||||||||||
+1228515  cgacggactt  1228506
+
+1228937  cagcctgaaa  1228946
+         ||||||||||
+1228972  gtcggacttt  1228963
+
+1228961  attttcaggc  1228970
+         ||||||||||
+1228981  taaaagtccg  1228972
+
+1230460  atttcatttt  1230469
+         ||||||||||
+1230483  taaagtaaaa  1230474
+
+1231569  ttcaggctgc  1231578
+         ||||||||||
+1231669  aagtccgacg  1231660
+
+1233287  tttcaggctgcctgaaa  1233303
+         |||||||||||||||||
+1233414  aaagtccgacggacttt  1233398
+
+1233307  aaaaatccct  1233316
+         ||||||||||
+1233333  tttttaggga  1233324
+
+1234379  aaaaaatccctg  1234390
+         ||||||||||||
+1234407  ttttttagggac  1234396
+
+1234652  cgtttcaggc  1234661
+         ||||||||||
+1234672  gcaaagtccg  1234663
+
+1235682  ccctcccccg  1235691
+         ||||||||||
+1235706  gggagggggc  1235697
+
+1235696  gcgggggaggg  1235706
+         |||||||||||
+1235787  cgccccctccc  1235777
+
+1235709  agggtggggg  1235718
+         ||||||||||
+1235774  tcccaccccc  1235765
+
+1236365  aaagccaaag  1236374
+         ||||||||||
+1236441  tttcggtttc  1236432
+
+1237118  tgtagggtgcaacttgttgcacca  1237141
+         ||||||||||||||||||||||||
+1237187  acatcccacgttgaacaacgtggt  1237164
+
+1239141  ggctgcctgaaa  1239152
+         ||||||||||||
+1239245  ccgacggacttt  1239234
+
+1242230  tcaaaaaaat  1242239
+         ||||||||||
+1242326  agttttttta  1242317
+
+1245109  aaacaggctgcctgaaag  1245126
+         ||||||||||||||||||
+1245154  tttgtccgacggactttc  1245137
+
+1245809  atttcaggcagcctgaaaa  1245827
+         |||||||||||||||||||
+1245860  taaagtccgtcggactttt  1245842
+
+1248212  ggacggtgtagggga  1248226
+         |||||||||||||||
+1248293  cctgccacatcccct  1248279
+
+1249226  ttttgccttcggcgacttactttttaaaaaagtaagccaaata  1249268
+         |||||||||||||||||||||||||||||||||||||||||||
+1249409  aaaacggaagccgctgaatgaaaaattttttcattcggtttat  1249367
+
+1249241  cttacttttt  1249250
+         ||||||||||
+1249261  gaatgaaaaa  1249252
+
+1249374  cttacttttt  1249383
+         ||||||||||
+1249394  gaatgaaaaa  1249385
+
+1251108  caacaaacccaaacca  1251123
+         ||||||||||||||||
+1251147  gttgtttgggtttggt  1251132
+
+1252120  cttacttttt  1252129
+         ||||||||||
+1252140  gaatgaaaaa  1252131
+
+1255307  tatacccataaaa  1255319
+         |||||||||||||
+1255333  atatgggtatttt  1255321
+
+1256190  ttgccaatgtt  1256200
+         |||||||||||
+1256277  aacggttacaa  1256267
+
+1257089  gcagcctgaa  1257098
+         ||||||||||
+1257127  cgtcggactt  1257118
+
+1258521  aggctgcctgaaaa  1258534
+         ||||||||||||||
+1258560  tccgacggactttt  1258547
+
+1259754  aggggcggat  1259763
+         ||||||||||
+1259778  tccccgccta  1259769
+
+1259817  tgtagggtgcaacttgttgcacca  1259840
+         ||||||||||||||||||||||||
+1259886  acatcccacgttgaacaacgtggt  1259863
+
+1259985  cagcctgaaa  1259994
+         ||||||||||
+1260017  gtcggacttt  1260008
+
+1260060  gctctccgagccgac  1260074
+         |||||||||||||||
+1260128  cgagaggctcggctg  1260114
+
+1260816  tttcaggcagcctgaaa  1260832
+         |||||||||||||||||
+1260864  aaagtccgtcggacttt  1260848
+
+1262845  aaatgtttttt  1262855
+         |||||||||||
+1262932  tttacaaaaaa  1262922
+
+1263085  gccctctctcc  1263095
+         |||||||||||
+1263121  cgggagagagg  1263111
+
+1263909  tcgcccccaat  1263919
+         |||||||||||
+1263944  agcgggggtta  1263934
+
+1264768  tgtagggtgcaacttgttgcacca  1264791
+         ||||||||||||||||||||||||
+1264837  acatcccacgttgaacaacgtggt  1264814
+
+1268071  gaatgcggcattt  1268083
+         |||||||||||||
+1268147  cttacgccgtaaa  1268135
+
+1270554  tttggtggtgg  1270564
+         |||||||||||
+1270674  aaaccaccacc  1270664
+
+1270881  ccctctctcc  1270890
+         ||||||||||
+1270915  gggagagagg  1270906
+
+1271044  aggctgcctgaa  1271055
+         ||||||||||||
+1271082  tccgacggactt  1271071
+
+1272061  catcggcttt  1272070
+         ||||||||||
+1272110  gtagccgaaa  1272101
+
+1272810  aaaatgccgtttc  1272822
+         |||||||||||||
+1272843  ttttacggcaaag  1272831
+
+1272862  tatagtcgcttaaaat  1272877
+         ||||||||||||||||
+1272969  atatcagcgaatttta  1272954
+
+1273010  tggggagagggt  1273021
+         ||||||||||||
+1273047  acccctctccca  1273036
+
+1273737  acaatgccaa  1273746
+         ||||||||||
+1273845  tgttacggtt  1273836
+
+1273873  aaaatgccgttt  1273884
+         ||||||||||||
+1273905  ttttacggcaaa  1273894
+
+1275798  tttcaggctgc  1275808
+         |||||||||||
+1275832  aaagtccgacg  1275822
+
+1277138  ggtttcaggc  1277147
+         ||||||||||
+1277158  ccaaagtccg  1277149
+
+1277251  atgtagggtgcaac  1277264
+         ||||||||||||||
+1277280  tacatcccacgttg  1277267
+
+1279027  ggcagcctgaa  1279037
+         |||||||||||
+1279134  ccgtcggactt  1279124
+
+1281103  ggctgcctgaaa  1281114
+         ||||||||||||
+1281216  ccgacggacttt  1281205
+
+1284174  aaagatgaagaa  1284185
+         ||||||||||||
+1284244  tttctacttctt  1284233
+
+1284692  agaggcggat  1284701
+         ||||||||||
+1284716  tctccgccta  1284707
+
+1284753  tgtattttta  1284762
+         ||||||||||
+1284783  acataaaaat  1284774
+
+1285207  caatcagttgg  1285217
+         |||||||||||
+1285316  gttagtcaacc  1285306
+
+1285906  agggtgcaacttgttgcacca  1285926
+         |||||||||||||||||||||
+1285969  tcccacgttgaacaacgtggt  1285949
+
+1286058  cagcctgaaaa  1286068
+         |||||||||||
+1286091  gtcggactttt  1286081
+
+1288287  ttttcaggctgcct  1288300
+         ||||||||||||||
+1288402  aaaagtccgacgga  1288389
+
+1288312  gtagggtgcgcc  1288323
+         ||||||||||||
+1288381  catcccacgcgg  1288370
+
+1288575  aagcggcggc  1288584
+         ||||||||||
+1288682  ttcgccgccg  1288673
+
+1289457  acttgggcgt  1289466
+         ||||||||||
+1289565  tgaacccgca  1289556
+
+1290830  gcctttcagtacacgaca  1290847
+         ||||||||||||||||||
+1290944  cggaaagtcatgtgctgt  1290927
+
+1290941  aggcagcctgaa  1290952
+         ||||||||||||
+1290970  tccgtcggactt  1290959
+
+1292197  tttcaggcagc  1292207
+         |||||||||||
+1292245  aaagtccgtcg  1292235
+
+1292257  ccattttaac  1292266
+         ||||||||||
+1292333  ggtaaaattg  1292324
+
+1293003  caatgtgcaa  1293012
+         ||||||||||
+1293070  gttacacgtt  1293061
+
+1293227  tttcaggcagcctgaa  1293242
+         ||||||||||||||||
+1293264  aaagtccgtcggactt  1293249
+
+1297066  tttcaggctgcctg  1297079
+         ||||||||||||||
+1297100  aaagtccgacggac  1297087
+
+1298779  aaaaataaata  1298789
+         |||||||||||
+1298894  tttttatttat  1298884
+
+1298975  cgtagggtgcg  1298985
+         |||||||||||
+1299052  gcatcccacgc  1299042
+
+1299505  gcgcaaattc  1299514
+         ||||||||||
+1299603  cgcgtttaag  1299594
+
+1304408  tttcaggcagcctg  1304421
+         ||||||||||||||
+1304513  aaagtccgtcggac  1304500
+
+1304535  gtagggtgcgccgtgcgcacc  1304555
+         |||||||||||||||||||||
+1304611  catcccacgcggcacgcgtgg  1304591
+
+1304671  taggttgggtt  1304681
+         |||||||||||
+1304695  atccaacccaa  1304685
+
+1305847  aacaactgtattttaa  1305862
+         ||||||||||||||||
+1305888  ttgttgacataaaatt  1305873
+
+1308492  gccctctctcc  1308502
+         |||||||||||
+1308528  cgggagagagg  1308518
+
+1309036  aaatttgaat  1309045
+         ||||||||||
+1309062  tttaaactta  1309053
+
+1314966  ttgatttaaa  1314975
+         ||||||||||
+1315006  aactaaattt  1314997
+
+1315335  attttcaggc  1315344
+         ||||||||||
+1315454  taaaagtccg  1315445
+
+1315396  aaaataccgtt  1315406
+         |||||||||||
+1315431  ttttatggcaa  1315421
+
+1315552  aaaaataccgtt  1315563
+         ||||||||||||
+1315589  tttttatggcaa  1315578
+
+1316910  tttcaggcag  1316919
+         ||||||||||
+1317009  aaagtccgtc  1317000
+
+1316947  acaaaaatccttatgt  1316962
+         ||||||||||||||||
+1316991  tgtttttaggaataca  1316976
+
+1316998  ggctgcctgaaa  1317009
+         ||||||||||||
+1317032  ccgacggacttt  1317021
+
+1318334  attttcaggc  1318343
+         ||||||||||
+1318354  taaaagtccg  1318345
+
+1319655  ttaccctacaaa  1319666
+         ||||||||||||
+1319763  aatgggatgttt  1319752
+
+1322306  tttgaccgcg  1322315
+         ||||||||||
+1322411  aaactggcgc  1322402
+
+1322684  ccctctcctttgggaga  1322700
+         |||||||||||||||||
+1322774  gggagaggaaaccctct  1322758
+
+1322741  tcccctctcc  1322750
+         ||||||||||
+1322776  aggggagagg  1322767
+
+1323556  aaaaaacgtgaaata  1323570
+         |||||||||||||||
+1323599  ttttttgcactttat  1323585
+
+1325003  ggctgcctgaaa  1325014
+         ||||||||||||
+1325113  ccgacggacttt  1325102
+
+1325100  gttttcaggc  1325109
+         ||||||||||
+1325120  caaaagtccg  1325111
+
+1325198  gtgcaacttgttgcacca  1325215
+         ||||||||||||||||||
+1325257  cacgttgaacaacgtggt  1325240
+
+1325277  tttcaggcagcctgaa  1325292
+         ||||||||||||||||
+1325314  aaagtccgtcggactt  1325299
+
+1325278  ttcaggcagcc  1325288
+         |||||||||||
+1325393  aagtccgtcgg  1325383
+
+1325296  gcattcaggc  1325305
+         ||||||||||
+1325396  cgtaagtccg  1325387
+
+1325853  agggcaaatcg  1325863
+         |||||||||||
+1325957  tcccgtttagc  1325947
+
+1326156  gcctgaaaaa  1326165
+         ||||||||||
+1326214  cggacttttt  1326205
+
+1326555  ccaaatcatc  1326564
+         ||||||||||
+1326661  ggtttagtag  1326652
+
+1327009  gtgggtcatg  1327018
+         ||||||||||
+1327103  cacccagtac  1327094
+
+1328879  ccctccccct  1328888
+         ||||||||||
+1328903  gggaggggga  1328894
+
+1328907  gggtgggggt  1328916
+         ||||||||||
+1328943  cccaccccca  1328934
+
+1330073  aaaaaatgctgcctgaaaa  1330091
+         |||||||||||||||||||
+1330122  ttttttacgacggactttt  1330104
+
+1331448  tgcctgaaaat  1331458
+         |||||||||||
+1331509  acggactttta  1331499
+
+1335992  aaaaagctgcctgaaa  1336007
+         ||||||||||||||||
+1336026  tttttcgacggacttt  1336011
+
+1337232  gctgcctgaaa  1337242
+         |||||||||||
+1337264  cgacggacttt  1337254
+
+1338179  aagctgcctgaaaa  1338192
+         ||||||||||||||
+1338208  ttcgacggactttt  1338195
+
+1338831  ggctgcctgaa  1338841
+         |||||||||||
+1338858  ccgacggactt  1338848
+
+1340306  ctgcctgaaaa  1340316
+         |||||||||||
+1340400  gacggactttt  1340390
+
+1342742  gcagcctgaa  1342751
+         ||||||||||
+1342768  cgtcggactt  1342759
+
+1345364  aatggaatat  1345373
+         ||||||||||
+1345417  ttaccttata  1345408
+
+1345742  ctgctacttaatc  1345754
+         |||||||||||||
+1345775  gacgatgaattag  1345763
+
+1347530  tttcaggcagcc  1347541
+         ||||||||||||
+1347566  aaagtccgtcgg  1347555
+
+1347556  gctgcctgaaaa  1347567
+         ||||||||||||
+1347604  cgacggactttt  1347593
+
+1347630  ttccctctccc  1347640
+         |||||||||||
+1347666  aagggagaggg  1347656
+
+1347632  ccctctccccttgggagaggg  1347652
+         |||||||||||||||||||||
+1347715  gggagaggggaaccctctccc  1347695
+
+1347656  gggagaggga  1347665
+         ||||||||||
+1347691  ccctctccct  1347682
+
+1347683  ccctctcccc  1347692
+         ||||||||||
+1347715  gggagagggg  1347706
+
+1350435  gcagcctgaaaac  1350447
+         |||||||||||||
+1350469  cgtcggacttttg  1350457
+
+1350460  ttcaggctgc  1350469
+         ||||||||||
+1350549  aagtccgacg  1350540
+
+1351169  ttttatcttt  1351178
+         ||||||||||
+1351210  aaaatagaaa  1351201
+
+1351349  tttgggtaac  1351358
+         ||||||||||
+1351401  aaacccattg  1351392
+
+1354936  gttttcaggcagc  1354948
+         |||||||||||||
+1354974  caaaagtccgtcg  1354962
+
+1355976  tttcaggcagcct  1355988
+         |||||||||||||
+1356023  aaagtccgtcgga  1356011
+
+1357304  cagcaatgcca  1357314
+         |||||||||||
+1357398  gtcgttacggt  1357388
+
+1358143  aaagctgcctgaa  1358155
+         |||||||||||||
+1358174  tttcgacggactt  1358162
+
+1360479  gccaacatca  1360488
+         ||||||||||
+1360507  cggttgtagt  1360498
+
+1360669  aaagctgcctga  1360680
+         ||||||||||||
+1360701  tttcgacggact  1360690
+
+1362316  taaatcaaagctgcctgaaa  1362335
+         ||||||||||||||||||||
+1362370  atttagtttcgacggacttt  1362351
+
+1362371  cgctacaaaa  1362380
+         ||||||||||
+1362453  gcgatgtttt  1362444
+
+1362464  gcagcctgaaa  1362474
+         |||||||||||
+1362490  cgtcggacttt  1362480
+
+1362510  aaaatgcaaaa  1362520
+         |||||||||||
+1362587  ttttacgtttt  1362577
+
+1365616  tttcaacttgct  1365627
+         ||||||||||||
+1365649  aaagttgaacga  1365638
+
+1370473  caaaaagccacttctg  1370488
+         ||||||||||||||||
+1370512  gtttttcggtgaagac  1370497
+
+1371586  ttttgttgaa  1371595
+         ||||||||||
+1371619  aaaacaactt  1371610
+
+1371618  aaagctgcctgaa  1371630
+         |||||||||||||
+1371649  tttcgacggactt  1371637
+
+1371621  gctgcctgaaaa  1371632
+         ||||||||||||
+1371663  cgacggactttt  1371652
+
+1376134  ttgatttcaggc  1376145
+         ||||||||||||
+1376158  aactaaagtccg  1376147
+
+1377626  gggtgggggt  1377635
+         ||||||||||
+1377662  cccaccccca  1377653
+
+1377666  ccctccccct  1377675
+         ||||||||||
+1377690  gggaggggga  1377681
+
+1377767  gatttcatatc  1377777
+         |||||||||||
+1377845  ctaaagtatag  1377835
+
+1379146  aaatcaaaat  1379155
+         ||||||||||
+1379242  tttagtttta  1379233
+
+1380257  attttaattt  1380266
+         ||||||||||
+1380371  taaaattaaa  1380362
+
+1380330  gcataaatgt  1380339
+         ||||||||||
+1380408  cgtatttaca  1380399
+
+1382830  cgtatttgccca  1382841
+         ||||||||||||
+1382904  gcataaacgggt  1382893
+
+1383255  gggagagagt  1383264
+         ||||||||||
+1383363  ccctctctca  1383354
+
+1384366  tgaaaaccat  1384375
+         ||||||||||
+1384399  acttttggta  1384390
+
+1396777  gctttcaggcagc  1396789
+         |||||||||||||
+1396811  cgaaagtccgtcg  1396799
+
+1396801  tgcctgaaag  1396810
+         ||||||||||
+1396902  acggactttc  1396893
+
+1398552  ttttcaggcagcc  1398564
+         |||||||||||||
+1398589  aaaagtccgtcgg  1398577
+
+1400961  ccctccccct  1400970
+         ||||||||||
+1400985  gggaggggga  1400976
+
+1400989  gggtgggggt  1400998
+         ||||||||||
+1401025  cccaccccca  1401016
+
+1401029  ccctcccccg  1401038
+         ||||||||||
+1401053  gggagggggc  1401044
+
+1401675  attttgccaa  1401684
+         ||||||||||
+1401763  taaaacggtt  1401754
+
+1403343  attggttgat  1403352
+         ||||||||||
+1403401  taaccaacta  1403392
+
+1404230  aatcggaaca  1404239
+         ||||||||||
+1404256  ttagccttgt  1404247
+
+1404798  acgctgcctgaaa  1404810
+         |||||||||||||
+1404835  tgcgacggacttt  1404823
+
+1406877  gatttttctg  1406886
+         ||||||||||
+1406917  ctaaaaagac  1406908
+
+1406950  tgattttcaggcagcc  1406965
+         ||||||||||||||||
+1406993  actaaaagtccgtcgg  1406978
+
+1408648  aagcaagccgaaaagt  1408663
+         ||||||||||||||||
+1408691  ttcgttcggcttttca  1408676
+
+1409972  atcaggatttt  1409982
+         |||||||||||
+1410009  tagtcctaaaa  1409999
+
+1411752  ttattttgat  1411761
+         ||||||||||
+1411841  aataaaacta  1411832
+
+1412996  aggctgcctgaaa  1413008
+         |||||||||||||
+1413032  tccgacggacttt  1413020
+
+1414883  ctgctttcaggc  1414894
+         ||||||||||||
+1414982  gacgaaagtccg  1414971
+
+1416418  atggaaacgt  1416427
+         ||||||||||
+1416521  tacctttgca  1416512
+
+1417017  gccccatttt  1417026
+         ||||||||||
+1417088  cggggtaaaa  1417079
+
+1420805  aatccaacgta  1420815
+         |||||||||||
+1420836  ttaggttgcat  1420826
+
+1421904  cccctccccc  1421913
+         ||||||||||
+1421998  ggggaggggg  1421989
+
+1421905  ccctccccct  1421914
+         ||||||||||
+1421929  gggaggggga  1421920
+
+1421933  gggtgggggt  1421942
+         ||||||||||
+1421969  cccaccccca  1421960
+
+1421973  ccctcccccg  1421982
+         ||||||||||
+1421997  gggagggggc  1421988
+
+1423540  tccctctccc  1423549
+         ||||||||||
+1423635  agggagaggg  1423626
+
+1423541  ccctctcccc  1423550
+         ||||||||||
+1423573  gggagagggg  1423564
+
+1423552  tgggagaggg  1423561
+         ||||||||||
+1423623  accctctccc  1423614
+
+1423565  gggagagggt  1423574
+         ||||||||||
+1423622  ccctctccca  1423613
+
+1423600  ttccctctcccta  1423612
+         |||||||||||||
+1423636  aagggagagggat  1423624
+
+1423653  attttcaggc  1423662
+         ||||||||||
+1423673  taaaagtccg  1423664
+
+1428882  caacgcgcccca  1428893
+         ||||||||||||
+1428917  gttgcgcggggt  1428906
+
+1430308  aagccaaagc  1430317
+         ||||||||||
+1430328  ttcggtttcg  1430319
+
+1430346  aaagagacaa  1430355
+         ||||||||||
+1430375  tttctctgtt  1430366
+
+1430933  agcgattttt  1430942
+         ||||||||||
+1430979  tcgctaaaaa  1430970
+
+1430938  tttttggcaata  1430949
+         ||||||||||||
+1430973  aaaaaccgttat  1430962
+
+1433468  ccaaaatttc  1433477
+         ||||||||||
+1433523  ggttttaaag  1433514
+
+1433691  tttttatgccaat  1433703
+         |||||||||||||
+1433725  aaaaatacggtta  1433713
+
+1434577  cttacttttt  1434586
+         ||||||||||
+1434597  gaatgaaaaa  1434588
+
+1435748  aaaaaagctgcctgaa  1435763
+         ||||||||||||||||
+1435785  ttttttcgacggactt  1435770
+
+1436343  gtttgaaatt  1436352
+         ||||||||||
+1436441  caaactttaa  1436432
+
+1438371  tatgccaaata  1438381
+         |||||||||||
+1438414  atacggtttat  1438404
+
+1438497  tttcaggcagcctgaa  1438512
+         ||||||||||||||||
+1438545  aaagtccgtcggactt  1438530
+
+1440498  aggcagcctgaaaa  1440511
+         ||||||||||||||
+1440526  tccgtcggactttt  1440513
+
+1440514  tttcaggctgcctgaaac  1440531
+         ||||||||||||||||||
+1440602  aaagtccgacggactttg  1440585
+
+1440584  tgtttcaggc  1440593
+         ||||||||||
+1440604  acaaagtccg  1440595
+
+1441032  aaatggcattt  1441042
+         |||||||||||
+1441079  tttaccgtaaa  1441069
+
+1442440  caaaaaatga  1442449
+         ||||||||||
+1442514  gttttttact  1442505
+
+1442956  tgcttgccgc  1442965
+         ||||||||||
+1443064  acgaacggcg  1443055
+
+1444685  ttttcaggcagc  1444696
+         ||||||||||||
+1444806  aaaagtccgtcg  1444795
+
+1445797  ttgttttaac  1445806
+         ||||||||||
+1445861  aacaaaattg  1445852
+
+1447728  gatttcaggc  1447737
+         ||||||||||
+1447748  ctaaagtccg  1447739
+
+1450200  gcgcattgagc  1450210
+         |||||||||||
+1450295  cgcgtaactcg  1450285
+
+1450561  ttcaggcagc  1450570
+         ||||||||||
+1450664  aagtccgtcg  1450655
+
+1451249  aacatcgcca  1451258
+         ||||||||||
+1451368  ttgtagcggt  1451359
+
+1452425  ggcagcctgaa  1452435
+         |||||||||||
+1452502  ccgtcggactt  1452492
+
+1452496  ggctgcctgaa  1452506
+         |||||||||||
+1452573  ccgacggactt  1452563
+
+1455154  gctgcctgaaa  1455164
+         |||||||||||
+1455189  cgacggacttt  1455179
+
+1460465  tttgtttgtt  1460474
+         ||||||||||
+1460521  aaacaaacaa  1460512
+
+1460535  gtggtttggc  1460544
+         ||||||||||
+1460609  caccaaaccg  1460600
+
+1461203  tggcacaacaa  1461213
+         |||||||||||
+1461261  accgtgttgtt  1461251
+
+1462083  aataatccccagtc  1462096
+         ||||||||||||||
+1462121  ttattaggggtcag  1462108
+
+1462294  tgtttaaaca  1462303
+         ||||||||||
+1462360  acaaatttgt  1462351
+
+1462608  tttttattcaat  1462619
+         ||||||||||||
+1462656  aaaaataagtta  1462645
+
+1462692  gtaaacaaac  1462701
+         ||||||||||
+1462740  catttgtttg  1462731
+
+1462913  tttgggtgtt  1462922
+         ||||||||||
+1462995  aaacccacaa  1462986
+
+1463308  cacgggtacccgtg  1463321
+         ||||||||||||||
+1463388  gtgcccatgggcac  1463375
+
+1463377  cgggtacccgtg  1463388
+         ||||||||||||
+1463451  gcccatgggcac  1463440
+
+1463440  cacgggtacccg  1463451
+         ||||||||||||
+1463512  gtgcccatgggc  1463501
+
+1463499  cacgggtacccgtg  1463512
+         ||||||||||||||
+1463580  gtgcccatgggcac  1463567
+
+1463567  cacgggtacccgtg  1463580
+         ||||||||||||||
+1463646  gtgcccatgggcac  1463633
+
+1463635  cgggtacccgtg  1463646
+         ||||||||||||
+1463710  gcccatgggcac  1463699
+
+1463699  cacgggtacccg  1463710
+         ||||||||||||
+1463769  gtgcccatgggc  1463758
+
+1463756  cacgggtacccgtg  1463769
+         ||||||||||||||
+1463836  gtgcccatgggcac  1463823
+
+1463813  tgtttaaacaca  1463824
+         ||||||||||||
+1463889  acaaatttgtgt  1463878
+
+1463823  cacgggtacccgtg  1463836
+         ||||||||||||||
+1463903  gtgcccatgggcac  1463890
+
+1463878  tgtgtttaaac  1463888
+         |||||||||||
+1463957  acacaaatttg  1463947
+
+1463890  cacgggtacccgtg  1463903
+         ||||||||||||||
+1463969  gtgcccatgggcac  1463956
+
+1463947  gtttaaacac  1463956
+         ||||||||||
+1464019  caaatttgtg  1464010
+
+1463956  cacgggtacccgtg  1463969
+         ||||||||||||||
+1464034  gtgcccatgggcac  1464021
+
+1464010  gtgtttaaaca  1464020
+         |||||||||||
+1464086  cacaaatttgt  1464076
+
+1464021  cacgggtacccgtg  1464034
+         ||||||||||||||
+1464099  gtgcccatgggcac  1464086
+
+1464076  tgtttaaaca  1464085
+         ||||||||||
+1464151  acaaatttgt  1464142
+
+1464086  cacgggtacccgtg  1464099
+         ||||||||||||||
+1464165  gtgcccatgggcac  1464152
+
+1464142  tgtttaaaca  1464151
+         ||||||||||
+1464218  acaaatttgt  1464209
+
+1464152  cacgggtacccgtg  1464165
+         ||||||||||||||
+1464232  gtgcccatgggcac  1464219
+
+1464209  tgtttaaaca  1464218
+         ||||||||||
+1464284  acaaatttgt  1464275
+
+1464219  cacgggtacccgtg  1464232
+         ||||||||||||||
+1464298  gtgcccatgggcac  1464285
+
+1464275  tgtttaaaca  1464284
+         ||||||||||
+1464350  acaaatttgt  1464341
+
+1464285  cacgggtacccgtg  1464298
+         ||||||||||||||
+1464364  gtgcccatgggcac  1464351
+
+1464341  tgtttaaaca  1464350
+         ||||||||||
+1464416  acaaatttgt  1464407
+
+1464351  cacgggtacccgtg  1464364
+         ||||||||||||||
+1464430  gtgcccatgggcac  1464417
+
+1464417  cacgggtacccgtg  1464430
+         ||||||||||||||
+1464497  gtgcccatgggcac  1464484
+
+1464475  gtttaaacac  1464484
+         ||||||||||
+1464548  caaatttgtg  1464539
+
+1464484  cacgggtacccgtg  1464497
+         ||||||||||||||
+1464563  gtgcccatgggcac  1464550
+
+1464539  gtgtttaaac  1464548
+         ||||||||||
+1464617  cacaaatttg  1464608
+
+1464550  cacgggtacccgtg  1464563
+         ||||||||||||||
+1464630  gtgcccatgggcac  1464617
+
+1472712  ttgccaaaat  1472721
+         ||||||||||
+1472787  aacggtttta  1472778
+
+1475097  ccctccccctt  1475107
+         |||||||||||
+1475120  gggagggggaa  1475110
+
+1475122  tagggtggggg  1475132
+         |||||||||||
+1475190  atcccaccccc  1475180
+
+1476558  caatcaggctgcctgaaa  1476575
+         ||||||||||||||||||
+1476598  gttagtccgacggacttt  1476581
+
+1476983  tttcaggcagcct  1476995
+         |||||||||||||
+1477031  aaagtccgtcgga  1477019
+
+1477037  tccctccccc  1477046
+         ||||||||||
+1477131  agggaggggg  1477122
+
+1477038  ccctcccccg  1477047
+         ||||||||||
+1477062  gggagggggc  1477053
+
+1477066  gggtgggggt  1477075
+         ||||||||||
+1477102  cccaccccca  1477093
+
+1477106  ccctccccct  1477115
+         ||||||||||
+1477130  gggaggggga  1477121
+
+1480966  atcgccaaattt  1480977
+         ||||||||||||
+1481006  tagcggtttaaa  1480995
+
+1482793  caaaaatttg  1482802
+         ||||||||||
+1482873  gtttttaaac  1482864
+
+1484699  tttcaggctgcctgaaaa  1484716
+         ||||||||||||||||||
+1484747  aaagtccgacggactttt  1484730
+
+1485655  accaatcaat  1485664
+         ||||||||||
+1485727  tggttagtta  1485718
+
+1487688  gcgaattttt  1487697
+         ||||||||||
+1487792  cgcttaaaaa  1487783
+
+1488655  aggtggatttg  1488665
+         |||||||||||
+1488765  tccacctaaac  1488755
+
+1490485  gctgcctgaa  1490494
+         ||||||||||
+1490526  cgacggactt  1490517
+
+1490697  ctgtgggagaggg  1490709
+         |||||||||||||
+1490774  gacaccctctccc  1490762
+
+1491410  gttttcaggc  1491419
+         ||||||||||
+1491430  caaaagtccg  1491421
+
+1494019  cctcccccgt  1494028
+         ||||||||||
+1494043  ggagggggca  1494034
+
+1494035  cgggggaggg  1494044
+         ||||||||||
+1494119  gccccctccc  1494110
+
+1494046  tagggtggggg  1494056
+         |||||||||||
+1494108  atcccaccccc  1494098
+
+1494695  gttttcaggc  1494704
+         ||||||||||
+1494804  caaaagtccg  1494795
+
+1496075  ttcaggcagcctgaaaa  1496091
+         |||||||||||||||||
+1496122  aagtccgtcggactttt  1496106
+
+1500974  ttttcaggcagcc  1500986
+         |||||||||||||
+1501011  aaaagtccgtcgg  1500999
+
+1504907  gaaacatcat  1504916
+         ||||||||||
+1504999  ctttgtagta  1504990
+
+1505800  ggcagcctgaaa  1505811
+         ||||||||||||
+1505901  ccgtcggacttt  1505890
+
+1506330  ctgtttcaggc  1506340
+         |||||||||||
+1506352  gacaaagtccg  1506342
+
+1507610  attcaatgggt  1507620
+         |||||||||||
+1507640  taagttaccca  1507630
+
+1512018  aaaaaggcagat  1512029
+         ||||||||||||
+1512046  tttttccgtcta  1512035
+
+1513062  aaattgccgc  1513071
+         ||||||||||
+1513136  tttaacggcg  1513127
+
+1513351  cttacttttt  1513360
+         ||||||||||
+1513371  gaatgaaaaa  1513362
+
+1514946  aaaaacccagtt  1514957
+         ||||||||||||
+1514975  tttttgggtcaa  1514964
+
+1516108  ataaaaaacctttcaggcagcc  1516129
+         ||||||||||||||||||||||
+1516166  tattttttggaaagtccgtcgg  1516145
+
+1520859  aaaagctgcctgaaa  1520873
+         |||||||||||||||
+1520894  ttttcgacggacttt  1520880
+
+1522408  cttacttttt  1522417
+         ||||||||||
+1522428  gaatgaaaaa  1522419
+
+1522413  tttttaaaaa  1522422
+         ||||||||||
+1522510  aaaaattttt  1522501
+
+1522540  cttacttttt  1522549
+         ||||||||||
+1522560  gaatgaaaaa  1522551
+
+1522589  tttttcaaat  1522598
+         ||||||||||
+1522677  aaaaagttta  1522668
+
+1522626  aggcagcctgaa  1522637
+         ||||||||||||
+1522656  tccgtcggactt  1522645
+
+1524162  cttacttttt  1524171
+         ||||||||||
+1524182  gaatgaaaaa  1524173
+
+1527620  aattcaggctgcctgaaa  1527637
+         ||||||||||||||||||
+1527661  ttaagtccgacggacttt  1527644
+
+1527676  aaaaggcgaat  1527686
+         |||||||||||
+1527702  ttttccgctta  1527692
+
+1533309  aggctgcctgaa  1533320
+         ||||||||||||
+1533340  tccgacggactt  1533329
+
+1534421  aaaagcgtatc  1534431
+         |||||||||||
+1534456  ttttcgcatag  1534446
+
+1535911  ttcaggcagcc  1535921
+         |||||||||||
+1536022  aagtccgtcgg  1536012
+
+1539059  ttcaggcagc  1539068
+         ||||||||||
+1539105  aagtccgtcg  1539096
+
+1543275  ccctctccctgtgggagaggg  1543295
+         |||||||||||||||||||||
+1543360  gggagagggacaccctctccc  1543340
+
+1543328  ccctctccct  1543337
+         ||||||||||
+1543360  gggagaggga  1543351
+
+1544560  acaaaaaggcggataa  1544575
+         ||||||||||||||||
+1544598  tgtttttccgcctatt  1544583
+
+1545449  gctattttaa  1545458
+         ||||||||||
+1545497  cgataaaatt  1545488
+
+1546982  aggggcggat  1546991
+         ||||||||||
+1547006  tccccgccta  1546997
+
+1547045  tgtagggtgcaacttgttgcacca  1547068
+         ||||||||||||||||||||||||
+1547114  acatcccacgttgaacaacgtggt  1547091
+
+1550455  ttcaggcagcccaa  1550468
+         ||||||||||||||
+1550489  aagtccgtcgggtt  1550476
+
+1554008  gttttcaggc  1554017
+         ||||||||||
+1554028  caaaagtccg  1554019
+
+1555165  ccctctccct  1555174
+         ||||||||||
+1555197  gggagaggga  1555188
+
+1555165  ccctctccctttgggagaggg  1555185
+         |||||||||||||||||||||
+1555256  gggagagggaaaccctctccc  1555236
+
+1555177  gggagagggt  1555186
+         ||||||||||
+1555232  ccctctccca  1555223
+
+1556314  gggtgggggt  1556323
+         ||||||||||
+1556350  cccaccccca  1556341
+
+1557459  caaggttttg  1557468
+         ||||||||||
+1557536  gttccaaaac  1557527
+
+1558372  atttcaggcagc  1558383
+         ||||||||||||
+1558405  taaagtccgtcg  1558394
+
+1559276  ctgcctgaaa  1559285
+         ||||||||||
+1559375  gacggacttt  1559366
+
+1559845  aaccattttgc  1559855
+         |||||||||||
+1559961  ttggtaaaacg  1559951
+
+1560424  ctgcctgaaaa  1560434
+         |||||||||||
+1560458  gacggactttt  1560448
+
+1561456  agaggcggat  1561465
+         ||||||||||
+1561480  tctccgccta  1561471
+
+1562746  ctgcctgaaa  1562755
+         ||||||||||
+1562780  gacggacttt  1562771
+
+1565629  ttcgctgccat  1565639
+         |||||||||||
+1565712  aagcgacggta  1565702
+
+1567798  aggcagcctgaaa  1567810
+         |||||||||||||
+1567837  tccgtcggacttt  1567825
+
+1567913  cacacatcat  1567922
+         ||||||||||
+1567966  gtgtgtagta  1567957
+
+1568209  aaagctgcctgaaaa  1568223
+         |||||||||||||||
+1568242  tttcgacggactttt  1568228
+
+1569363  ttcaggctgcctgaaaa  1569379
+         |||||||||||||||||
+1569431  aagtccgacggactttt  1569415
+
+1569414  gttttcaggc  1569423
+         ||||||||||
+1569434  caaaagtccg  1569425
+
+1570516  ccctcccccgt  1570526
+         |||||||||||
+1570542  gggagggggca  1570532
+
+1570533  cgggggaggg  1570542
+         ||||||||||
+1570618  gccccctccc  1570609
+
+1570544  tagggtggggg  1570554
+         |||||||||||
+1570607  atcccaccccc  1570597
+
+1571668  ccctccccct  1571677
+         ||||||||||
+1571692  gggaggggga  1571683
+
+1571851  tgaattgctg  1571860
+         ||||||||||
+1571933  acttaacgac  1571924
+
+1573664  ttgggttttcaggc  1573677
+         ||||||||||||||
+1573692  aacccaaaagtccg  1573679
+
+1574275  attcaggcagcctgaaaa  1574292
+         ||||||||||||||||||
+1574314  taagtccgtcggactttt  1574297
+
+1576317  gttttcaggc  1576326
+         ||||||||||
+1576434  caaaagtccg  1576425
+
+1577324  tgtagggtgcaacttgttgcacca  1577347
+         ||||||||||||||||||||||||
+1577393  acatcccacgttgaacaacgtggt  1577370
+
+1577485  cttacttttt  1577494
+         ||||||||||
+1577505  gaatgaaaaa  1577496
+
+1581071  caaacccgaa  1581080
+         ||||||||||
+1581173  gtttgggctt  1581164
+
+1582650  ttttcaggcagcctgaa  1582666
+         |||||||||||||||||
+1582695  aaaagtccgtcggactt  1582679
+
+1585188  gccatgccaaa  1585198
+         |||||||||||
+1585257  cggtacggttt  1585247
+
+1586765  tttcaggcagccaaa  1586779
+         |||||||||||||||
+1586801  aaagtccgtcggttt  1586787
+
+1588963  aaaaaagctgcctgaaa  1588979
+         |||||||||||||||||
+1589001  ttttttcgacggacttt  1588985
+
+1594334  caggctgcctga  1594345
+         ||||||||||||
+1594453  gtccgacggact  1594442
+
+1595712  ctctccctatgg  1595723
+         ||||||||||||
+1595792  gagagggatacc  1595781
+
+1600404  attttcaggc  1600413
+         ||||||||||
+1600517  taaaagtccg  1600508
+
+1600406  tttcaggcagcttttt  1600421
+         ||||||||||||||||
+1600452  aaagtccgtcgaaaaa  1600437
+
+1600442  gctgcctgaaa  1600452
+         |||||||||||
+1600509  cgacggacttt  1600499
+
+1601192  tgtttttggg  1601201
+         ||||||||||
+1601304  acaaaaaccc  1601295
+
+1601636  attggcaaaa  1601645
+         ||||||||||
+1601731  taaccgtttt  1601722
+
+1601679  ttgccgccatg  1601689
+         |||||||||||
+1601750  aacggcggtac  1601740
+
+1602494  gatttcaggc  1602503
+         ||||||||||
+1602514  ctaaagtccg  1602505
+
+1603548  gttttcaggc  1603557
+         ||||||||||
+1603568  caaaagtccg  1603559
+
+1605177  cttacttttt  1605186
+         ||||||||||
+1605197  gaatgaaaaa  1605188
+
+1605572  caaaattttt  1605581
+         ||||||||||
+1605636  gttttaaaaa  1605627
+
+1605586  tcaaaattttt  1605596
+         |||||||||||
+1605637  agttttaaaaa  1605627
+
+1606419  agcgcgtggc  1606428
+         ||||||||||
+1606519  tcgcgcaccg  1606510
+
+1606864  aaaaatcctct  1606874
+         |||||||||||
+1606908  tttttaggaga  1606898
+
+1607258  tttttattcaat  1607269
+         ||||||||||||
+1607306  aaaaataagtta  1607295
+
+1607342  gtaaacaaac  1607351
+         ||||||||||
+1607390  catttgtttg  1607381
+
+1607561  tttgggtgtt  1607570
+         ||||||||||
+1607642  aaacccacaa  1607633
+
+1609486  attttcaggcagc  1609498
+         |||||||||||||
+1609521  taaaagtccgtcg  1609509
+
+1615643  ttcaggcagcctgaa  1615657
+         |||||||||||||||
+1615679  aagtccgtcggactt  1615665
+
+1617232  aggcagcctgaaa  1617244
+         |||||||||||||
+1617262  tccgtcggacttt  1617250
+
+1617320  ccctctctcc  1617329
+         ||||||||||
+1617354  gggagagagg  1617345
+
+1620107  tttcaggcagcctgaa  1620122
+         ||||||||||||||||
+1620145  aaagtccgtcggactt  1620130
+
+1623272  aggggcggat  1623281
+         ||||||||||
+1623296  tccccgccta  1623287
+
+1624420  aaccatttgc  1624429
+         ||||||||||
+1624496  ttggtaaacg  1624487
+
+1625507  gccctctctcc  1625517
+         |||||||||||
+1625543  cgggagagagg  1625533
+
+1625642  ccctacaaacc  1625652
+         |||||||||||
+1625735  gggatgtttgg  1625725
+
+1628932  aaaaggctgcctgaaa  1628947
+         ||||||||||||||||
+1628968  ttttccgacggacttt  1628953
+
+1629724  taaagcaaaa  1629733
+         ||||||||||
+1629748  atttcgtttt  1629739
+
+1630121  ttggctttgt  1630130
+         ||||||||||
+1630221  aaccgaaaca  1630212
+
+1630518  ctttaatcac  1630527
+         ||||||||||
+1630586  gaaattagtg  1630577
+
+1631483  accaacaccaaa  1631494
+         ||||||||||||
+1631589  tggttgtggttt  1631578
+
+1632226  aggctgcctgaaa  1632238
+         |||||||||||||
+1632256  tccgacggacttt  1632244
+
+1632291  agaggcggat  1632300
+         ||||||||||
+1632315  tctccgccta  1632306
+
+1632343  tgtagggtgcaacttgttgcacca  1632366
+         ||||||||||||||||||||||||
+1632412  acatcccacgttgaacaacgtggt  1632389
+
+1633148  ttcaggctgc  1633157
+         ||||||||||
+1633182  aagtccgacg  1633173
+
+1633248  ttgggcgatg  1633257
+         ||||||||||
+1633353  aacccgctac  1633344
+
+1634005  ttttcaggcagcc  1634017
+         |||||||||||||
+1634106  aaaagtccgtcgg  1634094
+
+1636328  cggcagaaat  1636337
+         ||||||||||
+1636431  gccgtcttta  1636422
+
+1637047  cttacttttt  1637056
+         ||||||||||
+1637067  gaatgaaaaa  1637058
+
+1637274  cttacttttt  1637283
+         ||||||||||
+1637294  gaatgaaaaa  1637285
+
+1638453  caggcagcctgaaag  1638467
+         |||||||||||||||
+1638493  gtccgtcggactttc  1638479
+
+1644462  ttcaggcagcctgaaa  1644477
+         ||||||||||||||||
+1644499  aagtccgtcggacttt  1644484
+
+1645336  tttcaggcagc  1645346
+         |||||||||||
+1645456  aaagtccgtcg  1645446
+
+1645519  aaatatattg  1645528
+         ||||||||||
+1645545  tttatataac  1645536
+
+1646009  cgtcattcccgcgtag  1646024
+         ||||||||||||||||
+1646102  gcagtaagggcgcatc  1646087
+
+1646026  cgggaatcca  1646035
+         ||||||||||
+1646085  gcccttaggt  1646076
+
+1646135  tgtaggttggg  1646145
+         |||||||||||
+1646164  acatccaaccc  1646154
+
+1646466  cgcgttttca  1646475
+         ||||||||||
+1646514  gcgcaaaagt  1646505
+
+1647597  tttcaggcagcct  1647609
+         |||||||||||||
+1647632  aaagtccgtcgga  1647620
+
+1648245  cagctaacac  1648254
+         ||||||||||
+1648269  gtcgattgtg  1648260
+
+1650071  aaaaagctgcctgaaa  1650086
+         ||||||||||||||||
+1650107  tttttcgacggacttt  1650092
+
+1650579  ctgaaacctttgcaaa  1650594
+         ||||||||||||||||
+1650691  gactttggaaacgttt  1650676
+
+1655204  aataaaacctgttg  1655217
+         ||||||||||||||
+1655240  ttattttggacaac  1655227
+
+1660481  gacaaattcg  1660490
+         ||||||||||
+1660576  ctgtttaagc  1660567
+
+1661734  cgccaaaatt  1661743
+         ||||||||||
+1661852  gcggttttaa  1661843
+
+1662004  ccctctccct  1662013
+         ||||||||||
+1662088  gggagaggga  1662079
+
+1662015  tgggagaggg  1662024
+         ||||||||||
+1662077  accctctccc  1662068
+
+1662016  gggagagggc  1662025
+         ||||||||||
+1662064  ccctctcccg  1662055
+
+1662056  ccctctccct  1662065
+         ||||||||||
+1662088  gggagaggga  1662079
+
+1662279  gctgcctgaaa  1662289
+         |||||||||||
+1662399  cgacggacttt  1662389
+
+1663426  caggctgcctgaaa  1663439
+         ||||||||||||||
+1663519  gtccgacggacttt  1663506
+
+1663467  aaacacgccaaa  1663478
+         ||||||||||||
+1663499  tttgtgcggttt  1663488
+
+1663556  gggtgggggt  1663565
+         ||||||||||
+1663592  cccaccccca  1663583
+
+1663596  ccctccccct  1663605
+         ||||||||||
+1663620  gggaggggga  1663611
+
+1664904  ggctgcctgaaa  1664915
+         ||||||||||||
+1664936  ccgacggacttt  1664925
+
+1670822  aaaaagcgcgt  1670832
+         |||||||||||
+1670877  tttttcgcgca  1670867
+
+1671588  aaaacacggtttctgt  1671603
+         ||||||||||||||||
+1671625  ttttgtgccaaagaca  1671610
+
+1671637  tggtttttcaggc  1671649
+         |||||||||||||
+1671663  accaaaaagtccg  1671651
+
+1673677  ctatgatttt  1673686
+         ||||||||||
+1673773  gatactaaaa  1673764
+
+1674389  ttcaggctgcctgaa  1674403
+         |||||||||||||||
+1674421  aagtccgacggactt  1674407
+
+1674808  ttttcaggcagcc  1674820
+         |||||||||||||
+1674844  aaaagtccgtcgg  1674832
+
+1677707  aagctgcctgaaa  1677719
+         |||||||||||||
+1677745  ttcgacggacttt  1677733
+
+1677787  gatttcatatc  1677797
+         |||||||||||
+1677865  ctaaagtatag  1677855
+
+1681648  tccctctcct  1681657
+         ||||||||||
+1681741  agggagagga  1681732
+
+1681659  tgggagaggg  1681668
+         ||||||||||
+1681730  accctctccc  1681721
+
+1681672  gggagagggc  1681681
+         ||||||||||
+1681729  ccctctcccg  1681720
+
+1685499  cttttcaggcagcc  1685512
+         ||||||||||||||
+1685541  gaaaagtccgtcgg  1685528
+
+1685528  ggctgcctgaaa  1685539
+         ||||||||||||
+1685623  ccgacggacttt  1685612
+
+1687909  ttcaggcagcctgaaaag  1687926
+         ||||||||||||||||||
+1687954  aagtccgtcggacttttc  1687937
+
+1688519  tccctctcct  1688528
+         ||||||||||
+1688599  agggagagga  1688590
+
+1688530  tgggagaggg  1688539
+         ||||||||||
+1688588  accctctccc  1688579
+
+1691137  aaacctttcaggc  1691149
+         |||||||||||||
+1691163  tttggaaagtccg  1691151
+
+1691142  tttcaggctgcctgaaa  1691158
+         |||||||||||||||||
+1691262  aaagtccgacggacttt  1691246
+
+1692571  taagctgcctgaa  1692583
+         |||||||||||||
+1692603  attcgacggactt  1692591
+
+1693397  aaggcgggtt  1693406
+         ||||||||||
+1693420  ttccgcccaa  1693411
+
+1694585  gccctctctcc  1694595
+         |||||||||||
+1694621  cgggagagagg  1694611
+
+1695457  aaatttttgt  1695466
+         ||||||||||
+1695483  tttaaaaaca  1695474
+
+1695996  ttcaggcagcctga  1696009
+         ||||||||||||||
+1696030  aagtccgtcggact  1696017
+
+1697523  tttcaggctgcctgaaa  1697539
+         |||||||||||||||||
+1697631  aaagtccgacggacttt  1697615
+
+1697529  gctgcctgaaa  1697539
+         |||||||||||
+1697575  cgacggacttt  1697565
+
+1697564  ttttcaggcagc  1697575
+         ||||||||||||
+1697651  aaaagtccgtcg  1697640
+
+1697614  ttttcaggcagcc  1697626
+         |||||||||||||
+1697651  aaaagtccgtcgg  1697639
+
+1697639  ggctgcctgaaa  1697650
+         ||||||||||||
+1697695  ccgacggacttt  1697684
+
+1697990  catcatgggt  1697999
+         ||||||||||
+1698015  gtagtaccca  1698006
+
+1700285  ttttttcaggctgc  1700298
+         ||||||||||||||
+1700334  aaaaaagtccgacg  1700321
+
+1701682  tgtagggtgcgtaccacgcaccaa  1701705
+         ||||||||||||||||||||||||
+1701742  acatcccacgcatggtgcgtggtt  1701719
+
+1704033  tggaatttcaa  1704043
+         |||||||||||
+1704139  accttaaagtt  1704129
+
+1704665  cgggggaggg  1704674
+         ||||||||||
+1704752  gccccctccc  1704743
+
+1704743  ccctcccccgt  1704753
+         |||||||||||
+1704769  gggagggggca  1704759
+
+1706620  ggcgcaagcc  1706629
+         ||||||||||
+1706688  ccgcgttcgg  1706679
+
+1707432  ttttcaggcagcctgaaaa  1707450
+         |||||||||||||||||||
+1707485  aaaagtccgtcggactttt  1707467
+
+1708593  aaaaataccatt  1708604
+         ||||||||||||
+1708630  tttttatggtaa  1708619
+
+1710466  gctgcctgaaaaa  1710478
+         |||||||||||||
+1710517  cgacggacttttt  1710505
+
+1710500  tgcgttttttca  1710511
+         ||||||||||||
+1710558  acgcaaaaaagt  1710547
+
+1710529  caacatcaacg  1710539
+         |||||||||||
+1710645  gttgtagttgc  1710635
+
+1711873  ttttcaggcagcc  1711885
+         |||||||||||||
+1711911  aaaagtccgtcgg  1711899
+
+1716394  caaaaaataaa  1716404
+         |||||||||||
+1716441  gttttttattt  1716431
+
+1718248  ttcaggcagcc  1718258
+         |||||||||||
+1718277  aagtccgtcgg  1718267
+
+1718259  cgttttcaggc  1718269
+         |||||||||||
+1718281  gcaaaagtccg  1718271
+
+1719189  gatgatgtggggtgcaa  1719205
+         |||||||||||||||||
+1719272  ctactacaccccacgtt  1719256
+
+1719815  cgtttcaggc  1719824
+         ||||||||||
+1719835  gcaaagtccg  1719826
+
+1721995  caatttgtcg  1722004
+         ||||||||||
+1722097  gttaaacagc  1722088
+
+1722476  ctcaatgacc  1722485
+         ||||||||||
+1722592  gagttactgg  1722583
+
+1724302  gatttcatatc  1724312
+         |||||||||||
+1724380  ctaaagtatag  1724370
+
+1725094  tttcaggcagcctga  1725108
+         |||||||||||||||
+1725131  aaagtccgtcggact  1725117
+
+1725094  tttcaggcagc  1725104
+         |||||||||||
+1725186  aaagtccgtcg  1725176
+
+1728135  tcaggctgcctgaaag  1728150
+         ||||||||||||||||
+1728177  agtccgacggactttc  1728162
+
+1729325  attcggtcaa  1729334
+         ||||||||||
+1729423  taagccagtt  1729414
+
+1729457  tttttcaggc  1729466
+         ||||||||||
+1729477  aaaaagtccg  1729468
+
+1729457  tttttcaggcagcc  1729470
+         ||||||||||||||
+1729530  aaaaagtccgtcgg  1729517
+
+1729460  ttcaggcagcctgaa  1729474
+         |||||||||||||||
+1729495  aagtccgtcggactt  1729481
+
+1730749  ccacgctttt  1730758
+         ||||||||||
+1730797  ggtgcgaaaa  1730788
+
+1731201  aaatcggcat  1731210
+         ||||||||||
+1731282  tttagccgta  1731273
+
+1731737  aggcagcctg  1731746
+         ||||||||||
+1731833  tccgtcggac  1731824
+
+1732611  attcaggctgcctgaa  1732626
+         ||||||||||||||||
+1732658  taagtccgacggactt  1732643
+
+1733932  catttttacc  1733941
+         ||||||||||
+1733978  gtaaaaatgg  1733969
+
+1734076  ctttattttt  1734085
+         ||||||||||
+1734119  gaaataaaaa  1734110
+
+1734714  tcaatttggca  1734724
+         |||||||||||
+1734764  agttaaaccgt  1734754
+
+1738006  tgttggaagt  1738015
+         ||||||||||
+1738107  acaaccttca  1738098
+
+1739278  tgaaacgccca  1739288
+         |||||||||||
+1739304  actttgcgggt  1739294
+
+1739687  aaagcagcctgaaaa  1739701
+         |||||||||||||||
+1739722  tttcgtcggactttt  1739708
+
+1741487  attcaggcagca  1741498
+         ||||||||||||
+1741591  taagtccgtcgt  1741580
+
+1742796  ttttggattgt  1742806
+         |||||||||||
+1742817  aaaacctaaca  1742807
+
+1748731  aggctgcctgaaa  1748743
+         |||||||||||||
+1748761  tccgacggacttt  1748749
+
+1749394  ggcgtgtttt  1749403
+         ||||||||||
+1749484  ccgcacaaaa  1749475
+
+1752097  aaaaaggcagcctgaa  1752112
+         ||||||||||||||||
+1752135  tttttccgtcggactt  1752120
+
+1753892  gctgcctgaaaa  1753903
+         ||||||||||||
+1753942  cgacggactttt  1753931
+
+1753933  ttcaggcagc  1753942
+         ||||||||||
+1753983  aagtccgtcg  1753974
+
+1755160  gctgccaaat  1755169
+         ||||||||||
+1755224  cgacggttta  1755215
+
+1759690  tttcaggctgcctga  1759704
+         |||||||||||||||
+1759728  aaagtccgacggact  1759714
+
+1759710  tttttcaggc  1759719
+         ||||||||||
+1759730  aaaaagtccg  1759721
+
+1760758  ttttcaggctgc  1760769
+         ||||||||||||
+1760811  aaaagtccgacg  1760800
+
+1763498  tttattttta  1763507
+         ||||||||||
+1763603  aaataaaaat  1763594
+
+1767304  tttgcccaca  1767313
+         ||||||||||
+1767411  aaacgggtgt  1767402
+
+1769289  ttcaggcagc  1769298
+         ||||||||||
+1769403  aagtccgtcg  1769394
+
+1770100  gccctctctcc  1770110
+         |||||||||||
+1770136  cgggagagagg  1770126
+
+1770283  ccctcccccg  1770292
+         ||||||||||
+1770307  gggagggggc  1770298
+
+1772619  cttacttttt  1772628
+         ||||||||||
+1772646  gaatgaaaaa  1772637
+
+1772733  cgtaggggcggatttcatatccg  1772755
+         |||||||||||||||||||||||
+1772831  gcatccccgcctaaagtataggc  1772809
+
+1772901  cttacttttt  1772910
+         ||||||||||
+1772928  gaatgaaaaa  1772919
+
+1773179  ccgatgtgta  1773188
+         ||||||||||
+1773265  ggctacacat  1773256
+
+1774359  tgccgtgcgcacc  1774371
+         |||||||||||||
+1774419  acggcacgcgtgg  1774407
+
+1774979  attttcaggc  1774988
+         ||||||||||
+1774999  taaaagtccg  1774990
+
+1776062  caacaccgcc  1776071
+         ||||||||||
+1776151  gttgtggcgg  1776142
+
+1777689  cccctctcct  1777698
+         ||||||||||
+1777769  ggggagagga  1777760
+
+1777700  tgggagaggg  1777709
+         ||||||||||
+1777758  accctctccc  1777749
+
+1777921  ggctgcctgt  1777930
+         ||||||||||
+1778016  ccgacggaca  1778007
+
+1778808  tttcaggctgcct  1778820
+         |||||||||||||
+1778842  aaagtccgacgga  1778830
+
+1779707  ttgcgaaaaa  1779716
+         ||||||||||
+1779751  aacgcttttt  1779742
+
+1779848  cttacttttt  1779857
+         ||||||||||
+1779868  gaatgaaaaa  1779859
+
+1781727  aaacgcctgaa  1781737
+         |||||||||||
+1781758  tttgcggactt  1781748
+
+1781902  ttaaagcccca  1781912
+         |||||||||||
+1782012  aatttcggggt  1782002
+
+1786300  gctgcctgaaag  1786311
+         ||||||||||||
+1786324  cgacggactttc  1786313
+
+1787126  ttttcaggcagcctgaaa  1787143
+         ||||||||||||||||||
+1787223  aaaagtccgtcggacttt  1787206
+
+1787196  caaaaaaaca  1787205
+         ||||||||||
+1787266  gtttttttgt  1787257
+
+1787206  tttcaggctgc  1787216
+         |||||||||||
+1787312  aaagtccgacg  1787302
+
+1789002  cttacttttt  1789011
+         ||||||||||
+1789022  gaatgaaaaa  1789013
+
+1789418  tttcaggctgcctgaat  1789434
+         |||||||||||||||||
+1789460  aaagtccgacggactta  1789444
+
+1791362  caagaaattg  1791371
+         ||||||||||
+1791415  gttctttaac  1791406
+
+1793047  aaagcagcctgaaaa  1793061
+         |||||||||||||||
+1793080  tttcgtcggactttt  1793066
+
+1794991  gtttcaggcagc  1795002
+         ||||||||||||
+1795024  caaagtccgtcg  1795013
+
+1795324  caaattgaatg  1795334
+         |||||||||||
+1795436  gtttaacttac  1795426
+
+1796168  gctgcctgaaa  1796178
+         |||||||||||
+1796278  cgacggacttt  1796268
+
+1796430  ccacacaaaa  1796439
+         ||||||||||
+1796543  ggtgtgtttt  1796534
+
+1798567  ggttgccaaaa  1798577
+         |||||||||||
+1798668  ccaacggtttt  1798658
+
+1798854  tgatttgccat  1798864
+         |||||||||||
+1798970  actaaacggta  1798960
+
+1799480  accctctccc  1799489
+         ||||||||||
+1799514  tgggagaggg  1799505
+
+1799483  ctctccctgtgggag  1799497
+         |||||||||||||||
+1799555  gagagggacaccctc  1799541
+
+1799525  ccctctctcc  1799534
+         ||||||||||
+1799559  gggagagagg  1799550
+
+1807690  tttcaggcagc  1807700
+         |||||||||||
+1807724  aaagtccgtcg  1807714
+
+1812394  gcagcctgaaa  1812404
+         |||||||||||
+1812420  cgtcggacttt  1812410
+
+1814402  ctttgtaaaac  1814412
+         |||||||||||
+1814477  gaaacattttg  1814467
+
+1816791  tagggtggaca  1816801
+         |||||||||||
+1816813  atcccacctgt  1816803
+
+1819321  ccgaaaacgc  1819330
+         ||||||||||
+1819429  ggcttttgcg  1819420
+
+1819719  ttttaataaa  1819728
+         ||||||||||
+1819800  aaaattattt  1819791
+
+1820725  taaaaatatta  1820735
+         |||||||||||
+1820817  atttttataat  1820807
+
+1820817  aggctgcctgaaa  1820829
+         |||||||||||||
+1820858  tccgacggacttt  1820846
+
+1820846  tttcaggcagcctg  1820859
+         ||||||||||||||
+1820965  aaagtccgtcggac  1820952
+
+1822628  cgcccaatca  1822637
+         ||||||||||
+1822735  gcgggttagt  1822726
+
+1823634  attttatgaa  1823643
+         ||||||||||
+1823715  taaaatactt  1823706
+
+1824609  attttcaggc  1824618
+         ||||||||||
+1824629  taaaagtccg  1824620
+
+1824612  ttcaggcagcctga  1824625
+         ||||||||||||||
+1824661  aagtccgtcggact  1824648
+
+1824694  gggcgcatcg  1824703
+         ||||||||||
+1824728  cccgcgtagc  1824719
+
+1828144  gatttcatatc  1828154
+         |||||||||||
+1828221  ctaaagtatag  1828211
+
+1828293  tttcaggcagcc  1828304
+         ||||||||||||
+1828329  aaagtccgtcgg  1828318
+
+1829455  tggcattggcaa  1829466
+         ||||||||||||
+1829559  accgtaaccgtt  1829548
+
+1829876  cagtacacgacaa  1829888
+         |||||||||||||
+1829979  gtcatgtgctgtt  1829967
+
+1829916  ccctccccct  1829925
+         ||||||||||
+1829940  gggaggggga  1829931
+
+1830487  acgccattga  1830496
+         ||||||||||
+1830571  tgcggtaact  1830562
+
+1830847  aggcagcctgaaaa  1830860
+         ||||||||||||||
+1830888  tccgtcggactttt  1830875
+
+1832424  gcaatatagc  1832433
+         ||||||||||
+1832504  cgttatatcg  1832495
+
+1833233  aaattcaggc  1833242
+         ||||||||||
+1833253  tttaagtccg  1833244
+
+1833988  gctgcctgaa  1833997
+         ||||||||||
+1834023  cgacggactt  1834014
+
+1838170  attcaggcagcc  1838181
+         ||||||||||||
+1838204  taagtccgtcgg  1838193
+
+1845147  aaagctgcctg  1845157
+         |||||||||||
+1845179  tttcgacggac  1845169
+
+1845617  aaacgccaaa  1845626
+         ||||||||||
+1845652  tttgcggttt  1845643
+
+1846988  ggtttccaaa  1846997
+         ||||||||||
+1847087  ccaaaggttt  1847078
+
+1847851  tttttcaggc  1847860
+         ||||||||||
+1847871  aaaaagtccg  1847862
+
+1847851  tttttcaggc  1847860
+         ||||||||||
+1847933  aaaaagtccg  1847924
+
+1847859  gctgcctgaaaa  1847870
+         ||||||||||||
+1847904  cgacggactttt  1847893
+
+1847893  ttttcaggcagc  1847904
+         ||||||||||||
+1847932  aaaagtccgtcg  1847921
+
+1849306  gctgcctgaa  1849315
+         ||||||||||
+1849343  cgacggactt  1849334
+
+1849678  gcgtgttttt  1849687
+         ||||||||||
+1849771  cgcacaaaaa  1849762
+
+1850482  ttcaggcagc  1850491
+         ||||||||||
+1850519  aagtccgtcg  1850510
+
+1851776  ttttgcacacc  1851786
+         |||||||||||
+1851823  aaaacgtgtgg  1851813
+
+1852626  ttcaggcagcc  1852636
+         |||||||||||
+1852729  aagtccgtcgg  1852719
+
+1855137  tttcaggctgc  1855147
+         |||||||||||
+1855170  aaagtccgacg  1855160
+
+1857621  gcctgaaatg  1857630
+         ||||||||||
+1857718  cggactttac  1857709
+
+1858607  cccgaatgcg  1858616
+         ||||||||||
+1858671  gggcttacgc  1858662
+
+1859722  aaaaggctgcctgaaaa  1859738
+         |||||||||||||||||
+1859769  ttttccgacggactttt  1859753
+
+1861396  ccacaaagac  1861405
+         ||||||||||
+1861441  ggtgtttctg  1861432
+
+1862401  ttttttcaggc  1862411
+         |||||||||||
+1862423  aaaaaagtccg  1862413
+
+1862403  ttttcaggcagc  1862414
+         ||||||||||||
+1862442  aaaagtccgtcg  1862431
+
+1863086  gctttcaggc  1863095
+         ||||||||||
+1863106  cgaaagtccg  1863097
+
+1863717  ttttcaggctgcctgaa  1863733
+         |||||||||||||||||
+1863764  aaaagtccgacggactt  1863748
+
+1865104  tggggttcaggc  1865115
+         ||||||||||||
+1865128  accccaagtccg  1865117
+
+1865792  taccatgcca  1865801
+         ||||||||||
+1865904  atggtacggt  1865895
+
+1866314  tcaggcagcctgaaa  1866328
+         |||||||||||||||
+1866358  agtccgtcggacttt  1866344
+
+1867663  tgggagaggg  1867672
+         ||||||||||
+1867734  accctctccc  1867725
+
+1867881  ttttcaggcagc  1867892
+         ||||||||||||
+1867916  aaaagtccgtcg  1867905
+
+1869119  gggtgggggt  1869128
+         ||||||||||
+1869155  cccaccccca  1869146
+
+1869159  ccctccccct  1869168
+         ||||||||||
+1869183  gggaggggga  1869174
+
+1870311  ttttttgcgc  1870320
+         ||||||||||
+1870376  aaaaaacgcg  1870367
+
+1871379  caacagccac  1871388
+         ||||||||||
+1871465  gttgtcggtg  1871456
+
+1871395  tgttgttacc  1871404
+         ||||||||||
+1871425  acaacaatgg  1871416
+
+1871416  ggtaacaaca  1871425
+         ||||||||||
+1871494  ccattgttgt  1871485
+
+1871945  aaaacacgcatgaaca  1871960
+         ||||||||||||||||
+1871985  ttttgtgcgtacttgt  1871970
+
+1872948  ttttcaggctgcctga  1872963
+         ||||||||||||||||
+1873016  aaaagtccgacggact  1873001
+
+1875061  cttacttttt  1875070
+         ||||||||||
+1875081  gaatgaaaaa  1875072
+
+1875254  gccctctctcc  1875264
+         |||||||||||
+1875290  cgggagagagg  1875280
+
+1876889  ttcaggcagcctgaa  1876903
+         |||||||||||||||
+1876926  aagtccgtcggactt  1876912
+
+1877752  tgtagggtgcaacttgttgcacca  1877775
+         ||||||||||||||||||||||||
+1877821  acatcccacgttgaacaacgtggt  1877798
+
+1878753  agaggcggat  1878762
+         ||||||||||
+1878777  tctccgccta  1878768
+
+1878862  cttacttttt  1878871
+         ||||||||||
+1878882  gaatgaaaaa  1878873
+
+1878925  gctgcctgaaaa  1878936
+         ||||||||||||
+1878960  cgacggactttt  1878949
+
+1879965  ttacaaaaaa  1879974
+         ||||||||||
+1879994  aatgtttttt  1879985
+
+1881786  ccctccccct  1881795
+         ||||||||||
+1881810  gggaggggga  1881801
+
+1881814  gggtgggggt  1881823
+         ||||||||||
+1881850  cccaccccca  1881841
+
+1882345  ggctgcctgaa  1882355
+         |||||||||||
+1882410  ccgacggactt  1882400
+
+1884756  aaaacggtttcaggc  1884770
+         |||||||||||||||
+1884786  ttttgccaaagtccg  1884772
+
+1884763  tttcaggctgcctg  1884776
+         ||||||||||||||
+1884832  aaagtccgacggac  1884819
+
+1885508  gctgcctgaa  1885517
+         ||||||||||
+1885534  cgacggactt  1885525
+
+1888377  atgttcaggc  1888386
+         ||||||||||
+1888414  tacaagtccg  1888405
+
+1888516  gctgcctgaaa  1888526
+         |||||||||||
+1888554  cgacggacttt  1888544
+
+1889434  ccatggcttt  1889443
+         ||||||||||
+1889515  ggtaccgaaa  1889506
+
+1889925  gccctctctcc  1889935
+         |||||||||||
+1889961  cgggagagagg  1889951
+
+1891219  aaaaatcaac  1891228
+         ||||||||||
+1891327  tttttagttg  1891318
+
+1891940  gctgcctgaa  1891949
+         ||||||||||
+1892011  cgacggactt  1892002
+
+1893067  gggtgggggt  1893076
+         ||||||||||
+1893103  cccaccccca  1893094
+
+1893107  ccctccccct  1893116
+         ||||||||||
+1893131  gggaggggga  1893122
+
+1893567  tttcaggcagcctga  1893581
+         |||||||||||||||
+1893603  aaagtccgtcggact  1893589
+
+1895578  cgtaggggcggatttcatatccgccct  1895604
+         |||||||||||||||||||||||||||
+1895676  gcatccccgcctaaagtataggcggga  1895650
+
+1895707  cagcctgaaa  1895716
+         ||||||||||
+1895740  gtcggacttt  1895731
+
+1899728  tttcaggcagcct  1899740
+         |||||||||||||
+1899780  aaagtccgtcgga  1899768
+
+1899733  ggcagcctgaaaac  1899746
+         ||||||||||||||
+1899850  ccgtcggacttttg  1899837
+
+1899737  gcctgaaaaca  1899747
+         |||||||||||
+1899827  cggacttttgt  1899817
+
+1899770  gctgcctgaaa  1899780
+         |||||||||||
+1899830  cgacggacttt  1899820
+
+1906709  aagctgcctgaaaac  1906723
+         |||||||||||||||
+1906748  ttcgacggacttttg  1906734
+
+1909466  aggcagaataa  1909476
+         |||||||||||
+1909492  tccgtcttatt  1909482
+
+1909560  caagttggct  1909569
+         ||||||||||
+1909665  gttcaaccga  1909656
+
+1910375  gctggctgaa  1910384
+         ||||||||||
+1910423  cgaccgactt  1910414
+
+1912535  aaacgcgatt  1912544
+         ||||||||||
+1912646  tttgcgctaa  1912637
+
+1913904  gcaaatccac  1913913
+         ||||||||||
+1913984  cgtttaggtg  1913975
+
+1914507  tttcaggcagc  1914517
+         |||||||||||
+1914558  aaagtccgtcg  1914548
+
+1915819  atgcaggggcaga  1915831
+         |||||||||||||
+1915851  tacgtccccgtct  1915839
+
+1915833  atgaaatctgccc  1915845
+         |||||||||||||
+1915888  tactttagacggg  1915876
+
+1915935  tgtagggtgcaacttgttgcacca  1915958
+         ||||||||||||||||||||||||
+1916004  acatcccacgttgaacaacgtggt  1915981
+
+1916032  agaggcggat  1916041
+         ||||||||||
+1916056  tctccgccta  1916047
+
+1919337  attgaaaatt  1919346
+         ||||||||||
+1919435  taacttttaa  1919426
+
+1923803  aggctgcctgaa  1923814
+         ||||||||||||
+1923832  tccgacggactt  1923821
+
+1926479  ttcaggctgcctgaaaa  1926495
+         |||||||||||||||||
+1926517  aagtccgacggactttt  1926501
+
+1926505  caggcagcctgaaac  1926519
+         |||||||||||||||
+1926623  gtccgtcggactttg  1926609
+
+1928734  tttcaggcagcctt  1928747
+         ||||||||||||||
+1928772  aaagtccgtcggaa  1928759
+
+1929669  caggcagcctgaaa  1929682
+         ||||||||||||||
+1929702  gtccgtcggacttt  1929689
+
+1930659  gcgcgtgtaca  1930669
+         |||||||||||
+1930764  cgcgcacatgt  1930754
+
+1932338  tgattcaggc  1932347
+         ||||||||||
+1932358  actaagtccg  1932349
+
+1935184  atggaaattt  1935193
+         ||||||||||
+1935302  tacctttaaa  1935293
+
+1936928  tttcaggcagcctgaaaaa  1936946
+         |||||||||||||||||||
+1936976  aaagtccgtcggacttttt  1936958
+
+1939860  ttttcaggcag  1939870
+         |||||||||||
+1939930  aaaagtccgtc  1939920
+
+1941051  aagattattt  1941060
+         ||||||||||
+1941092  ttctaataaa  1941083
+
+1941092  ttcaggcagc  1941101
+         ||||||||||
+1941135  aagtccgtcg  1941126
+
+1943669  ttccagcgcg  1943678
+         ||||||||||
+1943730  aaggtcgcgc  1943721
+
+1944376  aaaagctgcctgaaa  1944390
+         |||||||||||||||
+1944410  ttttcgacggacttt  1944396
+
+1944703  tttgggtgtt  1944712
+         ||||||||||
+1944784  aaacccacaa  1944775
+
+1944955  gtaaacaaac  1944964
+         ||||||||||
+1945003  catttgtttg  1944994
+
+1945039  tttttattcaat  1945050
+         ||||||||||||
+1945087  aaaaataagtta  1945076
+
+1946477  aatttttggc  1946486
+         ||||||||||
+1946569  ttaaaaaccg  1946560
+
+1949946  tgatgttggc  1949955
+         ||||||||||
+1949999  actacaaccg  1949990
+
+1950179  tcaggcagcg  1950188
+         ||||||||||
+1950219  agtccgtcgc  1950210
+
+1950999  attgattttt  1951008
+         ||||||||||
+1951088  taactaaaaa  1951079
+
+1953971  caaaatcaggctgcctgaaa  1953990
+         ||||||||||||||||||||
+1954023  gttttagtccgacggacttt  1954004
+
+1954717  tcgcattttc  1954726
+         ||||||||||
+1954804  agcgtaaaag  1954795
+
+1955348  caggctgcctgaaa  1955361
+         ||||||||||||||
+1955388  gtccgacggacttt  1955375
+
+1956945  tttcaggctg  1956954
+         ||||||||||
+1957047  aaagtccgac  1957038
+
+1957848  atcgtgaatg  1957857
+         ||||||||||
+1957963  tagcacttac  1957954
+
+1959232  ggctgcctgaaa  1959243
+         ||||||||||||
+1959262  ccgacggacttt  1959251
+
+1960470  cagtacacgaca  1960481
+         ||||||||||||
+1960589  gtcatgtgctgt  1960578
+
+1960488  atgtagggtgcgt  1960500
+         |||||||||||||
+1960558  tacatcccacgca  1960546
+
+1962102  tcgcttgccg  1962111
+         ||||||||||
+1962178  agcgaacggc  1962169
+
+1962255  taaaataagaaa  1962266
+         ||||||||||||
+1962341  attttattcttt  1962330
+
+1963222  tttcaggctgcct  1963234
+         |||||||||||||
+1963265  aaagtccgacgga  1963253
+
+1963247  aatttcaggc  1963256
+         ||||||||||
+1963267  ttaaagtccg  1963258
+
+1963255  gcagcctgaa  1963264
+         ||||||||||
+1963348  cgtcggactt  1963339
+
+1963951  aaaatgcttt  1963960
+         ||||||||||
+1964008  ttttacgaaa  1963999
+
+1964007  ttgccaaattg  1964017
+         |||||||||||
+1964114  aacggtttaac  1964104
+
+1964202  aggctgcctg  1964211
+         ||||||||||
+1964321  tccgacggac  1964312
+
+1966333  attcaggcagcctgaaaa  1966350
+         ||||||||||||||||||
+1966370  taagtccgtcggactttt  1966353
+
+1968437  ctaaaataat  1968446
+         ||||||||||
+1968513  gattttatta  1968504
+
+1968770  aaattcaggcagcc  1968783
+         ||||||||||||||
+1968821  tttaagtccgtcgg  1968808
+
+1969463  cagcaaccttgtgt  1969476
+         ||||||||||||||
+1969499  gtcgttggaacaca  1969486
+
+1970719  gcagcctgaaag  1970730
+         ||||||||||||
+1970754  cgtcggactttc  1970743
+
+1972479  tttcaggcagcc  1972490
+         ||||||||||||
+1972580  aaagtccgtcgg  1972569
+
+1974832  ccctctcccacagga  1974846
+         |||||||||||||||
+1974959  gggagagggtgtcct  1974945
+
+1975378  aactttcaggc  1975388
+         |||||||||||
+1975400  ttgaaagtccg  1975390
+
+1975418  ctctcccacaggagagggg  1975436
+         |||||||||||||||||||
+1975540  gagagggtgtcctctcccc  1975522
+
+1976155  acggttgcca  1976164
+         ||||||||||
+1976243  tgccaacggt  1976234
+
+1978158  gttttcaggc  1978167
+         ||||||||||
+1978178  caaaagtccg  1978169
+
+1978563  tgttttcaggcagcca  1978578
+         ||||||||||||||||
+1978604  acaaaagtccgtcggt  1978589
+
+1978658  ccctctctcc  1978667
+         ||||||||||
+1978692  gggagagagg  1978683
+
+1984751  aaccccagcat  1984761
+         |||||||||||
+1984776  ttggggtcgta  1984766
+
+1986122  aaacgcgccc  1986131
+         ||||||||||
+1986226  tttgcgcggg  1986217
+
+1987445  gatttcatatc  1987455
+         |||||||||||
+1987523  ctaaagtatag  1987513
+
+1987560  gtttcaggctgcctgaaa  1987577
+         ||||||||||||||||||
+1987652  caaagtccgacggacttt  1987635
+
+1989554  ggctttggcgtaa  1989566
+         |||||||||||||
+1989586  ccgaaaccgcatt  1989574
+
+1989912  ttcaggctgcc  1989922
+         |||||||||||
+1989985  aagtccgacgg  1989975
+
+1989915  aggctgcctgaaa  1989927
+         |||||||||||||
+1989951  tccgacggacttt  1989939
+
+1989993  ccctcccccgt  1990003
+         |||||||||||
+1990019  gggagggggca  1990009
+
+1992132  ttcaggctgcctgaaaa  1992148
+         |||||||||||||||||
+1992178  aagtccgacggactttt  1992162
+
+1992828  tgtgttggcg  1992837
+         ||||||||||
+1992946  acacaaccgc  1992937
+
+1995418  gcgtggtttg  1995427
+         ||||||||||
+1995494  cgcaccaaac  1995485
+
+1995926  aatttgggca  1995935
+         ||||||||||
+1996020  ttaaacccgt  1996011
+
+1996475  cacggcattc  1996484
+         ||||||||||
+1996532  gtgccgtaag  1996523
+
+1996890  ttttcaggcagc  1996901
+         ||||||||||||
+1996984  aaaagtccgtcg  1996973
+
+1996891  tttcaggcagc  1996901
+         |||||||||||
+1996926  aaagtccgtcg  1996916
+
+1998350  ttgcgcgatg  1998359
+         ||||||||||
+1998445  aacgcgctac  1998436
+
+1999207  tttcaggcagccaaaa  1999222
+         ||||||||||||||||
+1999244  aaagtccgtcggtttt  1999229
+
+1999263  caaacaatgtc  1999273
+         |||||||||||
+1999319  gtttgttacag  1999309
+
+1999494  aaaatgttttttt  1999506
+         |||||||||||||
+1999539  ttttacaaaaaaa  1999527
+
+2002350  cttacttttt  2002359
+         ||||||||||
+2002370  gaatgaaaaa  2002361
+
+2002482  cttacttttt  2002491
+         ||||||||||
+2002502  gaatgaaaaa  2002493
+
+2003096  gcctgtaacctg  2003107
+         ||||||||||||
+2003215  cggacattggac  2003204
+
+2003110  ccctccccct  2003119
+         ||||||||||
+2003134  gggaggggga  2003125
+
+2003138  gggtgggggt  2003147
+         ||||||||||
+2003174  cccaccccca  2003165
+
+2003528  cagtttaaaag  2003538
+         |||||||||||
+2003639  gtcaaattttc  2003629
+
+2003651  gatttcatatc  2003661
+         |||||||||||
+2003729  ctaaagtatag  2003719
+
+2006225  cgcccaccacgcc  2006237
+         |||||||||||||
+2006305  gcgggtggtgcgg  2006293
+
+2006569  ttcaggctgc  2006578
+         ||||||||||
+2006597  aagtccgacg  2006588
+
+2007320  gattggcaaa  2007329
+         ||||||||||
+2007359  ctaaccgttt  2007350
+
+2008271  tgttgcaagc  2008280
+         ||||||||||
+2008355  acaacgttcg  2008346
+
+2008574  tgtattcgcaaga  2008586
+         |||||||||||||
+2008624  acataagcgttct  2008612
+
+2008786  atttcaggcagccttt  2008801
+         ||||||||||||||||
+2008825  taaagtccgtcggaaa  2008810
+
+2011487  aaacaagcgac  2011497
+         |||||||||||
+2011525  tttgttcgctg  2011515
+
+2014069  ccctccccct  2014078
+         ||||||||||
+2014093  gggaggggga  2014084
+
+2015087  agaacctgtgtt  2015098
+         ||||||||||||
+2015158  tcttggacacaa  2015147
+
+2015162  atttcaggcagcc  2015174
+         |||||||||||||
+2015201  taaagtccgtcgg  2015189
+
+2016680  ttcaggctgcctgaaaa  2016696
+         |||||||||||||||||
+2016786  aagtccgacggactttt  2016770
+
+2018335  agattttgcc  2018344
+         ||||||||||
+2018427  tctaaaacgg  2018418
+
+2018590  tttgttgcgcc  2018600
+         |||||||||||
+2018626  aaacaacgcgg  2018616
+
+2022203  ccaccgccat  2022212
+         ||||||||||
+2022278  ggtggcggta  2022269
+
+2022494  gtttgccgcc  2022503
+         ||||||||||
+2022558  caaacggcgg  2022549
+
+2022673  gggtgggggt  2022682
+         ||||||||||
+2022709  cccaccccca  2022700
+
+2022713  ccctccccct  2022722
+         ||||||||||
+2022736  gggaggggga  2022727
+
+2022946  ttcaggcagc  2022955
+         ||||||||||
+2023058  aagtccgtcg  2023049
+
+2027198  atcgcgcccaaa  2027209
+         ||||||||||||
+2027232  tagcgcgggttt  2027221
+
+2027880  ttgaaaaaaa  2027889
+         ||||||||||
+2027917  aacttttttt  2027908
+
+2027986  aaaccacgcc  2027995
+         ||||||||||
+2028058  tttggtgcgg  2028049
+
+2028688  tttcaggcagc  2028698
+         |||||||||||
+2028804  aaagtccgtcg  2028794
+
+2030184  ttattttaac  2030193
+         ||||||||||
+2030277  aataaaattg  2030268
+
+2030781  aaaaaggctgcctgaaa  2030797
+         |||||||||||||||||
+2030818  tttttccgacggacttt  2030802
+
+2031229  taatcggtgc  2031238
+         ||||||||||
+2031268  attagccacg  2031259
+
+2031365  ctttgatgatg  2031375
+         |||||||||||
+2031448  gaaactactac  2031438
+
+2032687  ttggcgcgtt  2032696
+         ||||||||||
+2032771  aaccgcgcaa  2032762
+
+2032920  aattttattg  2032929
+         ||||||||||
+2032952  ttaaaataac  2032943
+
+2036050  aagctgcctgaaaa  2036063
+         ||||||||||||||
+2036078  ttcgacggactttt  2036065
+
+2036531  ccgttgccac  2036540
+         ||||||||||
+2036594  ggcaacggtg  2036585
+
+2037818  ggcggcatttt  2037828
+         |||||||||||
+2037919  ccgccgtaaaa  2037909
+
+2038468  gctgcctgaa  2038477
+         ||||||||||
+2038535  cgacggactt  2038526
+
+2038511  gctgcctgaa  2038520
+         ||||||||||
+2038535  cgacggactt  2038526
+
+2039695  gctgcctgaat  2039705
+         |||||||||||
+2039730  cgacggactta  2039720
+
+2040521  ccctcccccgt  2040531
+         |||||||||||
+2040545  gggagggggca  2040535
+
+2040552  tttcaggcagc  2040562
+         |||||||||||
+2040598  aaagtccgtcg  2040588
+
+2041299  ttaaaggttt  2041308
+         ||||||||||
+2041323  aatttccaaa  2041314
+
+2046768  taaaaatacc  2046777
+         ||||||||||
+2046819  atttttatgg  2046810
+
+2049819  tttttgtaat  2049828
+         ||||||||||
+2049894  aaaaacatta  2049885
+
+2051345  aaaagctgcctgaaacg  2051361
+         |||||||||||||||||
+2051389  ttttcgacggactttgc  2051373
+
+2051428  cttacttttt  2051437
+         ||||||||||
+2051448  gaatgaaaaa  2051439
+
+2051596  atgtagggtgcaacttgttgcac  2051618
+         |||||||||||||||||||||||
+2051667  tacatcccacgttgaacaacgtg  2051645
+
+2051694  agaggcggat  2051703
+         ||||||||||
+2051718  tctccgccta  2051709
+
+2051806  cttacttttt  2051815
+         ||||||||||
+2051826  gaatgaaaaa  2051817
+
+2051838  aaaacccatt  2051847
+         ||||||||||
+2051895  ttttgggtaa  2051886
+
+2051861  aaaaagctgcctgaaaacc  2051879
+         |||||||||||||||||||
+2051908  tttttcgacggacttttgg  2051890
+
+2053441  caggcagcctgaaaa  2053455
+         |||||||||||||||
+2053479  gtccgtcggactttt  2053465
+
+2054192  gttttcaggc  2054201
+         ||||||||||
+2054212  caaaagtccg  2054203
+
+2055521  tttcaggcag  2055530
+         ||||||||||
+2055615  aaagtccgtc  2055606
+
+2056501  tgtggcaaca  2056510
+         ||||||||||
+2056581  acaccgttgt  2056572
+
+2057391  cttacttttt  2057400
+         ||||||||||
+2057411  gaatgaaaaa  2057402
+
+2059404  ttcaggcagc  2059413
+         ||||||||||
+2059438  aagtccgtcg  2059429
+
+2059429  gctgcctgaaa  2059439
+         |||||||||||
+2059507  cgacggacttt  2059497
+
+2059499  tcaggcagcctgaaaagccaatggggtgg  2059527
+         |||||||||||||||||||||||||||||
+2059564  agtccgtcggacttttcggttaccccacc  2059536
+
+2061286  aggcagcctgaa  2061297
+         ||||||||||||
+2061315  tccgtcggactt  2061304
+
+2062996  ttcaggcagc  2063005
+         ||||||||||
+2063038  aagtccgtcg  2063029
+
+2066492  aaacgccatttat  2066504
+         |||||||||||||
+2066524  tttgcggtaaata  2066512
+
+2067132  aaatggcggcaa  2067143
+         ||||||||||||
+2067233  tttaccgccgtt  2067222
+
+2068347  tgccaaaatt  2068356
+         ||||||||||
+2068372  acggttttaa  2068363
+
+2070009  gccctctccc  2070018
+         ||||||||||
+2070031  cgggagaggg  2070022
+
+2070012  ctctccctatgggagag  2070028
+         |||||||||||||||||
+2070089  gagagggataccctctc  2070073
+
+2070059  ccctctctcc  2070068
+         ||||||||||
+2070093  gggagagagg  2070084
+
+2073491  tttcaggcagc  2073501
+         |||||||||||
+2073524  aaagtccgtcg  2073514
+
+2074451  tgatgattttt  2074461
+         |||||||||||
+2074562  actactaaaaa  2074552
+
+2075830  gcagcctgaa  2075839
+         ||||||||||
+2075919  cgtcggactt  2075910
+
+2077106  atttcaggcag  2077116
+         |||||||||||
+2077181  taaagtccgtc  2077171
+
+2078297  ttttcaggctgcctgaa  2078313
+         |||||||||||||||||
+2078343  aaaagtccgacggactt  2078327
+
+2081076  aaatcgccaca  2081086
+         |||||||||||
+2081113  tttagcggtgt  2081103
+
+2083495  tttcaggcagcctgaaac  2083512
+         ||||||||||||||||||
+2083576  aaagtccgtcggactttg  2083559
+
+2083515  aaaaaagtcggt  2083526
+         ||||||||||||
+2083544  ttttttcagcca  2083533
+
+2084981  aaaaataaaa  2084990
+         ||||||||||
+2085063  tttttatttt  2085054
+
+2085016  ttttaaaaaa  2085025
+         ||||||||||
+2085068  aaaatttttt  2085059
+
+2085133  gatttcatatc  2085143
+         |||||||||||
+2085211  ctaaagtatag  2085201
+
+2085298  cttacttttt  2085307
+         ||||||||||
+2085318  gaatgaaaaa  2085309
+
+2085356  aggctgcctgaaag  2085369
+         ||||||||||||||
+2085391  tccgacggactttc  2085378
+
+2086884  tgtgggcattg  2086894
+         |||||||||||
+2086978  acacccgtaac  2086968
+
+2089425  ggtcgccaat  2089434
+         ||||||||||
+2089494  ccagcggtta  2089485
+
+2091357  aagctgcctgaaaag  2091371
+         |||||||||||||||
+2091396  ttcgacggacttttc  2091382
+
+2092336  aagttcaggc  2092345
+         ||||||||||
+2092378  ttcaagtccg  2092369
+
+2093500  aggctgcctgaaa  2093512
+         |||||||||||||
+2093530  tccgacggacttt  2093518
+
+2102049  tattttttac  2102058
+         ||||||||||
+2102167  ataaaaaatg  2102158
+
+2103861  tctcaatgat  2103870
+         ||||||||||
+2103951  agagttacta  2103942
+
+2105159  acgctggcaa  2105168
+         ||||||||||
+2105189  tgcgaccgtt  2105180
+
+2110883  tgaaacccaaa  2110893
+         |||||||||||
+2110987  actttgggttt  2110977
+
+2111361  gttttcaggc  2111370
+         ||||||||||
+2111381  caaaagtccg  2111372
+
+2111739  ttttcaggcagc  2111750
+         ||||||||||||
+2111776  aaaagtccgtcg  2111765
+
+2117274  tttcaggcagccaaa  2117288
+         |||||||||||||||
+2117311  aaagtccgtcggttt  2117297
+
+2125129  ctggctgaaat  2125139
+         |||||||||||
+2125238  gaccgacttta  2125228
+
+2126443  gcgcaatttg  2126452
+         ||||||||||
+2126523  cgcgttaaac  2126514
+
+2127523  ttttcaggcagcctgaaa  2127540
+         ||||||||||||||||||
+2127572  aaaagtccgtcggacttt  2127555
+
+2127547  aaaccacttttcaggc  2127562
+         ||||||||||||||||
+2127579  tttggtgaaaagtccg  2127564
+
+2127743  gcattcaaag  2127752
+         ||||||||||
+2127853  cgtaagtttc  2127844
+
+2129434  gccctctctcc  2129444
+         |||||||||||
+2129470  cgggagagagg  2129460
+
+2130683  ttcaggcagcc  2130693
+         |||||||||||
+2130718  aagtccgtcgg  2130708
+
+2136822  ccctctctcc  2136831
+         ||||||||||
+2136856  gggagagagg  2136847
+
+2137070  cttacttttt  2137079
+         ||||||||||
+2137090  gaatgaaaaa  2137081
+
+2138744  tttcaggcagc  2138754
+         |||||||||||
+2138785  aaagtccgtcg  2138775
+
+2140791  cgcaaaatgg  2140800
+         ||||||||||
+2140886  gcgttttacc  2140877
+
+2141170  aattaaaaat  2141179
+         ||||||||||
+2141234  ttaattttta  2141225
+
+2142872  tttttcaggc  2142881
+         ||||||||||
+2142892  aaaaagtccg  2142883
+
+2144188  attcaatttaaa  2144199
+         ||||||||||||
+2144278  taagttaaattt  2144267
+
+2144558  ttcatcaaat  2144567
+         ||||||||||
+2144636  aagtagttta  2144627
+
+2144767  taaattcagaa  2144777
+         |||||||||||
+2144801  atttaagtctt  2144791
+
+2144949  aaaatcaatg  2144958
+         ||||||||||
+2145031  ttttagttac  2145022
+
+2145125  atttaaattta  2145135
+         |||||||||||
+2145149  taaatttaaat  2145139
+
+2145141  aatttaaata  2145150
+         ||||||||||
+2145220  ttaaatttat  2145211
+
+2145178  aacttgcaatatg  2145190
+         |||||||||||||
+2145299  ttgaacgttatac  2145287
+
+2146418  ccctctccca  2146427
+         ||||||||||
+2146438  gggagagggt  2146429
+
+2146950  aaaccccaaattttc  2146964
+         |||||||||||||||
+2146984  tttggggtttaaaag  2146970
+
+2149959  gccctctccc  2149968
+         ||||||||||
+2149981  cgggagaggg  2149972
+
+2150009  ccctctctcc  2150018
+         ||||||||||
+2150043  gggagagagg  2150034
+
+2152885  ttttcaggcagcctgaat  2152902
+         ||||||||||||||||||
+2152999  aaaagtccgtcggactta  2152982
+
+2155498  gccctctccc  2155507
+         ||||||||||
+2155520  cgggagaggg  2155511
+
+2157877  aaacatggtttgt  2157889
+         |||||||||||||
+2157924  tttgtaccaaaca  2157912
+
+2160823  tgcaggcagcgtg  2160835
+         |||||||||||||
+2160925  acgtccgtcgcac  2160913
+
+2162542  ggctgcctgaa  2162552
+         |||||||||||
+2162591  ccgacggactt  2162581
+
+2164928  tttcaggcagccttt  2164942
+         |||||||||||||||
+2164959  aaagtccgtcggaaa  2164945
+
+2170629  attttcaggc  2170638
+         ||||||||||
+2170649  taaaagtccg  2170640
+
+2170821  aggggcagat  2170830
+         ||||||||||
+2170845  tccccgtcta  2170836
+
+2173328  atcgcccatg  2173337
+         ||||||||||
+2173403  tagcgggtac  2173394
+
+2175763  aaagctgcctgaaaatg  2175779
+         |||||||||||||||||
+2175804  tttcgacggacttttac  2175788
+
+2176622  aattctctttaag  2176634
+         |||||||||||||
+2176653  ttaagagaaattc  2176641
+
+2179196  gcggctttggc  2179206
+         |||||||||||
+2179305  cgccgaaaccg  2179295
+
+2181562  ttcaggctgcctgaaa  2181577
+         ||||||||||||||||
+2181629  aagtccgacggacttt  2181614
+
+2182224  aaggctgcctgaaa  2182237
+         ||||||||||||||
+2182258  ttccgacggacttt  2182245
+
+2183894  ccctcccccg  2183903
+         ||||||||||
+2183918  gggagggggc  2183909
+
+2183894  ccctcccccgtct  2183906
+         |||||||||||||
+2184011  gggagggggcaga  2183999
+
+2183909  cgggggaggg  2183918
+         ||||||||||
+2183994  gccccctccc  2183985
+
+2183920  tagggtggggg  2183930
+         |||||||||||
+2183983  atcccaccccc  2183973
+
+2183985  ccctcccccgt  2183995
+         |||||||||||
+2184011  gggagggggca  2184001
+
+2185368  gtccaaattg  2185377
+         ||||||||||
+2185434  caggtttaac  2185425
+
+2185570  tgtagggtgc  2185579
+         ||||||||||
+2185636  acatcccacg  2185627
+
+2185580  caacttgttgcacca  2185594
+         |||||||||||||||
+2185627  gttgaacaacgtggt  2185613
+
+2186329  aaagcagcctgaaaa  2186343
+         |||||||||||||||
+2186360  tttcgtcggactttt  2186346
+
+2187863  caattttttt  2187872
+         ||||||||||
+2187968  gttaaaaaaa  2187959
+
+2189432  tacttcatca  2189441
+         ||||||||||
+2189514  atgaagtagt  2189505
+
+2189731  ccaaatcggt  2189740
+         ||||||||||
+2189793  ggtttagcca  2189784
+
+2191971  gagcgatgatt  2191981
+         |||||||||||
+2191999  ctcgctactaa  2191989
+
+2192165  atttgttgaa  2192174
+         ||||||||||
+2192198  taaacaactt  2192189
+
+2192503  tgccacccaa  2192512
+         ||||||||||
+2192602  acggtgggtt  2192593
+
+2196041  ttcaggctgc  2196050
+         ||||||||||
+2196073  aagtccgacg  2196064
+
+2196060  caaagcagcc  2196069
+         ||||||||||
+2196172  gtttcgtcgg  2196163
+
+2198339  atcgccaaat  2198348
+         ||||||||||
+2198435  tagcggttta  2198426
+
+2200849  ttaagccaatc  2200859
+         |||||||||||
+2200955  aattcggttag  2200945
+
+2202338  tgatattttt  2202347
+         ||||||||||
+2202409  actataaaaa  2202400
+
+2202615  ttcgcaaaaa  2202624
+         ||||||||||
+2202733  aagcgttttt  2202724
+
+2204169  acctttgcaaaac  2204181
+         |||||||||||||
+2204273  tggaaacgttttg  2204261
+
+2207383  attaggtacattt  2207395
+         |||||||||||||
+2207477  taatccatgtaaa  2207465
+
+2208731  tggtgtgatga  2208741
+         |||||||||||
+2208803  accacactact  2208793
+
+2208791  tttcatcacac  2208801
+         |||||||||||
+2208848  aaagtagtgtg  2208838
+
+2208876  aaaccacacc  2208885
+         ||||||||||
+2208952  tttggtgtgg  2208943
+
+2210364  aaagggcattg  2210374
+         |||||||||||
+2210396  tttcccgtaac  2210386
+
+2210922  tggtgtgatga  2210932
+         |||||||||||
+2210994  accacactact  2210984
+
+2210982  tttcatcacacca  2210994
+         |||||||||||||
+2211019  aaagtagtgtggt  2211007
+
+2210982  tttcatcacac  2210992
+         |||||||||||
+2211039  aaagtagtgtg  2211029
+
+2213035  gcgcgtgattt  2213045
+         |||||||||||
+2213147  cgcgcactaaa  2213137
+
+2213217  tggtaacgaaac  2213228
+         ||||||||||||
+2213328  accattgctttg  2213317
+
+2213239  ggtaacgaaac  2213249
+         |||||||||||
+2213327  ccattgctttg  2213317
+
+2213253  gtaacgaaac  2213262
+         ||||||||||
+2213326  cattgctttg  2213317
+
+2213293  gtaacgaaac  2213302
+         ||||||||||
+2213326  cattgctttg  2213317
+
+2216044  acaccagcaaaaa  2216056
+         |||||||||||||
+2216074  tgtggtcgttttt  2216062
+
+2216079  tgtcatgtttaaaaa  2216093
+         |||||||||||||||
+2216187  acagtacaaattttt  2216173
+
+2216083  atgtttaaaaa  2216093
+         |||||||||||
+2216111  tacaaattttt  2216101
+
+2216105  taaacatatc  2216114
+         ||||||||||
+2216130  atttgtatag  2216121
+
+2217296  aacaccagcaa  2217306
+         |||||||||||
+2217324  ttgtggtcgtt  2217314
+
+2217314  ttgctggtgt  2217323
+         ||||||||||
+2217346  aacgaccaca  2217337
+
+2217714  aatccctgaaa  2217724
+         |||||||||||
+2217744  ttagggacttt  2217734
+
+2218274  tttcaggcagcc  2218285
+         ||||||||||||
+2218396  aaagtccgtcgg  2218385
+
+2219367  gctcacgccc  2219376
+         ||||||||||
+2219470  cgagtgcggg  2219461
+
+2222252  ttcaggctgc  2222261
+         ||||||||||
+2222370  aagtccgacg  2222361
+
+2223280  cgctttcggt  2223289
+         ||||||||||
+2223339  gcgaaagcca  2223330
+
+2223870  aaagggcagat  2223880
+         |||||||||||
+2223896  tttcccgtcta  2223886
+
+2225421  tttcaggctg  2225430
+         ||||||||||
+2225490  aaagtccgac  2225481
+
+2225789  ccctcccccg  2225798
+         ||||||||||
+2225813  gggagggggc  2225804
+
+2225817  gggtgggggt  2225826
+         ||||||||||
+2225853  cccaccccca  2225844
+
+2225860  tgccaagttct  2225870
+         |||||||||||
+2225981  acggttcaaga  2225971
+
+2225878  tcgtaggggc  2225887
+         ||||||||||
+2225965  agcatccccg  2225956
+
+2226061  tccctctccttgtgggagaggg  2226082
+         ||||||||||||||||||||||
+2226156  agggagaggaacaccctctccc  2226135
+
+2227743  gatttcatatc  2227753
+         |||||||||||
+2227821  ctaaagtatag  2227811
+
+2228994  cagcctgaaa  2229003
+         ||||||||||
+2229082  gtcggacttt  2229073
+
+2229168  tgtagggtgcaacttgttgcacca  2229191
+         ||||||||||||||||||||||||
+2229237  acatcccacgttgaacaacgtggt  2229214
+
+2229318  ggtttcaggc  2229327
+         ||||||||||
+2229338  ccaaagtccg  2229329
+
+2230048  aagctgcctgaa  2230059
+         ||||||||||||
+2230084  ttcgacggactt  2230073
+
+2230446  gcaaacacgc  2230455
+         ||||||||||
+2230563  cgtttgtgcg  2230554
+
+2231220  ccctctctcc  2231229
+         ||||||||||
+2231254  gggagagagg  2231245
+
+2231248  gagagggttgg  2231258
+         |||||||||||
+2231289  ctctcccaacc  2231279
+
+2231283  ccctctccca  2231292
+         ||||||||||
+2231303  gggagagggt  2231294
+
+2244900  aggctgcctgaa  2244911
+         ||||||||||||
+2244938  tccgacggactt  2244927
+
+2245838  gttgccattg  2245847
+         ||||||||||
+2245882  caacggtaac  2245873
+
+2246691  aaaccaatcg  2246700
+         ||||||||||
+2246727  tttggttagc  2246718
+
+2246951  acacaaaatcca  2246962
+         ||||||||||||
+2246993  tgtgttttaggt  2246982
+
+2251722  ccgatttggc  2251731
+         ||||||||||
+2251754  ggctaaaccg  2251745
+
+2254001  aatcaggctgcctgaa  2254016
+         ||||||||||||||||
+2254047  ttagtccgacggactt  2254032
+
+2255896  aaaatatttt  2255905
+         ||||||||||
+2255957  ttttataaaa  2255948
+
+2255957  tattattaaaaa  2255968
+         ||||||||||||
+2255997  ataataattttt  2255986
+
+2256135  atgtattatcaa  2256146
+         ||||||||||||
+2256165  tacataatagtt  2256154
+
+2258801  tttcataaaa  2258810
+         ||||||||||
+2258885  aaagtatttt  2258876
+
+2260772  aaaaaccaatccgtttgcc  2260790
+         |||||||||||||||||||
+2260822  tttttggttaggcaaacgg  2260804
+
+2260840  aaatgggcag  2260849
+         ||||||||||
+2260868  tttacccgtc  2260859
+
+2261464  aggctgcctgaaaa  2261477
+         ||||||||||||||
+2261498  tccgacggactttt  2261485
+
+2264320  cattttcaggc  2264330
+         |||||||||||
+2264342  gtaaaagtccg  2264332
+
+2264837  tttggaaacc  2264846
+         ||||||||||
+2264945  aaacctttgg  2264936
+
+2266513  aaaacccaag  2266522
+         ||||||||||
+2266575  ttttgggttc  2266566
+
+2267743  aaactcaatc  2267752
+         ||||||||||
+2267782  tttgagttag  2267773
+
+2267807  aacggattttgta  2267819
+         |||||||||||||
+2267838  ttgcctaaaacat  2267826
+
+2270605  tttgcgccgc  2270614
+         ||||||||||
+2270675  aaacgcggcg  2270666
+
+2270960  aggctgcctgaaa  2270972
+         |||||||||||||
+2270990  tccgacggacttt  2270978
+
+2271142  aacgcgccaaa  2271152
+         |||||||||||
+2271195  ttgcgcggttt  2271185
+
+2274676  caggctgcctgaa  2274688
+         |||||||||||||
+2274716  gtccgacggactt  2274704
+
+2274757  gatttcatatc  2274767
+         |||||||||||
+2274835  ctaaagtatag  2274825
+
+2276472  taggggcagat  2276482
+         |||||||||||
+2276498  atccccgtcta  2276488
+
+2277501  aaatactccccct  2277513
+         |||||||||||||
+2277533  tttatgaggggga  2277521
+
+2277535  ttttgattgc  2277544
+         ||||||||||
+2277607  aaaactaacg  2277598
+
+2278595  tggcacggcg  2278604
+         ||||||||||
+2278651  accgtgccgc  2278642
+
+2280867  tggcgaattg  2280876
+         ||||||||||
+2280930  accgcttaac  2280921
+
+2285724  aaaatactca  2285733
+         ||||||||||
+2285745  ttttatgagt  2285736
+
+2285876  tattagcttata  2285887
+         ||||||||||||
+2285910  ataatcgaatat  2285899
+
+2287306  tgcctgaaaa  2287315
+         ||||||||||
+2287374  acggactttt  2287365
+
+2287708  gctgcctgaaa  2287718
+         |||||||||||
+2287732  cgacggacttt  2287722
+
+2288405  attttgattt  2288414
+         ||||||||||
+2288502  taaaactaaa  2288493
+
+2289014  ggcattgaaa  2289023
+         ||||||||||
+2289073  ccgtaacttt  2289064
+
+2290301  aggggcggat  2290310
+         ||||||||||
+2290325  tccccgccta  2290316
+
+2295694  caatattcaggc  2295705
+         ||||||||||||
+2295718  gttataagtccg  2295707
+
+2295699  ttcaggcagc  2295708
+         ||||||||||
+2295753  aagtccgtcg  2295744
+
+2300415  tgaaatcagtttg  2300427
+         |||||||||||||
+2300440  actttagtcaaac  2300428
+
+2300534  aaattgcaaattaaa  2300548
+         |||||||||||||||
+2300595  tttaacgtttaattt  2300581
+
+2300850  ttttaaaaaa  2300859
+         ||||||||||
+2300950  aaaatttttt  2300941
+
+2302919  ggctgcctgaaaa  2302931
+         |||||||||||||
+2302953  ccgacggactttt  2302941
+
+2308537  cttacttttt  2308546
+         ||||||||||
+2308557  gaatgaaaaa  2308548
+
+2308669  cttacttttt  2308678
+         ||||||||||
+2308689  gaatgaaaaa  2308680
+
+2310081  agggttattcaggcagc  2310097
+         |||||||||||||||||
+2310143  tcccaataagtccgtcg  2310127
+
+2311863  gctgcctgaaa  2311873
+         |||||||||||
+2311889  cgacggacttt  2311879
+
+2311880  ttcaggcagc  2311889
+         ||||||||||
+2311946  aagtccgtcg  2311937
+
+2313888  gtaggtcgggcatt  2313901
+         ||||||||||||||
+2313955  catccagcccgtaa  2313942
+
+2313903  atgcccgaca  2313912
+         ||||||||||
+2313940  tacgggctgt  2313931
+
+2315046  aaaaacatttcaggca  2315061
+         ||||||||||||||||
+2315096  tttttgtaaagtccgt  2315081
+
+2315079  gctgcctgaaa  2315089
+         |||||||||||
+2315151  cgacggacttt  2315141
+
+2316374  aaaacctgttt  2316384
+         |||||||||||
+2316403  ttttggacaaa  2316393
+
+2317890  aacaccccaaaatca  2317904
+         |||||||||||||||
+2317925  ttgtggggttttagt  2317911
+
+2323494  tgaaatcagtttg  2323506
+         |||||||||||||
+2323519  actttagtcaaac  2323507
+
+2323614  aaattgcaaattaaa  2323628
+         |||||||||||||||
+2323675  tttaacgtttaattt  2323661
+
+2323693  aaaaataaaa  2323702
+         ||||||||||
+2323753  tttttatttt  2323744
+
+2323694  aaaataaaaaa  2323704
+         |||||||||||
+2323747  ttttatttttt  2323737
+
+2329472  gctgcctgaa  2329481
+         ||||||||||
+2329498  cgacggactt  2329489
+
+2330200  gccaaacggc  2330209
+         ||||||||||
+2330242  cggtttgccg  2330233
+
+2330508  aaacaggcagcctgaa  2330523
+         ||||||||||||||||
+2330547  tttgtccgtcggactt  2330532
+
+2330678  tgggcgcgtg  2330687
+         ||||||||||
+2330791  acccgcgcac  2330782
+
+2331496  tttgaaaaca  2331505
+         ||||||||||
+2331612  aaacttttgt  2331603
+
+2332806  gctgcctgaaaacg  2332819
+         ||||||||||||||
+2332841  cgacggacttttgc  2332828
+
+2332876  gatttcatatc  2332886
+         |||||||||||
+2332954  ctaaagtatag  2332944
+
+2336561  tttgccgctca  2336571
+         |||||||||||
+2336609  aaacggcgagt  2336599
+
+2336809  caatggttgc  2336818
+         ||||||||||
+2336842  gttaccaacg  2336833
+
+2338896  ttgcgccaaa  2338905
+         ||||||||||
+2338925  aacgcggttt  2338916
+
+2340858  tgtagggtgcaacttgttgcacca  2340881
+         ||||||||||||||||||||||||
+2340927  acatcccacgttgaacaacgtggt  2340904
+
+2341173  catcaacaaa  2341182
+         ||||||||||
+2341212  gtagttgttt  2341203
+
+2342536  ggctgcctgaaa  2342547
+         ||||||||||||
+2342575  ccgacggacttt  2342564
+
+2343171  gctttggcgt  2343180
+         ||||||||||
+2343253  cgaaaccgca  2343244
+
+2343979  cttacttttt  2343988
+         ||||||||||
+2343999  gaatgaaaaa  2343990
+
+2344026  tgtagggtgcaacttgttgcacca  2344049
+         ||||||||||||||||||||||||
+2344095  acatcccacgttgaacaacgtggt  2344072
+
+2345232  agggctttga  2345241
+         ||||||||||
+2345332  tcccgaaact  2345323
+
+2346228  caggcagcctgaaa  2346241
+         ||||||||||||||
+2346280  gtccgtcggacttt  2346267
+
+2349238  gcaaacggct  2349247
+         ||||||||||
+2349356  cgtttgccga  2349347
+
+2350468  gatttcatatc  2350478
+         |||||||||||
+2350546  ctaaagtatag  2350536
+
+2350627  cttacttttt  2350636
+         ||||||||||
+2350647  gaatgaaaaa  2350638
+
+2350759  ctgacttttt  2350768
+         ||||||||||
+2350779  gactgaaaaa  2350770
+
+2351405  aggctgcctgaa  2351416
+         ||||||||||||
+2351443  tccgacggactt  2351432
+
+2353301  aaaaaccgtg  2353310
+         ||||||||||
+2353327  tttttggcac  2353318
+
+2353369  aaaacggtctgaa  2353381
+         |||||||||||||
+2353401  ttttgccagactt  2353389
+
+2353958  aaaagctgcctgaa  2353971
+         ||||||||||||||
+2353991  ttttcgacggactt  2353978
+
+2354697  ttaacattttca  2354708
+         ||||||||||||
+2354758  aattgtaaaagt  2354747
+
+2357059  gctgcctgaa  2357068
+         ||||||||||
+2357083  cgacggactt  2357074
+
+2358552  gtcaatttgc  2358561
+         ||||||||||
+2358667  cagttaaacg  2358658
+
+2358572  gccctctctcc  2358582
+         |||||||||||
+2358608  cgggagagagg  2358598
+
+2358813  cttacttttt  2358822
+         ||||||||||
+2358833  gaatgaaaaa  2358824
+
+2359835  aaaacggtttca  2359846
+         ||||||||||||
+2359867  ttttgccaaagt  2359856
+
+2363139  ttcaggcagcctgaaa  2363154
+         ||||||||||||||||
+2363250  aagtccgtcggacttt  2363235
+
+2363186  cggttttttt  2363195
+         ||||||||||
+2363234  gccaaaaaaa  2363225
+
+2367242  ttcaggcagcc  2367252
+         |||||||||||
+2367274  aagtccgtcgg  2367264
+
+2367348  aaaaatgacc  2367357
+         ||||||||||
+2367372  tttttactgg  2367363
+
+2372291  caggcagcct  2372300
+         ||||||||||
+2372365  gtccgtcgga  2372356
+
+2372442  ccctccccct  2372451
+         ||||||||||
+2372466  gggaggggga  2372457
+
+2372553  gatttcatatc  2372563
+         |||||||||||
+2372631  ctaaagtatag  2372621
+
+2373429  atgatttcaggctgcctgaaaa  2373450
+         ||||||||||||||||||||||
+2373532  tactaaagtccgacggactttt  2373511
+
+2373654  ttgcccacca  2373663
+         ||||||||||
+2373720  aacgggtggt  2373711
+
+2377205  ggcgattttg  2377214
+         ||||||||||
+2377289  ccgctaaaac  2377280
+
+2378225  ggcagcctgaaa  2378236
+         ||||||||||||
+2378251  ccgtcggacttt  2378240
+
+2382882  aagggcggat  2382891
+         ||||||||||
+2382906  ttcccgccta  2382897
+
+2382889  gatttcatatc  2382899
+         |||||||||||
+2382966  ctaaagtatag  2382956
+
+2382902  cccttttttc  2382911
+         ||||||||||
+2382952  gggaaaaaag  2382943
+
+2383822  aaatcctgtttc  2383833
+         ||||||||||||
+2383853  tttaggacaaag  2383842
+
+2384075  aaaccccaaagca  2384087
+         |||||||||||||
+2384107  tttggggtttcgt  2384095
+
+2384156  gcgtaggtcggctc  2384169
+         ||||||||||||||
+2384186  cgcatccagccgag  2384173
+
+2384223  atttgatttt  2384232
+         ||||||||||
+2384280  taaactaaaa  2384271
+
+2388643  atgtccaaat  2388652
+         ||||||||||
+2388731  tacaggttta  2388722
+
+2388734  ttcaggctgcctgaaa  2388749
+         ||||||||||||||||
+2388809  aagtccgacggacttt  2388794
+
+2388745  tgaaaaattg  2388754
+         ||||||||||
+2388850  actttttaac  2388841
+
+2388760  tgggtatttt  2388769
+         ||||||||||
+2388863  acccataaaa  2388854
+
+2388783  gaaaaattgg  2388792
+         ||||||||||
+2388849  ctttttaacc  2388840
+
+2390392  acagcccaaac  2390402
+         |||||||||||
+2390418  tgtcgggtttg  2390408
+
+2391839  tgtgccgtcat  2391849
+         |||||||||||
+2391877  acacggcagta  2391867
+
+2392825  ctcaatggtg  2392834
+         ||||||||||
+2392923  gagttaccac  2392914
+
+2393703  gctgcctgaaa  2393713
+         |||||||||||
+2393813  cgacggacttt  2393803
+
+2393798  aaaggtttcaggc  2393810
+         |||||||||||||
+2393824  tttccaaagtccg  2393812
+
+2393902  tgtagggtgcaacttgttgcacca  2393925
+         ||||||||||||||||||||||||
+2393971  acatcccacgttgaacaacgtggt  2393948
+
+2394690  aaagctgcctgaaa  2394703
+         ||||||||||||||
+2394722  tttcgacggacttt  2394709
+
+2395292  gttttcaggc  2395301
+         ||||||||||
+2395312  caaaagtccg  2395303
+
+2395396  cgtgggcttg  2395405
+         ||||||||||
+2395466  gcacccgaac  2395457
+
+2396557  ccctcccccg  2396566
+         ||||||||||
+2396581  gggagggggc  2396572
+
+2397495  tcgcccattttcaggc  2397510
+         ||||||||||||||||
+2397527  agcgggtaaaagtccg  2397512
+
+2398325  aatggggcagat  2398336
+         ||||||||||||
+2398353  ttaccccgtcta  2398342
+
+2398454  gagagggctgg  2398464
+         |||||||||||
+2398495  ctctcccgacc  2398485
+
+2401646  atccgcaaaaa  2401656
+         |||||||||||
+2401692  taggcgttttt  2401682
+
+2402084  attttcaaca  2402093
+         ||||||||||
+2402181  taaaagttgt  2402172
+
+2402736  aagcaccccaat  2402747
+         ||||||||||||
+2402771  ttcgtggggtta  2402760
+
+2402993  gtgattgata  2403002
+         ||||||||||
+2403073  cactaactat  2403064
+
+2409043  aaaaacaaaaagcgacag  2409060
+         ||||||||||||||||||
+2409085  tttttgtttttcgctgtc  2409068
+
+2411884  aggcagcctgaa  2411895
+         ||||||||||||
+2411915  tccgtcggactt  2411904
+
+2411954  cttacttttt  2411963
+         ||||||||||
+2411974  gaatgaaaaa  2411965
+
+2411972  aagccaaata  2411981
+         ||||||||||
+2412086  ttcggtttat  2412077
+
+2413041  ggctgcctgaa  2413051
+         |||||||||||
+2413068  ccgacggactt  2413058
+
+2414241  aaaacggaagag  2414252
+         ||||||||||||
+2414266  ttttgccttctc  2414255
+
+2414578  gcagcctgaaa  2414588
+         |||||||||||
+2414615  cgtcggacttt  2414605
+
+2416571  aaaagctgcctgaaa  2416585
+         |||||||||||||||
+2416605  ttttcgacggacttt  2416591
+
+2417308  aaagctgcctgaaa  2417321
+         ||||||||||||||
+2417340  tttcgacggacttt  2417327
+
+2418394  gctttcaggc  2418403
+         ||||||||||
+2418414  cgaaagtccg  2418405
+
+2420537  gtacaaaatg  2420546
+         ||||||||||
+2420615  catgttttac  2420606
+
+2420719  ttcaggcagcc  2420729
+         |||||||||||
+2420752  aagtccgtcgg  2420742
+
+2423487  aaacctgtttc  2423497
+         |||||||||||
+2423512  tttggacaaag  2423502
+
+2425357  ttcaggcagcctg  2425369
+         |||||||||||||
+2425404  aagtccgtcggac  2425392
+
+2426837  atacgcacctgatgattta  2426855
+         |||||||||||||||||||
+2426880  tatgcgtggactactaaat  2426862
+
+2428584  tatactaatt  2428593
+         ||||||||||
+2428692  atatgattaa  2428683
+
+2428915  gtagggtgggtgcttgcacccac  2428937
+         |||||||||||||||||||||||
+2429047  catcccacccacgaacgtgggtg  2429025
+
+2429229  tgggagaggg  2429238
+         ||||||||||
+2429299  accctctccc  2429290
+
+2430344  ggctgcctgaaaa  2430356
+         |||||||||||||
+2430430  ccgacggactttt  2430418
+
+2430948  tcccctctcccgcttgcgggggaggg  2430973
+         ||||||||||||||||||||||||||
+2431068  aggggagagggcgaacgccccctccc  2431043
+
+2430975  tagggtggggg  2430985
+         |||||||||||
+2431041  atcccaccccc  2431031
+
+2432044  tgtggataag  2432053
+         ||||||||||
+2432078  acacctattc  2432069
 
 

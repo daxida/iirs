@@ -693,6 +693,7 @@ int main(int argc, char* argv[]) {
     if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length." << endl; return -1; }
     if (max_len < min_len) { usage(); cout << "Error: max_len must not be less than min_len." << endl; return -1; }
     if (max_gap >= n) { usage(); cout << "Error: max_gap must be less than sequence length." << endl; return -1; }
+    // twice?
     if (min_len >= n) { usage(); cout << "Error: min_len must be less than sequence length." << endl; return -1; }
     if (mismatches >= n) { usage(); cout << "Error: mismatches must be less than sequence length." << endl; return -1; }
     if (mismatches >= min_len) { usage(); cout << "Error: mismatches must be less than min_len." << endl; return -1; }
@@ -1118,6 +1119,10 @@ int main(int argc, char* argv[]) {
     free(SA);
     free(invSA);
     free(LCP);
+
+    end = chrono::high_resolution_clock::now();
+    duration = end - start;
+    cout << "TOTAL took " << duration.count() << " seconds." << endl;
 
     return 0;
 }
