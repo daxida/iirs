@@ -89,8 +89,8 @@ fn find_palindromes(
     }
 
     // Calculate LCP & RMQ
-    let lcp: Vec<INT> = lcp_array(&s, s_n as INT, &sa, &inv_sa);
-    let ary: Vec<INT> = rmq_preprocess(&lcp, s_n as INT); // A in the original
+    let lcp: Vec<INT> = lcp_array(&s, s_n, &sa, &inv_sa);
+    let ary: Vec<INT> = rmq_preprocess(&lcp, s_n); // A in the original
 
     if DEBUG {
         print_array("  seq", seq, false);
@@ -152,12 +152,72 @@ fn main() -> Result<()> {
     let elapsed_ms = elapsed.as_millis();
     println!("Elapsed time: {} milliseconds (PRECOMP)", elapsed_ms);
 
-    let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
+    // START TEST
+    //
+    // Construct s = seq + '$' + complement(reverse(seq)) + '#'
+    let s_n = 2 * n + 2;
+    let mut s = vec![0u8; 2 * n + 2];
+    for i in 0..n {
+        s[i] = seq[i];
+        s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
+    }
+    s[n] = b'$';
+    s[2 * n + 1] = b'#';
+
+    // Construct Suffix Array (sa) & Inverse Suffix Array
+    let sa: Vec<INT> = divsufsort64(&s).unwrap();
+    let mut inv_sa: Vec<INT> = vec![0; s_n];
+    for (i, value) in sa.iter().enumerate() {
+        inv_sa[*value as usize] = i as INT;
+    }
+
+    // Calculate LCP & RMQ
+    let lcp: Vec<INT> = lcp_array(&s, s_n, &sa, &inv_sa);
+
+    let elapsed = start_time.elapsed();
+    let elapsed_ms = elapsed.as_millis();
+
+    println!("Elapsed time: {} milliseconds (LCP)", elapsed_ms);
+
+    let ary: Vec<INT> = rmq_preprocess(&lcp, s_n); // A in the original
+
+    let elapsed = start_time.elapsed();
+    let elapsed_ms = elapsed.as_millis();
+    println!("Elapsed time: {} milliseconds (RMQ)", elapsed_ms);
+
+    if DEBUG {
+        print_array("  seq", &seq, false);
+        print_array("    S", &s, true);
+        print_array("   SA", &sa, true);
+        print_array("invSA", &inv_sa, true);
+        print_array("  LCP", &lcp, true);
+        print_array("A/ary", &ary, true);
+    }
+
+    // Calculate palidromes
+    // TODO: fix types
+    let palindromes: BTreeSet<(i32, i32, i32)> = add_palindromes(
+        &s,
+        s_n as INT,
+        n as INT,
+        &inv_sa,
+        &lcp,
+        &ary,
+        config.min_len,
+        config.max_len,
+        config.mismatches,
+        config.max_gap,
+        &matrix,
+    );
+
+    //
+    // END TEST
+    // let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
 
     let elapsed = start_time.elapsed();
     let elapsed_ms = elapsed.as_millis();
     println!(
-        "Elapsed time: {} milliseconds (END PALINDROMES)",
+        "Elapsed time: {} milliseconds (END ADD PALINDROMES)",
         elapsed_ms
     );
 

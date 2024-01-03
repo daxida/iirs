@@ -1,17 +1,13 @@
+use std::cmp::Ordering;
 // use linked_list::LinkedList;
 use std::collections::BTreeSet;
 
 use crate::matrix::MatchMatrix;
 use crate::INT;
-// use crate::debug::print_array;
 
-// Helper log function
 #[inline(always)]
-pub fn flog2(v: INT) -> INT {
-    if v == 0 {
-        return 0;
-    }
-    (v as f64).log2().floor() as INT
+fn flog2(v: INT) -> INT {
+    v.ilog2() as INT
 }
 
 ///////////////////////////////////////////
@@ -20,10 +16,7 @@ pub fn flog2(v: INT) -> INT {
 
 // Range Minimum Query (Type 1)
 // GETS CALLED LIKE THIS: LCP[rmq(A, LCP, n, a, b)] -- only in LCE
-fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> INT {
-    // print_array("from RMQ    A", &m, n as usize, false);
-    // println!("Printing n: {}", n);
-
+fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> usize {
     let lgn: INT = flog2(n);
 
     if i > j {
@@ -31,47 +24,46 @@ fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> INT {
     }
 
     i += 1;
-    if i == j {
-        return i;
-    }
 
-    // In the original you could find yourself in: k=-9223372036854775808 i=22 j=21
-    // with no issues (...), but we can't do the same here. That's why flog2 was modified.
-    let k: INT = flog2(j - i + 1);
-    // assert!(j - i + 1 > 0);
-    // println!("k={}, i={}, j={}", k, i, j);
-    // dbg!(j - i + 1);
-    // dbg!(k);
-    let a: INT = m[(i * lgn + k) as usize];
-    let shift = 1 << k;
-    let b = m[((j - shift + 1) * lgn + k) as usize];
+    match i.cmp(&j) {
+        Ordering::Greater => 0,
+        Ordering::Equal => i as usize,
+        Ordering::Less => {
+            assert!(i < j);
+            assert!(j - i + 1 > 0);
+            let k: INT = flog2(j - i + 1);
+            // println!("k={}, i={}, j={}", k, i, j);
+            let a = m[(i * lgn + k) as usize] as usize;
+            let b = m[((j - (1 << k) + 1) * lgn + k) as usize] as usize;
 
-    if v[a as usize] > v[b as usize] {
-        b
-    } else {
-        a
+            if v[a] > v[b] {
+                b
+            } else {
+                a
+            }
+        }
     }
 }
 
 // O(nlogn)-time preprocessing function for Type 1 Range Minimum Queries
-pub fn rmq_preprocess(v: &[INT], n: INT) -> Vec<INT> {
-    let lgn: INT = flog2(n);
-    let mut m: Vec<INT> = vec![0; (n * lgn) as usize];
+// It is going to be called with these args: rmq_preprocess(&lcp, s_n)
+pub fn rmq_preprocess(v: &[INT], n: usize) -> Vec<INT> {
+    let lgn = flog2(n as INT) as usize;
+    let mut m: Vec<INT> = vec![0; n * lgn];
 
-    for i in 0..(n as usize) {
-        m[i * lgn as usize] = i as INT;
+    for i in 0..n {
+        m[i * lgn] = i as INT;
     }
 
     let mut j = 1;
-    while (1 << j) <= n as INT {
-        let upto = n - (1 << j) + 1;
-        for i in 0..upto as usize {
-            if v[m[i * lgn as usize + j - 1] as usize]
-                < v[m[(i + (1 << (j - 1))) * lgn as usize + j - 1] as usize]
-            {
-                m[i * lgn as usize + j] = m[i * lgn as usize + j - 1];
+    while (1 << j) <= n {
+        for i in 0..=n - (1 << j) {
+            let idx_1 = i * lgn + j;
+            let idx_2 = (i + (1 << (j - 1))) * lgn + j - 1;
+            m[idx_1] = if v[m[idx_1 - 1] as usize] < v[m[idx_2] as usize] {
+                m[idx_1 - 1]
             } else {
-                m[i * lgn as usize + j] = m[(i + (1 << (j - 1))) * lgn as usize + j - 1];
+                m[idx_2]
             }
         }
         j += 1;
@@ -91,19 +83,17 @@ pub fn rmq_preprocess(v: &[INT], n: INT) -> Vec<INT> {
 // - Text length
 // - Suffix Array
 // - Longest Common Prefix data structure (empty)
-pub fn lcp_array(text: &[u8], n: INT, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> {
-    let mut lcp: Vec<INT> = vec![0; n as usize];
-    // TODO: use I for i and j
-
+pub fn lcp_array(text: &[u8], n: usize, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> {
+    let mut lcp: Vec<INT> = vec![0; n];
     let mut j: usize;
 
-    for i in 0..(n as usize) {
+    for i in 0..n {
         if inv_sa[i] != 0 {
             if i == 0 {
                 j = 0;
             } else {
-                let tmp: INT = lcp[inv_sa[i - 1] as usize];
-                j = if tmp >= 2 { (tmp - 1) as usize } else { 0 };
+                let tmp = lcp[inv_sa[i - 1] as usize] as usize;
+                j = if tmp >= 2 { tmp - 1 } else { 0 };
             }
 
             while text[i + j] == text[sa[inv_sa[i] as usize - 1] as usize + j] {
@@ -130,24 +120,13 @@ fn lce(i: INT, j: INT, n: INT, inv_sa: &[INT], lcp: &[INT], ary: &[INT]) -> INT 
         return (n - i) as INT;
     }
 
-    // print_array("from LCE    invSA", &inv_sa, n as usize, false);
-
     // TODO: FIX THIS ITS HARDCODED
     // let a_val = inv_sa[i as usize];
     // let b_val = inv_sa[j as usize];
-    let a_val = inv_sa.get(i as usize).unwrap_or(&21); // temporary fix
-    let b_val = inv_sa.get(j as usize).unwrap_or(&21); // temporary fix
+    let a = inv_sa.get(i as usize).unwrap_or(&21); // temporary fix
+    let b = inv_sa.get(j as usize).unwrap_or(&21); // temporary fix
 
-    let mut a = a_val;
-    let mut b = b_val;
-    // println!("(i, j, a, b, n) = {} {} {} {} {}", i, j, a, b, n);
-
-    if a > b {
-        std::mem::swap(&mut a, &mut b);
-    }
-
-    let idx = rmq(ary, lcp, n, *a, *b);
-    lcp[idx as usize]
+    lcp[rmq(ary, lcp, n, *a, *b)]
 }
 
 // Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches, up to maximum number of allowed mismatches
@@ -180,9 +159,11 @@ pub fn real_lce_mismatches(
     ary: &[INT],
     mut mismatches: i32,
     initial_gap: i32,
-    mismatch_locs: &mut Vec<i32>,
     matrix: &MatchMatrix,
-) {
+) -> Vec<i32> {
+    let mut mismatch_locs = Vec::new();
+    mismatch_locs.insert(0, -1); // LinkedList<i32>
+
     if i == j {
         mismatch_locs.push((n - i) as i32);
     } else {
@@ -208,6 +189,8 @@ pub fn real_lce_mismatches(
             real_lce += 1;
         }
     }
+
+    mismatch_locs
 }
 
 // Finds all inverted repeats (palindromes) with given parameters and adds them to an output set
@@ -235,7 +218,6 @@ pub fn add_palindromes(
     max_gap: i32,
     matrix: &MatchMatrix,
 ) -> BTreeSet<(i32, i32, i32)> {
-    // print_array("from AP    A", &A, s_n as usize, false);
     let mut palindromes: BTreeSet<(i32, i32, i32)> = BTreeSet::new();
 
     for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
@@ -255,11 +237,7 @@ pub fn add_palindromes(
             max_gap / 2
         };
 
-        let mut mismatch_locs = Vec::new();
-        // println!("Parameters: isOdd={} c={}", is_odd, c);
-        // println!("Calling RLCM with i={} j={} n=s_n={}", i, j, s_n);
-
-        real_lce_mismatches(
+        let mismatch_locs = real_lce_mismatches(
             s,
             i as INT,
             j as INT,
@@ -269,13 +247,8 @@ pub fn add_palindromes(
             ary,
             mismatches,
             initial_gap,
-            &mut mismatch_locs,
             matrix,
         );
-
-        // This is why it originally uses a LinkedList I guess??
-        // Vector is more handy for the rest of the code
-        mismatch_locs.insert(0, -1); // LinkedList<i32>
 
         let mut valid_start_locs: Vec<(i32, i32)> = Vec::new();
         let mut valid_end_locs: Vec<(i32, i32)> = Vec::new();

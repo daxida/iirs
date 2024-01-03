@@ -34,12 +34,13 @@ pub struct Config {
     pub output_file: String,
 
     /// Output format (classic or csv).
-    #[arg(short = 'F', default_value_t = String::from("csv"))]
+    #[arg(short = 'F', default_value_t = String::from("classic"))]
     pub output_format: String,
 }
 
 impl Config {
     #[allow(dead_code)] // ::new is actually used for testing...
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         input_file: &str,
         seq_name: &str,

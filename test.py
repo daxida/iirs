@@ -25,13 +25,14 @@ def write_fasta(fasta: str):
 def run(folder: str, cmd_beginning:str):
     start = time()
     os.chdir(folder)
-    command = f"{cmd_beginning} -f {FILE_NAME} -g {MAX_GAP} -x 2 -F csv"
+    command = f"{cmd_beginning} -f {FILE_NAME} -g {MAX_GAP} -x 2"
     output = subprocess.run(command, shell=True, capture_output=True)
     stdout = output.stdout.decode()
     stderr = output.stderr.decode()
-    # if stderr:
-    #     print(f"Stderr: {stderr}")
-    #     exit(0)
+    if "panic" in stderr:
+        print(f"Stderr: {stderr}")
+        # exit(0)
+    print(stderr)
     print(stdout)
     if "Error" in stdout:
         print(f"Error: {stdout}")
@@ -50,19 +51,19 @@ def run(folder: str, cmd_beginning:str):
 def test(n: int):
     fasta = generate(n)
     write_fasta(fasta)
-    # run(CPP_FOLDER, "./IUPACpal")
+    run(CPP_FOLDER, "./IUPACpal")
     run(RUST_FOLDER, "cargo run --")
     # run(RUST_FOLDER, "./iupacpal")
-    # test_equality(CPP_FOLDER, RUST_FOLDER)
+    test_equality(CPP_FOLDER, RUST_FOLDER)
 
 cpp_timings = []
 rust_timings = []
-for _ in range(10):
-    test(int(1e6))
+for _ in range(100):
+    test(int(1e3))
 
-# cpp_avg_time = mean(cpp_timings)
+cpp_avg_time = mean(cpp_timings)
 rust_avg_time = mean(rust_timings)
-# print(f"cpp average: {cpp_avg_time}")
+print(f"cpp average: {cpp_avg_time}")
 print(f"rust average: {rust_avg_time}")
 
 # 6.246067714691162
