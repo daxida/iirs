@@ -138,7 +138,7 @@ fn main() -> Result<()> {
     // Optionally print match matrix
     // println!("{}", matrix.display(&complement));
 
-    let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
+    let palindromes = find_palindromes(&config, seq, n, &complement, &matrix);
     // println!("Found n={} palindromes", palindromes.len());
 
     // Stringify & write palindromes
@@ -146,10 +146,10 @@ fn main() -> Result<()> {
         "classic" => Ok(format!(
             "{}{}",
             Config::out_palindrome_display(&config, n),
-            fmt(&palindromes, &seq, &matrix, &complement)
+            fmt(&palindromes, seq, &matrix, &complement)
         )),
         // TODO: add matching information
-        "csv" => Ok(fmt_csv(&palindromes, &seq)),
+        "csv" => Ok(fmt_csv(&palindromes, seq)),
         _ => {
             let _ = Config::command().print_help();
             Err(anyhow!(

@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 #[inline(always)]
 fn flog2(v: usize) -> usize {
     v.ilog2() as usize
@@ -7,30 +5,31 @@ fn flog2(v: usize) -> usize {
 
 // Range Minimum Query (used in algo::lce)
 pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: usize) -> usize {
-    let lgn = flog2(s_n);
+    // We could pass this as an arg to prevent recomputation but it's not worth.
+    let lgn = flog2(s_n); 
+
+    assert!(i != j);
 
     if i > j {
         std::mem::swap(&mut i, &mut j);
     }
 
     i += 1;
+    assert!(i <= j);
 
-    match i.cmp(&j) {
-        Ordering::Greater => 0,
-        Ordering::Equal => i,
-        Ordering::Less => {
-            assert!(i < j);
-            assert!(j - i + 1 > 0);
-            let k = flog2(j - i + 1);
-            let a = rmq_prep[i * lgn + k];
-            let b = rmq_prep[(j - (1 << k) + 1) * lgn + k];
+    if i < j {
+        let k = flog2(j - i + 1);
+        let a = rmq_prep[i * lgn + k];
+        let b = rmq_prep[(j - (1 << k) + 1) * lgn + k];
 
-            if lcp[a] > lcp[b] {
-                b
-            } else {
-                a
-            }
+        if lcp[a] > lcp[b] {
+            b
+        } else {
+            a
         }
+    } else {
+        // i == j since i <= j
+        i
     }
 }
 
