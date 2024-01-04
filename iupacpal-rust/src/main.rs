@@ -32,8 +32,6 @@ use utils::rmq_preprocess;
 const DEBUG: bool = false;
 const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 
-pub type INT = i64;
-
 fn build_complement_array() -> [char; 128] {
     let complement_rules = vec![
         ('a', 't'),
@@ -82,15 +80,15 @@ fn find_palindromes(
     s[2 * n + 1] = b'#';
 
     // Construct Suffix Array (sa) & Inverse Suffix Array
-    let sa: Vec<INT> = divsufsort64(&s).unwrap();
-    let mut inv_sa: Vec<INT> = vec![0; s_n];
+    let sa: Vec<i64> = divsufsort64(&s).unwrap();
+    let mut inv_sa = vec![0; s_n];
     for (i, value) in sa.iter().enumerate() {
-        inv_sa[*value as usize] = i as INT;
+        inv_sa[*value as usize] = i;
     }
 
     // Calculate LCP & RMQ
-    let lcp: Vec<INT> = lcp_array(&s, s_n, &sa, &inv_sa);
-    let ary: Vec<INT> = rmq_preprocess(&lcp, s_n); // A in the original
+    let lcp = lcp_array(&s, s_n, &sa, &inv_sa);
+    let ary = rmq_preprocess(&lcp, s_n); // A in the original
 
     if DEBUG {
         print_array("  seq", seq, false);
@@ -105,8 +103,8 @@ fn find_palindromes(
     // TODO: fix types
     let palindromes: BTreeSet<(i32, i32, i32)> = add_palindromes(
         &s,
-        s_n as INT,
-        n as INT,
+        s_n,
+        n,
         &inv_sa,
         &lcp,
         &ary,
@@ -165,21 +163,21 @@ fn main() -> Result<()> {
     s[2 * n + 1] = b'#';
 
     // Construct Suffix Array (sa) & Inverse Suffix Array
-    let sa: Vec<INT> = divsufsort64(&s).unwrap();
-    let mut inv_sa: Vec<INT> = vec![0; s_n];
+    let sa = divsufsort64(&s).unwrap();
+    let mut inv_sa = vec![0; s_n];
     for (i, value) in sa.iter().enumerate() {
-        inv_sa[*value as usize] = i as INT;
+        inv_sa[*value as usize] = i;
     }
 
     // Calculate LCP & RMQ
-    let lcp: Vec<INT> = lcp_array(&s, s_n, &sa, &inv_sa);
+    let lcp = lcp_array(&s, s_n, &sa, &inv_sa);
 
     let elapsed = start_time.elapsed();
     let elapsed_ms = elapsed.as_millis();
 
     println!("Elapsed time: {} milliseconds (LCP)", elapsed_ms);
 
-    let ary: Vec<INT> = rmq_preprocess(&lcp, s_n); // A in the original
+    let ary = rmq_preprocess(&lcp, s_n); // A in the original
 
     let elapsed = start_time.elapsed();
     let elapsed_ms = elapsed.as_millis();
@@ -198,8 +196,8 @@ fn main() -> Result<()> {
     // TODO: fix types
     let palindromes: BTreeSet<(i32, i32, i32)> = add_palindromes(
         &s,
-        s_n as INT,
-        n as INT,
+        s_n,
+        n,
         &inv_sa,
         &lcp,
         &ary,

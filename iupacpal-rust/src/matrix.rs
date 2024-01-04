@@ -86,6 +86,15 @@ impl MatchMatrix {
         self.match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j]
     }
 
+    // TEMP
+    pub fn match_u8(&self, ch1: u8, ch2: u8) -> bool {
+        let i = self.iupac_to_value[ch1 as usize];
+        let j = self.iupac_to_value[ch2 as usize];
+        assert!(i <= 20, "{}", ch1);
+        assert!(j <= 20, "{}", ch2);
+        self.match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j]
+    }
+
     // Optionally print match matrix
     #[allow(dead_code)]
     pub fn display(&self, complement: &[char; 128]) -> String {

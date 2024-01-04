@@ -3,11 +3,10 @@ use std::cmp::Ordering;
 use std::collections::BTreeSet;
 
 use crate::matrix::MatchMatrix;
-use crate::INT;
 
 #[inline(always)]
-fn flog2(v: INT) -> INT {
-    v.ilog2() as INT
+fn flog2(v: usize) -> usize {
+    v.ilog2() as usize
 }
 
 ///////////////////////////////////////////
@@ -16,8 +15,8 @@ fn flog2(v: INT) -> INT {
 
 // Range Minimum Query (Type 1)
 // GETS CALLED LIKE THIS: LCP[rmq(A, LCP, n, a, b)] -- only in LCE
-fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> usize {
-    let lgn: INT = flog2(n);
+fn rmq(ary: &[usize], lcp: &[usize], n: usize, mut i: usize, mut j: usize) -> usize {
+    let lgn = flog2(n);
 
     if i > j {
         std::mem::swap(&mut i, &mut j);
@@ -27,16 +26,15 @@ fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> usize {
 
     match i.cmp(&j) {
         Ordering::Greater => 0,
-        Ordering::Equal => i as usize,
+        Ordering::Equal => i,
         Ordering::Less => {
             assert!(i < j);
             assert!(j - i + 1 > 0);
-            let k: INT = flog2(j - i + 1);
-            // println!("k={}, i={}, j={}", k, i, j);
-            let a = m[(i * lgn + k) as usize] as usize;
-            let b = m[((j - (1 << k) + 1) * lgn + k) as usize] as usize;
+            let k = flog2(j - i + 1);
+            let a = ary[i * lgn + k];
+            let b = ary[(j - (1 << k) + 1) * lgn + k];
 
-            if v[a] > v[b] {
+            if lcp[a] > lcp[b] {
                 b
             } else {
                 a
@@ -47,12 +45,12 @@ fn rmq(m: &[INT], v: &[INT], n: INT, mut i: INT, mut j: INT) -> usize {
 
 // O(nlogn)-time preprocessing function for Type 1 Range Minimum Queries
 // It is going to be called with these args: rmq_preprocess(&lcp, s_n)
-pub fn rmq_preprocess(v: &[INT], n: usize) -> Vec<INT> {
-    let lgn = flog2(n as INT) as usize;
-    let mut m: Vec<INT> = vec![0; n * lgn];
+pub fn rmq_preprocess(lcp: &[usize], n: usize) -> Vec<usize> {
+    let lgn = flog2(n);
+    let mut ary = vec![0; n * lgn];
 
     for i in 0..n {
-        m[i * lgn] = i as INT;
+        ary[i * lgn] = i;
     }
 
     let mut j = 1;
@@ -60,16 +58,16 @@ pub fn rmq_preprocess(v: &[INT], n: usize) -> Vec<INT> {
         for i in 0..=n - (1 << j) {
             let idx_1 = i * lgn + j;
             let idx_2 = (i + (1 << (j - 1))) * lgn + j - 1;
-            m[idx_1] = if v[m[idx_1 - 1] as usize] < v[m[idx_2] as usize] {
-                m[idx_1 - 1]
+            ary[idx_1] = if lcp[ary[idx_1 - 1]] < lcp[ary[idx_2]] {
+                ary[idx_1 - 1]
             } else {
-                m[idx_2]
+                ary[idx_2]
             }
         }
         j += 1;
     }
 
-    m
+    ary
 }
 
 ////////////////////////
@@ -83,8 +81,8 @@ pub fn rmq_preprocess(v: &[INT], n: usize) -> Vec<INT> {
 // - Text length
 // - Suffix Array
 // - Longest Common Prefix data structure (empty)
-pub fn lcp_array(text: &[u8], n: usize, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> {
-    let mut lcp: Vec<INT> = vec![0; n];
+pub fn lcp_array(s: &[u8], n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usize> {
+    let mut lcp: Vec<usize> = vec![0; n];
     let mut j: usize;
 
     for i in 0..n {
@@ -92,15 +90,15 @@ pub fn lcp_array(text: &[u8], n: usize, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> 
             if i == 0 {
                 j = 0;
             } else {
-                let tmp = lcp[inv_sa[i - 1] as usize] as usize;
+                let tmp = lcp[inv_sa[i - 1]];
                 j = if tmp >= 2 { tmp - 1 } else { 0 };
             }
 
-            while text[i + j] == text[sa[inv_sa[i] as usize - 1] as usize + j] {
+            while s[i + j] == s[sa[inv_sa[i] - 1] as usize + j] {
                 j += 1;
             }
 
-            lcp[inv_sa[i] as usize] = j as INT;
+            lcp[inv_sa[i]] = j;
         }
     }
 
@@ -115,16 +113,17 @@ pub fn lcp_array(text: &[u8], n: usize, sa: &[INT], inv_sa: &[INT]) -> Vec<INT> 
 // - Inverse Suffix Array
 // - Longest Common Prefix Array data structure (filled)
 // - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
-fn lce(i: INT, j: INT, n: INT, inv_sa: &[INT], lcp: &[INT], ary: &[INT]) -> INT {
+fn lce(i: usize, j: usize, n: usize, inv_sa: &[usize], lcp: &[usize], ary: &[usize]) -> usize {
     if i == j {
-        return (n - i) as INT;
+        return n - i;
     }
 
     // TODO: FIX THIS ITS HARDCODED
     // let a_val = inv_sa[i as usize];
     // let b_val = inv_sa[j as usize];
-    let a = inv_sa.get(i as usize).unwrap_or(&21); // temporary fix
-    let b = inv_sa.get(j as usize).unwrap_or(&21); // temporary fix
+    // 21 becase there are 20 ALL_SYMBOLS
+    let a = inv_sa.get(i).unwrap_or(&21); // temporary fix
+    let b = inv_sa.get(j).unwrap_or(&21); // temporary fix
 
     lcp[rmq(ary, lcp, n, *a, *b)]
 }
@@ -151,37 +150,40 @@ fn lce(i: INT, j: INT, n: INT, inv_sa: &[INT], lcp: &[INT], ary: &[INT]) -> INT 
 #[allow(clippy::too_many_arguments)]
 pub fn real_lce_mismatches(
     text: &[u8],
-    i: INT,
-    j: INT,
-    n: INT,
-    inv_sa: &[INT],
-    lcp: &[INT],
-    ary: &[INT],
+    i: usize,
+    j: usize,
+    n: usize,
+    inv_sa: &[usize],
+    lcp: &[usize],
+    ary: &[usize],
     mut mismatches: i32,
     initial_gap: i32,
     matrix: &MatchMatrix,
 ) -> Vec<i32> {
-    let mut mismatch_locs = Vec::new();
-    mismatch_locs.insert(0, -1); // LinkedList<i32>
+    let mut mismatch_locs = Vec::new(); // Originally LinkedList<i32>
+    mismatch_locs.insert(0, -1); 
 
     if i == j {
         mismatch_locs.push((n - i) as i32);
     } else {
-        let mut real_lce: INT = 0;
+        let mut real_lce = 0;
 
         while mismatches >= 0 {
             real_lce += lce(i + real_lce, j + real_lce, n, inv_sa, lcp, ary);
 
-            if i + real_lce >= (n / 2) || j + real_lce >= n {
+            let ni = i + real_lce;
+            let nj = j + real_lce;
+
+            if ni >= (n / 2) || nj >= n {
                 break;
             }
 
-            let s1 = text[(i + real_lce) as usize];
-            let s2 = text[(j + real_lce) as usize];
+            let s1 = text[ni];
+            let s2 = text[nj];
 
             if !matrix.match_chars(s1 as char, s2 as char) {
                 mismatch_locs.push(real_lce as i32);
-                if real_lce >= initial_gap.into() {
+                if real_lce >= initial_gap as usize {
                     mismatches -= 1;
                 }
             }
@@ -207,11 +209,11 @@ pub fn real_lce_mismatches(
 #[allow(clippy::too_many_arguments)]
 pub fn add_palindromes(
     s: &[u8],
-    s_n: INT,
-    n: INT,
-    inv_sa: &[INT],
-    lcp: &[INT],
-    ary: &[INT],
+    s_n: usize,
+    n: usize,
+    inv_sa: &[usize],
+    lcp: &[usize],
+    ary: &[usize],
     min_len: i32,
     max_len: i32,
     mismatches: i32,
@@ -239,9 +241,9 @@ pub fn add_palindromes(
 
         let mismatch_locs = real_lce_mismatches(
             s,
-            i as INT,
-            j as INT,
-            s_n as INT,
+            i as usize,
+            j as usize,
+            s_n,
             inv_sa,
             lcp,
             ary,
@@ -275,27 +277,27 @@ pub fn add_palindromes(
 
         // Optional printing of mismatch locations relative to centre, valid start locations
         // and valid end locations
-        if false {
-            println!("centre = {}", c);
-            print!("mismatches: \t[ ");
-            for it in mismatch_locs.iter() {
-                print!("{} ", it);
-            }
-            println!("]");
-
-            print!("starts: \t[ ");
-            for it in valid_start_locs.iter() {
-                print!("({}, {}) ", it.0, it.1);
-            }
-            println!("]");
-
-            print!("ends: \t\t[ ");
-            for it in valid_end_locs.iter() {
-                print!("({}, {}) ", it.0, it.1);
-            }
-            println!("]");
-            println!();
-        }
+        // if false {
+        //     println!("centre = {}", c);
+        //     println!("mismatches: \t[ {} ]",
+        //         mismatch_locs
+        //             .iter()
+        //             .map(|loc| format!("{} ", loc))
+        //             .collect::<String>()
+        //     );
+        //     println!("starts: \t[ {} ]",
+        //         valid_start_locs
+        //             .iter()
+        //             .map(|(cur, id)| format!("({}, {}) ", cur, id))
+        //             .collect::<String>()
+        //     );
+        //     println!("ends: \t\t[ {} ]",
+        //         valid_end_locs
+        //             .iter()
+        //             .map(|(cur, id)| format!("({}, {}) ", cur, id))
+        //             .collect::<String>()
+        //     );
+        // }
 
         if !valid_start_locs.is_empty() && !valid_end_locs.is_empty() {
             // let mut start_it = valid_start_locs.iter().clone();
