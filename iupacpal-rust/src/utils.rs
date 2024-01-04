@@ -117,15 +117,13 @@ fn lce(i: usize, j: usize, n: usize, inv_sa: &[usize], lcp: &[usize], ary: &[usi
     if i == j {
         return n - i;
     }
+    if j == n {
+        return 0;
+    }
 
-    // TODO: FIX THIS ITS HARDCODED
-    // let a_val = inv_sa[i as usize];
-    // let b_val = inv_sa[j as usize];
-    // 21 becase there are 20 ALL_SYMBOLS
-    let a = inv_sa.get(i).unwrap_or(&21); // temporary fix
-    let b = inv_sa.get(j).unwrap_or(&21); // temporary fix
+    assert!(i < j);
 
-    lcp[rmq(ary, lcp, n, *a, *b)]
+    lcp[rmq(ary, lcp, n, inv_sa[i], inv_sa[j])]
 }
 
 // Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches, up to maximum number of allowed mismatches
