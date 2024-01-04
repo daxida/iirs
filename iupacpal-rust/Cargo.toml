@@ -9,6 +9,7 @@ libdivsufsort-rs = "0.1.2"
 linked-list = "0.0.3"
 clap = { version = "4.4.12", features = ["derive"] }
 seq_io = "0.3.2"
+elapsed-time = "0.1.1"
 
 # [profile.dev]
 # opt-level = 3

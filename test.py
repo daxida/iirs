@@ -52,7 +52,7 @@ def test(n: int):
     fasta = generate(n)
     write_fasta(fasta)
     run(CPP_FOLDER, "./IUPACpal")
-    run(RUST_FOLDER, "cargo run --")
+    run(RUST_FOLDER, "cargo run --release --")
     # run(RUST_FOLDER, "./iupacpal")
     test_equality(CPP_FOLDER, RUST_FOLDER)
 

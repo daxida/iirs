@@ -5,12 +5,14 @@
 // #![allow(unused_variables)]
 // #![allow(unused_imports)]
 
+mod algo;
 mod config;
 mod debug;
-mod rmq;
 mod format;
 mod matrix;
-mod algo;
+mod rmq;
+
+extern crate elapsed_time;
 
 use anyhow::{anyhow, Result};
 use clap::CommandFactory;
@@ -18,16 +20,14 @@ use libdivsufsort_rs::*;
 use std::collections::BTreeSet; // Ordered
 use std::fs::File;
 use std::io::Write;
-use std::time::Instant;
 
+use algo::{add_palindromes, lcp_array};
 use config::Config;
 use debug::print_array;
 use format::{fmt, fmt_csv};
 use matrix::MatchMatrix;
-use algo::{lcp_array, add_palindromes};
 use rmq::rmq_preprocess;
 
-const DEBUG: bool = false;
 const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 const COMPLEMENT_RULES: [(char, char); 18] = [
     ('a', 't'),
@@ -60,6 +60,7 @@ fn build_complement_array() -> [char; 128] {
     complement
 }
 
+#[elapsed_time::elapsed]
 fn find_palindromes(
     config: &Config,
     seq: &[u8],
@@ -73,6 +74,7 @@ fn find_palindromes(
     for i in 0..n {
         s[i] = seq[i];
         s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
+        assert!(IUPAC_SYMBOLS.contains(seq[i] as char))
     }
     s[n] = b'$';
     s[2 * n + 1] = b'#';
@@ -88,7 +90,7 @@ fn find_palindromes(
     let lcp = lcp_array(&s, s_n, &sa, &inv_sa);
     let rmq_prep = rmq_preprocess(&lcp, s_n); // A in the original
 
-    if DEBUG {
+    if false {
         print_array("  seq", seq, false);
         print_array("    S", &s, true);
         print_array("   SA", &sa, true);
@@ -98,7 +100,6 @@ fn find_palindromes(
     }
 
     // Calculate palidromes
-    // TODO: fix types
     let palindromes: BTreeSet<(i32, i32, i32)> = add_palindromes(
         &s,
         s_n,
@@ -116,13 +117,12 @@ fn find_palindromes(
     palindromes
 }
 
+#[elapsed_time::elapsed]
 fn main() -> Result<()> {
-    let start_time = Instant::now();
-
     // Config and init variables
     let config = Config::from_args();
     let string = config.extract_string()?;
-    let seq = string.as_bytes().to_vec();
+    let seq = string.as_bytes();
     let n = seq.len();
     if let Err(msg) = config.verify(n) {
         let _ = Config::command().print_help();
@@ -130,13 +130,7 @@ fn main() -> Result<()> {
         return Err(msg);
     }
     config.verify(n)?;
-
     print!("{}", config.display());
-    // dbg!(&string);
-    assert!(
-        string.chars().all(|c| IUPAC_SYMBOLS.contains(c)),
-        "Not all chars are in IUPAC"
-    );
 
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
@@ -144,114 +138,29 @@ fn main() -> Result<()> {
     // Optionally print match matrix
     // println!("{}", matrix.display(&complement));
 
-    let elapsed = start_time.elapsed();
-    let elapsed_ms = elapsed.as_millis();
-    println!("Elapsed time: {} milliseconds (PRECOMP)", elapsed_ms);
+    let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
+    // println!("Found n={} palindromes", palindromes.len());
 
-    // START TEST
-    //
-    // Construct s = seq + '$' + complement(reverse(seq)) + '#'
-    let s_n = 2 * n + 2;
-    let mut s = vec![0u8; 2 * n + 2];
-    for i in 0..n {
-        s[i] = seq[i];
-        s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
-    }
-    s[n] = b'$';
-    s[2 * n + 1] = b'#';
-
-    // Construct Suffix Array (sa) & Inverse Suffix Array
-    let sa = divsufsort64(&s).unwrap();
-    let mut inv_sa = vec![0; s_n];
-    for (i, value) in sa.iter().enumerate() {
-        inv_sa[*value as usize] = i;
-    }
-
-    // Calculate LCP & RMQ
-    let lcp = lcp_array(&s, s_n, &sa, &inv_sa);
-
-    let elapsed = start_time.elapsed();
-    let elapsed_ms = elapsed.as_millis();
-
-    println!("Elapsed time: {} milliseconds (LCP)", elapsed_ms);
-
-    let rmq_prep = rmq_preprocess(&lcp, s_n); // A in the original
-
-    let elapsed = start_time.elapsed();
-    let elapsed_ms = elapsed.as_millis();
-    println!("Elapsed time: {} milliseconds (RMQ)", elapsed_ms);
-
-    if DEBUG {
-        print_array("  seq", &seq, false);
-        print_array("    S", &s, true);
-        print_array("   SA", &sa, true);
-        print_array("invSA", &inv_sa, true);
-        print_array("  LCP", &lcp, true);
-        print_array("A/ary", &rmq_prep, true);
-    }
-
-    // Calculate palidromes
-    // TODO: fix types
-    let palindromes: BTreeSet<(i32, i32, i32)> = add_palindromes(
-        &s,
-        s_n,
-        n,
-        &inv_sa,
-        &lcp,
-        &rmq_prep,
-        config.min_len,
-        config.max_len,
-        config.mismatches,
-        config.max_gap,
-        &matrix,
-    );
-
-    //
-    // END TEST
-    // let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
-
-    let elapsed = start_time.elapsed();
-    let elapsed_ms = elapsed.as_millis();
-    println!(
-        "Elapsed time: {} milliseconds (END ADD PALINDROMES)",
-        elapsed_ms
-    );
-
-    // Print palindromes
-    println!("Found n={} palindromes", palindromes.len());
+    // Stringify & write palindromes
     let out_str = match config.output_format.as_str() {
-        "classic" => {
-            format!(
-                "{}{}",
-                Config::out_palindrome_display(&config, n),
-                fmt(&palindromes, &seq, &matrix, &complement)
-            )
-        }
-        "csv" => fmt_csv(&palindromes, &seq),
+        "classic" => Ok(format!(
+            "{}{}",
+            Config::out_palindrome_display(&config, n),
+            fmt(&palindromes, &seq, &matrix, &complement)
+        )),
+        // TODO: add matching information
+        "csv" => Ok(fmt_csv(&palindromes, &seq)),
         _ => {
             let _ = Config::command().print_help();
-            return Err(anyhow!(
+            Err(anyhow!(
                 "Output format '{}' not supported",
                 config.output_format
-            ));
+            ))
         }
-    };
-
-    let elapsed = start_time.elapsed();
-    let elapsed_ms = elapsed.as_millis();
-    println!(
-        "Elapsed time: {} milliseconds (END GET PALINDROME STRING)",
-        elapsed_ms
-    );
-
-    // Write palindromes
+    }?;
     let mut file = File::create(&config.output_file)?;
     writeln!(&mut file, "{}", out_str)?;
     println!("Search complete!");
-
-    let elapsed = start_time.elapsed();
-    let elapsed_ms = elapsed.as_millis();
-    println!("Elapsed time: {} milliseconds (TOTAL)", elapsed_ms);
 
     Ok(())
 }

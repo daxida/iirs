@@ -1,6 +1,5 @@
+use crate::{matrix::MatchMatrix, rmq::rmq};
 use std::collections::BTreeSet;
-
-use crate::{rmq::rmq, matrix::MatchMatrix};
 
 // Calculates the Longest Common Prefix array of a text and stores value in given variable LCP
 //
@@ -9,6 +8,7 @@ use crate::{rmq::rmq, matrix::MatchMatrix};
 // - Text length
 // - Suffix Array
 // - Longest Common Prefix data structure (empty)
+#[elapsed_time::elapsed]
 pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usize> {
     let mut lcp: Vec<usize> = vec![0; s_n];
     let mut j: usize;
@@ -27,31 +27,6 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usiz
     }
 
     lcp
-}
-
-// Returns the Longest Common Extension between position i and j (order of i, j input does not matter)
-//
-// INPUT:
-// - Indexes i and j
-// - Text length
-// - Inverse Suffix Array
-// - Longest Common Prefix Array data structure (filled)
-// - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
-fn lce(
-    i: usize,
-    j: usize,
-    s_n: usize,
-    inv_sa: &[usize],
-    lcp: &[usize],
-    rmq_prep: &[usize],
-) -> usize {
-    if j == s_n {
-        return 0;
-    }
-
-    assert!(i < j);
-
-    lcp[rmq(rmq_prep, lcp, s_n, inv_sa[i], inv_sa[j])]
 }
 
 // Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches, up to maximum number of allowed mismatches
@@ -86,12 +61,23 @@ fn real_lce_mismatches(
     initial_gap: i32,
     matrix: &MatchMatrix,
 ) -> Vec<i32> {
+    assert!(i < j);
+
     let mut mismatch_locs = Vec::new(); // Originally LinkedList<i32>
     mismatch_locs.push(-1);
 
     let mut real_lce = 0;
     while mismatches >= 0 {
-        real_lce += lce(i + real_lce, j + real_lce, s_n, inv_sa, lcp, rmq_prep);
+        // lce function in the original
+        if j + real_lce != s_n {
+            real_lce += lcp[rmq(
+                rmq_prep,
+                lcp,
+                s_n,
+                inv_sa[i + real_lce],
+                inv_sa[j + real_lce],
+            )];
+        }
 
         let ni = i + real_lce;
         let nj = j + real_lce;

@@ -160,7 +160,8 @@ impl Config {
         out.push_str(&format!("max_len:     {}\n", &self.max_len));
         out.push_str(&format!("max_gap:     {}\n", &self.max_gap));
         out.push_str(&format!("mismatches:  {}\n", &self.mismatches));
-        out.push_str(&format!("output_file: {}\n\n", &self.output_file));
+        out.push_str(&format!("output_file: {}\n", &self.output_file));
+        out.push_str(&format!("output_fmt:  {}\n\n", &self.output_format));
 
         out
     }

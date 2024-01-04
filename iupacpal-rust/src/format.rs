@@ -1,20 +1,19 @@
-use std::collections::BTreeSet; // Ordered
+// This may present differences in the ordering with IUPACpal - but it is simpler to write
 
 use crate::matrix::MatchMatrix;
+use std::collections::BTreeSet;
 
 fn int_size(x: i32) -> usize {
     format!("{}", x).len()
 }
 
-// This may present differences in the ordering with IUPACpal - but it is simpler to write
-
+#[elapsed_time::elapsed]
 pub fn fmt(
     palindromes: &BTreeSet<(i32, i32, i32)>,
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[char; 128],
 ) -> String {
-    // let mut palindromes_out = String::with_capacity(palindromes.len() * 1000); // Adjust
     let mut palindromes_out = String::new();
 
     let pad = "         ";
@@ -73,6 +72,7 @@ pub fn fmt(
     palindromes_out
 }
 
+#[elapsed_time::elapsed]
 pub fn fmt_csv(palindromes: &BTreeSet<(i32, i32, i32)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
     palindromes_out.push_str("start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat\n");

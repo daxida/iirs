@@ -35,6 +35,7 @@ pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: u
 }
 
 // O(nlogn)-time preprocessing function for Range Minimum Queries (used in main::main)
+#[elapsed_time::elapsed]
 pub fn rmq_preprocess(lcp: &[usize], s_n: usize) -> Vec<usize> {
     let lgn = flog2(s_n);
 
