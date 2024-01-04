@@ -58,8 +58,8 @@ def test(n: int):
 
 cpp_timings = []
 rust_timings = []
-for _ in range(100):
-    test(int(1e3))
+for _ in range(1):
+    test(int(1e6))
 
 cpp_avg_time = mean(cpp_timings)
 rust_avg_time = mean(rust_timings)

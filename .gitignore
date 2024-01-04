@@ -1,1 +1,13 @@
 2023-victor-IRs-Victor/
+
+# Ignore performance testing files or directories
+perf/
+perf*
+
+# out files
+IUPACpal/IUPACpal.out
+
+# Random data
+IUPACpal/rand.fasta
+iupacpal-rust/rand.fasta
+
