@@ -7,10 +7,10 @@
 
 mod config;
 mod debug;
-mod experiments;
+mod rmq;
 mod format;
 mod matrix;
-mod utils;
+mod algo;
 
 use anyhow::{anyhow, Result};
 use clap::CommandFactory;
@@ -22,40 +22,38 @@ use std::time::Instant;
 
 use config::Config;
 use debug::print_array;
-use format::fmt;
-use format::fmt_csv;
+use format::{fmt, fmt_csv};
 use matrix::MatchMatrix;
-use utils::add_palindromes;
-use utils::lcp_array;
-use utils::rmq_preprocess;
+use algo::{lcp_array, add_palindromes};
+use rmq::rmq_preprocess;
 
 const DEBUG: bool = false;
 const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
+const COMPLEMENT_RULES: [(char, char); 18] = [
+    ('a', 't'),
+    ('c', 'g'),
+    ('g', 'c'),
+    ('t', 'a'),
+    ('u', 'a'),
+    ('r', 'y'),
+    ('y', 'r'),
+    ('s', 's'),
+    ('w', 'w'),
+    ('k', 'm'),
+    ('m', 'k'),
+    ('b', 'v'),
+    ('d', 'h'),
+    ('h', 'd'),
+    ('v', 'b'),
+    ('n', 'n'),
+    ('*', 'n'),
+    ('-', 'n'),
+];
 
 fn build_complement_array() -> [char; 128] {
-    let complement_rules = vec![
-        ('a', 't'),
-        ('c', 'g'),
-        ('g', 'c'),
-        ('t', 'a'),
-        ('u', 'a'),
-        ('r', 'y'),
-        ('y', 'r'),
-        ('s', 's'),
-        ('w', 'w'),
-        ('k', 'm'),
-        ('m', 'k'),
-        ('b', 'v'),
-        ('d', 'h'),
-        ('h', 'd'),
-        ('v', 'b'),
-        ('n', 'n'),
-        ('*', 'n'),
-        ('-', 'n'),
-    ];
     let mut complement: [char; 128] = ['@'; 128];
 
-    for (key, value) in complement_rules {
+    for (key, value) in COMPLEMENT_RULES {
         complement[key as usize] = value;
     }
 
@@ -88,7 +86,7 @@ fn find_palindromes(
 
     // Calculate LCP & RMQ
     let lcp = lcp_array(&s, s_n, &sa, &inv_sa);
-    let ary = rmq_preprocess(&lcp, s_n); // A in the original
+    let rmq_prep = rmq_preprocess(&lcp, s_n); // A in the original
 
     if DEBUG {
         print_array("  seq", seq, false);
@@ -96,7 +94,7 @@ fn find_palindromes(
         print_array("   SA", &sa, true);
         print_array("invSA", &inv_sa, true);
         print_array("  LCP", &lcp, true);
-        print_array("A/ary", &ary, true);
+        print_array("    A", &rmq_prep, true);
     }
 
     // Calculate palidromes
@@ -107,7 +105,7 @@ fn find_palindromes(
         n,
         &inv_sa,
         &lcp,
-        &ary,
+        &rmq_prep,
         config.min_len,
         config.max_len,
         config.mismatches,
@@ -177,7 +175,7 @@ fn main() -> Result<()> {
 
     println!("Elapsed time: {} milliseconds (LCP)", elapsed_ms);
 
-    let ary = rmq_preprocess(&lcp, s_n); // A in the original
+    let rmq_prep = rmq_preprocess(&lcp, s_n); // A in the original
 
     let elapsed = start_time.elapsed();
     let elapsed_ms = elapsed.as_millis();
@@ -189,7 +187,7 @@ fn main() -> Result<()> {
         print_array("   SA", &sa, true);
         print_array("invSA", &inv_sa, true);
         print_array("  LCP", &lcp, true);
-        print_array("A/ary", &ary, true);
+        print_array("A/ary", &rmq_prep, true);
     }
 
     // Calculate palidromes
@@ -200,7 +198,7 @@ fn main() -> Result<()> {
         n,
         &inv_sa,
         &lcp,
-        &ary,
+        &rmq_prep,
         config.min_len,
         config.max_len,
         config.mismatches,
