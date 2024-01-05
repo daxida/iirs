@@ -1,6 +1,12 @@
 // This may present differences in the ordering with IUPACpal - but it is simpler to write
 
-use crate::matrix::MatchMatrix;
+use crate::{
+    config::Config,
+    constants,
+    matrix::{self, MatchMatrix},
+};
+use anyhow::{anyhow, Result};
+use clap::CommandFactory;
 use std::collections::BTreeSet;
 
 fn int_size(x: i32) -> usize {
@@ -8,11 +14,63 @@ fn int_size(x: i32) -> usize {
 }
 
 #[elapsed_time::elapsed]
-pub fn fmt(
+pub fn strinfigy_palindromes(
+    config: &Config,
+    palindromes: &BTreeSet<(i32, i32, i32)>,
+    seq: &[u8],
+    n: usize,
+) -> Result<String> {
+    // Build again the matchmatrix needed for printing out matches.
+    let matrix = matrix::MatchMatrix::new();
+    let complement = constants::build_complement_array();
+
+    match config.output_format.as_str() {
+        "classic" => Ok(format!(
+            "{}{}",
+            out_palindrome_display_header(config, n),
+            fmt_classic(palindromes, seq, &matrix, &complement)
+        )),
+        // TODO: add matching information
+        "csv" => Ok(fmt_csv(palindromes, seq)),
+        _ => {
+            let _ = Config::command().print_help();
+            Err(anyhow!(
+                "Output format '{}' not supported",
+                config.output_format
+            ))
+        }
+    }
+}
+
+fn out_palindrome_display_header(config: &Config, n: usize) -> String {
+    format!(
+        "Palindromes of: {}\n\
+        Sequence name: {}\n\
+        Sequence length is: {}\n\
+        Start at position: {}\n\
+        End at position: {}\n\
+        Minimum length of Palindromes is: {}\n\
+        Maximum length of Palindromes is: {}\n\
+        Maximum gap between elements is: {}\n\
+        Number of mismatches allowed in Palindrome: {}\n\n\n\n\
+        Palindromes:\n",
+        &config.input_file,
+        &config.seq_name,
+        n,
+        1,
+        n,
+        config.min_len,
+        config.max_len,
+        config.max_gap,
+        config.mismatches,
+    )
+}
+
+fn fmt_classic(
     palindromes: &BTreeSet<(i32, i32, i32)>,
     seq: &[u8],
     matrix: &MatchMatrix,
-    complement: &[char; 128],
+    complement: &[u8; 128],
 ) -> String {
     let mut palindromes_out = String::new();
 
@@ -45,7 +103,7 @@ pub fn fmt(
                 .map(|i| {
                     let l = seq[(left + i) as usize];
                     let r = seq[(right - i) as usize];
-                    if matrix.match_chars(l as char, complement[r as usize]) {
+                    if matrix.match_u8(l, complement[r as usize]) {
                         "|"
                     } else {
                         " "
@@ -72,8 +130,7 @@ pub fn fmt(
     palindromes_out
 }
 
-#[elapsed_time::elapsed]
-pub fn fmt_csv(palindromes: &BTreeSet<(i32, i32, i32)>, seq: &[u8]) -> String {
+fn fmt_csv(palindromes: &BTreeSet<(i32, i32, i32)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
     palindromes_out.push_str("start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat\n");
 
@@ -103,19 +160,20 @@ pub fn fmt_csv(palindromes: &BTreeSet<(i32, i32, i32)>, seq: &[u8]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{build_complement_array, config::Config, find_palindromes, matrix};
+    use crate::{config::Config, constants::build_complement_array, find_palindromes, matrix};
 
     #[test]
     fn test_format_classic() {
-        let config = Config::new("f", "f", 10, 100, 10, 1, "f", "f");
+        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
+        let palindromes = find_palindromes(&config, &seq, n);
+        // Classic format needs matrix & complement
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
-        let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
-        let received = fmt(&palindromes, &seq, &matrix, &complement);
+        let received = fmt_classic(&palindromes, &seq, &matrix, &complement);
         let expected = r#"2        gucsggtgtwkmmm       15
          ||| ||||||||||
 30       nngah*nn-nddbk       17
@@ -176,14 +234,12 @@ mod tests {
 
     #[test]
     fn test_format_csv() {
-        let config = Config::new("f", "f", 10, 100, 10, 1, "f", "f");
+        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let matrix = matrix::MatchMatrix::new();
-        let complement = build_complement_array();
-        let palindromes = find_palindromes(&config, &seq, n, &complement, &matrix);
+        let palindromes = find_palindromes(&config, &seq, n);
         let received = fmt_csv(&palindromes, &seq);
         let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk

@@ -6,7 +6,7 @@ fn flog2(v: usize) -> usize {
 // Range Minimum Query (used in algo::lce)
 pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: usize) -> usize {
     // We could pass this as an arg to prevent recomputation but it's not worth.
-    let lgn = flog2(s_n); 
+    let lgn = flog2(s_n);
 
     assert!(i != j);
 

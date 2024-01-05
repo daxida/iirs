@@ -1,9 +1,10 @@
 use anyhow::{anyhow, Result};
+use clap::CommandFactory;
 use clap::Parser;
 use seq_io::fasta::{Reader, Record};
 use std::fs;
 
-#[derive(Parser, Debug)]
+#[derive(Parser)]
 pub struct Config {
     /// Input filename (FASTA).
     #[arg(short = 'f', default_value_t = String::from("input.fasta"))]
@@ -41,7 +42,7 @@ pub struct Config {
 impl Config {
     #[allow(dead_code)] // ::new is actually used for testing...
     #[allow(clippy::too_many_arguments)]
-    pub fn new(
+    fn new(
         input_file: &str,
         seq_name: &str,
         min_len: i32,
@@ -67,7 +68,26 @@ impl Config {
         Config::parse()
     }
 
-    // Just some clearer error handling
+    #[allow(dead_code)] // For unit tests
+    pub fn dummy(min_len: i32, max_len: i32, max_gap: i32, mismatches: i32) -> Self {
+        Self {
+            input_file: String::from("dummy"),
+            seq_name: String::from("dummy"),
+            min_len,
+            max_len,
+            max_gap,
+            mismatches,
+            output_file: String::from("dummy"),
+            output_format: String::from("dummy"),
+        }
+    }
+
+    #[allow(dead_code)] // For unit tests
+    pub fn dummy_default() -> Self {
+        Config::dummy(10, 100, 100, 0)
+    }
+
+    // Just some clearer error handling (probably useless)
     fn check_file_exist(path: &str) -> Result<()> {
         let metadata = fs::metadata(path)
             .map_err(|_| anyhow!("'{}' does not exist or cannot access the path.", path))?;
@@ -79,13 +99,12 @@ impl Config {
         }
     }
 
-    /// Attemps to extract the sequence from the fasta file.
-    /// Returns a trimmed String in lowercase.
-    /// If the sequence is not found, returns an Error with the sequences that were actually
-    /// present in the fasta for convenience.
+    /// Attemps to extract the sequence (string) from the fasta file. Returns a trimmed lowercase String.
+    ///
+    /// If the sequence is not found, returns an Error with the list of found sequences.
     pub fn extract_string(&self) -> Result<String> {
         Config::check_file_exist(&self.input_file)?;
-        let mut reader = Reader::from_path(self.input_file.as_str())?;
+        let mut reader = Reader::from_path(&self.input_file)?;
         let mut found_seqs = Vec::new();
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
@@ -110,10 +129,45 @@ impl Config {
         ))
     }
 
+    /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
+    ///
+    /// Returns an error if there are no sequences.
+    ///
+    /// Mainly used for convenience in test suites.
+    #[allow(dead_code)] // For unit tests
+    pub fn extract_first_string(input_file: String) -> Result<String> {
+        Config::check_file_exist(&input_file)?;
+        let mut reader = Reader::from_path(&input_file)?;
+
+        while let Some(record) = reader.next() {
+            let record = record.expect("Error reading record");
+            return Ok(
+                std::str::from_utf8(record.seq())?
+                    .trim_end()
+                    .to_lowercase()
+                    .replace('\n', ""), // why isn't this the default?
+            );
+        }
+
+        Err(anyhow!("No sequences found"))
+    }
+
     pub fn verify(&self, n: usize) -> Result<()> {
+        match Config::verify_bounds(&self, n) {
+            Ok(()) => Ok(()),
+            Err(msg) => {
+                // Print help message if verify_bounds fails
+                let _ = Config::command().print_help();
+                println!();
+                Err(msg)
+            }
+        }
+    }
+
+    fn verify_bounds(&self, n: usize) -> Result<()> {
         if self.min_len as usize >= n {
             return Err(anyhow!(
-                "min_len={} must not be less than sequence length={}.",
+                "min_len={} must be less than sequence length={}.",
                 self.min_len,
                 n
             ));
@@ -125,11 +179,11 @@ impl Config {
                 n
             ));
         }
-        if self.max_len < self.min_len {
+        if self.min_len > self.max_len {
             return Err(anyhow!(
-                "max_len={} must not be less than min_len={}.",
-                self.max_len,
-                self.min_len
+                "min_len={} must be less than max_len={}.",
+                self.min_len,
+                self.max_len
             ));
         }
         if self.mismatches as usize >= n {
@@ -161,34 +215,8 @@ impl Config {
         out.push_str(&format!("max_gap:     {}\n", &self.max_gap));
         out.push_str(&format!("mismatches:  {}\n", &self.mismatches));
         out.push_str(&format!("output_file: {}\n", &self.output_file));
-        out.push_str(&format!("output_fmt:  {}\n\n", &self.output_format));
+        out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
 
         out
-    }
-
-    pub fn out_palindrome_display(&self, n: usize) -> String {
-        let config_out = format!(
-            "Palindromes of: {}\n\
-            Sequence name: {}\n\
-            Sequence length is: {}\n\
-            Start at position: {}\n\
-            End at position: {}\n\
-            Minimum length of Palindromes is: {}\n\
-            Maximum length of Palindromes is: {}\n\
-            Maximum gap between elements is: {}\n\
-            Number of mismatches allowed in Palindrome: {}\n\n\n\n\
-            Palindromes:\n",
-            &self.input_file,
-            &self.seq_name,
-            n,
-            1,
-            n,
-            self.min_len,
-            self.max_len,
-            self.max_gap,
-            self.mismatches,
-        );
-
-        config_out
     }
 }

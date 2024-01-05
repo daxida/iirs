@@ -111,6 +111,7 @@ fn real_lce_mismatches(
 // - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
 // - Tuple of parameters for palindromes to be found (minimum_length, maximum_length, maximum_allowed_number_of_mismatches, maximum_gap)
 #[allow(clippy::too_many_arguments)]
+#[elapsed_time::elapsed]
 pub fn add_palindromes(
     s: &[u8],
     s_n: usize,
