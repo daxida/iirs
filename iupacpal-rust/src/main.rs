@@ -1,7 +1,7 @@
 #![feature(test)]
 
-extern crate test;
 extern crate elapsed_time;
+extern crate test;
 
 mod algo;
 mod config;
@@ -23,15 +23,6 @@ use config::Config;
 use format::strinfigy_palindromes;
 
 // TODO: fix bug -g 0
-
-fn string_to_iupac_seq(string: &str) -> Vec<u8> {
-    let symbols = constants::IUPAC_SYMBOLS.as_bytes();
-    string
-        .as_bytes()
-        .iter()
-        .map(|&ch| symbols.iter().position(|&x| x == ch).unwrap() as u8)
-        .collect()
-}
 
 fn build_long_sequence(seq: &[u8], n: usize, complement: &[u8; 128]) -> Vec<u8> {
     let mut s = vec![0u8; 2 * n + 2];
@@ -56,7 +47,7 @@ fn find_palindromes(config: &Config, seq: &[u8], n: usize) -> BTreeSet<(i32, i32
 
     // Construct s = seq + '$' + complement(reverse(seq)) + '#'
     let s_n = 2 * n + 2;
-    let s = build_long_sequence(seq, n, &complement);
+    let s = build_long_sequence(&seq, n, &complement);
 
     // Construct Suffix Array (sa) & Inverse Suffix Array
     let sa: Vec<i64> = divsufsort64(&s).unwrap();
@@ -90,13 +81,10 @@ fn main() -> Result<()> {
     // Config and init variables
     let config = Config::from_args();
     let string = config.extract_string()?;
+    let n = string.len();
+    config.verify(n)?;
     let seq = string.as_bytes();
-    // let seq = string_to_iupac_seq(&string);
-    let n = seq.len();
-    config.verify(n)?; // Checks that the config makes sense
 
-    dbg!(string_to_iupac_seq(&string));
-    
     // Find all palindromes
     let palindromes = find_palindromes(&config, &seq, n);
 
@@ -172,9 +160,8 @@ mod tests {
 
     // Option 1
 
-    fn bench_from_path(file_path_str: &str) -> BTreeSet<(i32, i32, i32)> {
-        let config = Config::dummy(10, 100, 10, 1);
-        let string = Config::extract_first_string(String::from(file_path_str)).unwrap();
+    fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> BTreeSet<(i32, i32, i32)> {
+        let string = Config::extract_first_string(String::from(path)).unwrap();
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         config.verify(n).unwrap();
@@ -183,22 +170,30 @@ mod tests {
 
     // Copy pasta a LOT of these
     #[bench]
-    fn single_bench(b: &mut Bencher) {
-        let file_path_str = "test_data/test1.fasta";
-        b.iter(|| bench_from_path(file_path_str))
+    fn bench_test1(b: &mut Bencher) {
+        let config = Config::dummy(10, 100, 10, 0);
+        let path = "test_data/test1.fasta";
+        b.iter(|| find_palindromes_from_pathconfig(path, &config))
+    }
+
+    #[bench]
+    fn bench_alys(b: &mut Bencher) {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/alys.fna";
+        b.iter(|| find_palindromes_from_pathconfig(path, &config))
     }
 
     // Option 2: make some sort of macro and create benches while iterating test_data
     // (atm it benches everything in bulk)
 
     // use std::fs;
-    
+
     // #[bench]
     // fn iterate_test_suite(b: &mut Bencher) {
     //     let folder_path = "test_data";
     //     let config = Config::dummy(10, 100, 10, 1);
     //     let entries = fs::read_dir(folder_path).unwrap();
-    
+
     //     for entry in entries {
     //         if let Ok(entry) = entry {
     //             if let Some(file_path_str) = entry.path().to_str() {

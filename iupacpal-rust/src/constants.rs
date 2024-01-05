@@ -24,6 +24,28 @@ pub const COMPLEMENT_RULES: [(char, char); 18] = [
     ('*', 'n'),
     ('-', 'n'),
 ];
+const IUPAC_RULES: [(char, &str); 20] = [
+    ('a', "a"),
+    ('c', "c"),
+    ('g', "g"),
+    ('t', "t"),
+    ('u', "t"),
+    ('r', "ag"),
+    ('y', "ct"),
+    ('s', "gc"),
+    ('w', "at"),
+    ('k', "gt"),
+    ('m', "ac"),
+    ('b', "cgt"),
+    ('d', "agt"),
+    ('h', "act"),
+    ('v', "acg"),
+    ('n', "acgt"),
+    ('*', "acgt"),
+    ('-', "acgt"),
+    ('$', "$"),
+    ('#', "#"),
+];
 
 pub fn build_complement_array() -> [u8; 128] {
     let mut complement: [u8; 128] = [0; 128];
@@ -36,30 +58,10 @@ pub fn build_complement_array() -> [u8; 128] {
 }
 
 pub fn build_iupac_rules() -> Vec<(char, BTreeSet<char>)> {
-    // Vector with the meaning of each IUPAC symbol
-    vec![
-        ('a', BTreeSet::from(['a'])),
-        ('c', BTreeSet::from(['c'])),
-        ('g', BTreeSet::from(['g'])),
-        ('t', BTreeSet::from(['t'])),
-        ('u', BTreeSet::from(['t'])),
-        ('r', BTreeSet::from(['a', 'g'])),
-        ('y', BTreeSet::from(['c', 't'])),
-        ('s', BTreeSet::from(['g', 'c'])),
-        ('w', BTreeSet::from(['a', 't'])),
-        ('k', BTreeSet::from(['g', 't'])),
-        ('m', BTreeSet::from(['a', 'c'])),
-        ('b', BTreeSet::from(['c', 'g', 't'])),
-        ('d', BTreeSet::from(['a', 'g', 't'])),
-        ('h', BTreeSet::from(['a', 'c', 't'])),
-        ('v', BTreeSet::from(['a', 'c', 'g'])),
-        ('n', BTreeSet::from(['a', 'c', 'g', 't'])),
-        ('*', BTreeSet::from(['a', 'c', 'g', 't'])),
-        ('-', BTreeSet::from(['a', 'c', 'g', 't'])),
-        // Extra cases (separators)
-        ('$', BTreeSet::from(['$'])),
-        ('#', BTreeSet::from(['#'])),
-    ]
+    IUPAC_RULES
+        .iter()
+        .map(|&(c, t)| (c, t.chars().collect::<BTreeSet<_>>()))
+        .collect()
 }
 
 mod tests {
