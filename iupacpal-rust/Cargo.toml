@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "lib"
+name = "iupacpal"
 path = "src/lib.rs"
 
 [dependencies]
@@ -17,3 +17,6 @@ elapsed-time = "0.1.1"
 
 # [profile.dev]
 # opt-level = 3
+
+[profile.test]
+opt-level = 3
