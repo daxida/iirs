@@ -18,10 +18,10 @@ fn main() -> Result<()> {
     let seq = string.as_bytes();
 
     // Find all palindromes
-    let palindromes = find_palindromes(&config, &seq, n);
+    let palindromes = find_palindromes(&config, seq);
 
     // Stringify palindromes
-    let out_str = strinfigy_palindromes(&config, &palindromes, &seq, n)?;
+    let out_str = strinfigy_palindromes(&config, &palindromes, seq)?;
 
     // Write palindromes
     let mut file = File::create(&config.output_file)?;

@@ -1,5 +1,4 @@
 use crate::{matrix::MatchMatrix, rmq::rmq};
-use std::collections::BTreeSet;
 
 // Calculates the Longest Common Prefix array of a text and stores value in given variable LCP
 //
@@ -8,7 +7,6 @@ use std::collections::BTreeSet;
 // - Text length
 // - Suffix Array
 // - Longest Common Prefix data structure (empty)
-#[elapsed_time::elapsed]
 pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usize> {
     let mut lcp: Vec<usize> = vec![0; s_n];
     let mut j: usize;
@@ -61,7 +59,7 @@ fn real_lce_mismatches(
     initial_gap: i32,
     matrix: &MatchMatrix,
 ) -> Vec<i32> {
-    assert!(i < j);
+    debug_assert!(i < j);
 
     let mut mismatch_locs = Vec::new(); // Originally LinkedList<i32>
     mismatch_locs.push(-1);
@@ -110,8 +108,14 @@ fn real_lce_mismatches(
 // - Longest Common Prefix Array (LCP)
 // - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
 // - Tuple of parameters for palindromes to be found (minimum_length, maximum_length, maximum_allowed_number_of_mismatches, maximum_gap)
+//
+// NOTES:
+// - The original algorithm returned a set of tuples. The use of the corresponding BTreeSet<(i32, i32, i32)
+//   here is marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
+//   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
+// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data will be printed sorted
+//   afterwards in "format". The palindromes found are the same without sorting, they are just not returned in the expected order.
 #[allow(clippy::too_many_arguments)]
-#[elapsed_time::elapsed]
 pub fn add_palindromes(
     s: &[u8],
     s_n: usize,
@@ -124,8 +128,8 @@ pub fn add_palindromes(
     mismatches: i32,
     max_gap: i32,
     matrix: &MatchMatrix,
-) -> BTreeSet<(i32, i32, i32)> {
-    let mut palindromes: BTreeSet<(i32, i32, i32)> = BTreeSet::new();
+) -> Vec<(i32, i32, i32)> {
+    let mut palindromes: Vec<(i32, i32, i32)> = Vec::new();
     let behind = (2 * n + 1) as f64;
 
     for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
@@ -266,12 +270,13 @@ pub fn add_palindromes(
                         (left + overshoot + 1, right - overshoot - 1, gap)
                     }
                 };
-                palindromes.insert(palindrome);
+                palindromes.push(palindrome);
             }
 
             start_it_ptr += 1;
         }
     }
 
+    palindromes.sort();
     palindromes
 }

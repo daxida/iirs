@@ -3,7 +3,7 @@ fn flog2(v: usize) -> usize {
     v.ilog2() as usize
 }
 
-// Range Minimum Query (used in algo::lce)
+// Range Minimum Query.
 pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: usize) -> usize {
     // We could pass this as an arg to prevent recomputation but it's not worth.
     let lgn = flog2(s_n);
@@ -33,8 +33,8 @@ pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: u
     }
 }
 
-// O(nlogn)-time preprocessing function for Range Minimum Queries (used in main::main)
-#[elapsed_time::elapsed]
+// O(nlogn)-time preprocessing function for Range Minimum Queries.
+// #[elapsed_time::elapsed]
 pub fn rmq_preprocess(lcp: &[usize], s_n: usize) -> Vec<usize> {
     let lgn = flog2(s_n);
 

@@ -4,7 +4,7 @@ pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
 pub const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
 pub const ALL_SYMBOLS_COUNT: usize = 20;
-pub const COMPLEMENT_RULES: [(char, char); 18] = [
+const COMPLEMENT_RULES: [(char, char); 18] = [
     ('a', 't'),
     ('c', 'g'),
     ('g', 'c'),

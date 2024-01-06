@@ -2,41 +2,42 @@
 
 extern crate test;
 
-mod algo;
 pub mod config;
-mod constants;
 pub mod format;
+
+mod algo;
+mod constants;
 mod matrix;
 mod rmq;
 
-use libdivsufsort_rs::*;
-use std::collections::BTreeSet;
 use config::Config;
+use libdivsufsort_rs::*;
 
-fn build_long_sequence(seq: &[u8], n: usize, complement: &[u8; 128]) -> Vec<u8> {
-    let mut s = vec![0u8; 2 * n + 2];
-
-    for i in 0..n {
-        s[i] = seq[i];
-        s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
-        // This should probably be tested also in --release
-        assert!(constants::IUPAC_SYMBOLS.contains(seq[i] as char))
-    }
-    s[n] = b'$';
-    s[2 * n + 1] = b'#';
-
-    s
-}
-
+/// Panics if the given seq has a character NOT in lowercase IUPAC = "acgturyswkmbdhvn*-"
+///
 #[elapsed_time::elapsed]
-pub fn find_palindromes(config: &Config, seq: &[u8], n: usize) -> BTreeSet<(i32, i32, i32)> {
+pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
+    // This recomputation of n is just for convenience of the API
+    let n = seq.len();
+
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
     // Construct s = seq + '$' + complement(reverse(seq)) + '#'
     let s_n = 2 * n + 2;
-    let s = build_long_sequence(&seq, n, &complement);
+    let mut s = vec![0u8; s_n];
+    for i in 0..n {
+        s[i] = seq[i];
+        s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
+        assert!(
+            constants::IUPAC_SYMBOLS.contains(seq[i] as char),
+            "Error: sequence contains '{}' which is not a IUPAC symbol.",
+            seq[i] as char
+        )
+    }
+    s[n] = b'$';
+    s[2 * n + 1] = b'#';
 
     // Construct Suffix Array (sa) & Inverse Suffix Array
     let sa: Vec<i64> = divsufsort64(&s).unwrap();
@@ -47,7 +48,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8], n: usize) -> BTreeSet<(i32,
 
     // Calculate LCP & RMQ
     let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
-    let rmq_prep = rmq::rmq_preprocess(&lcp, s_n); // A in the original
+    let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
 
     // Calculate palidromes
     algo::add_palindromes(
@@ -68,14 +69,13 @@ pub fn find_palindromes(config: &Config, seq: &[u8], n: usize) -> BTreeSet<(i32,
 #[cfg(test)]
 mod tests {
     use crate::{config::Config, find_palindromes};
-    use std::collections::BTreeSet;
     use test::Bencher;
 
     fn test_seq(config: &Config, string: &str) -> usize {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq, n);
+        let palindromes = find_palindromes(&config, &seq);
         palindromes.len()
     }
 
@@ -122,12 +122,12 @@ mod tests {
     }
 
     // Test generator
-    fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> BTreeSet<(i32, i32, i32)> {
+    fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(i32, i32, i32)> {
         let string = Config::extract_first_string(String::from(path)).unwrap();
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         config.verify(n).unwrap();
-        find_palindromes(&config, &seq, n)
+        find_palindromes(&config, &seq)
     }
 
     #[test]
@@ -149,7 +149,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        b.iter(|| find_palindromes(&config, &seq, n))
+        b.iter(|| find_palindromes(&config, &seq))
     }
 
     #[bench]
@@ -180,12 +180,12 @@ mod tests {
     //     b.iter(|| find_palindromes_from_pathconfig(path, &config))
     // }
 
-    // #[bench]
-    // fn bench_alys(b: &mut Bencher) {
-    //     let config = Config::dummy(3, 100, 20, 0);
-    //     let path = "test_data/alys.fna";
-    //     b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    // }
+    #[bench]
+    fn bench_alys(b: &mut Bencher) {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/alys.fna";
+        b.iter(|| find_palindromes_from_pathconfig(path, &config))
+    }
 
     // #[bench]
     // fn bench_default_rand_iupac_1000000(b: &mut Bencher) {

@@ -7,19 +7,19 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use clap::CommandFactory;
-use std::collections::BTreeSet;
 
 fn int_size(x: i32) -> usize {
     format!("{}", x).len()
 }
 
-#[elapsed_time::elapsed]
 pub fn strinfigy_palindromes(
     config: &Config,
-    palindromes: &BTreeSet<(i32, i32, i32)>,
+    palindromes: &Vec<(i32, i32, i32)>,
     seq: &[u8],
-    n: usize,
 ) -> Result<String> {
+    // This recomputation of n is just for convenience of the API
+    let n = seq.len();
+
     // Build again the matchmatrix needed for printing out matches.
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
@@ -67,7 +67,7 @@ fn out_palindrome_display_header(config: &Config, n: usize) -> String {
 }
 
 fn fmt_classic(
-    palindromes: &BTreeSet<(i32, i32, i32)>,
+    palindromes: &Vec<(i32, i32, i32)>,
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
@@ -130,7 +130,7 @@ fn fmt_classic(
     palindromes_out
 }
 
-fn fmt_csv(palindromes: &BTreeSet<(i32, i32, i32)>, seq: &[u8]) -> String {
+fn fmt_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
     palindromes_out.push_str("start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat\n");
 
@@ -169,7 +169,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq, n);
+        let palindromes = find_palindromes(&config, &seq);
         // Classic format needs matrix & complement
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
@@ -239,7 +239,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq, n);
+        let palindromes = find_palindromes(&config, &seq);
         let received = fmt_csv(&palindromes, &seq);
         let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk

@@ -112,7 +112,6 @@ impl Config {
             if rec_id == self.seq_name {
                 return Ok(
                     std::str::from_utf8(record.seq())?
-                        .trim_end()
                         .to_lowercase()
                         .replace('\n', ""), // why isn't this the default?
                 );
@@ -138,22 +137,19 @@ impl Config {
     pub fn extract_first_string(input_file: String) -> Result<String> {
         Config::check_file_exist(&input_file)?;
         let mut reader = Reader::from_path(&input_file)?;
+        let record = reader
+            .next()
+            .expect("No sequences found")
+            .expect("Error reading record");
 
-        while let Some(record) = reader.next() {
-            let record = record.expect("Error reading record");
-            return Ok(
-                std::str::from_utf8(record.seq())?
-                    .trim_end()
-                    .to_lowercase()
-                    .replace('\n', ""), // why isn't this the default?
-            );
-        }
-
-        Err(anyhow!("No sequences found"))
+        Ok(std::str::from_utf8(record.seq())
+            .unwrap()
+            .to_lowercase()
+            .replace('\n', ""))
     }
 
     pub fn verify(&self, n: usize) -> Result<()> {
-        match Config::verify_bounds(&self, n) {
+        match Config::verify_bounds(self, n) {
             Ok(()) => Ok(()),
             Err(msg) => {
                 // Print help message if verify_bounds fails
