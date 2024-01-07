@@ -34,7 +34,7 @@ pub struct Config {
     #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
     pub output_file: String,
 
-    /// Output format (classic or csv).
+    /// Output format (classic, csv or custom_csv).
     #[arg(short = 'F', default_value_t = String::from("classic"))]
     pub output_format: String,
 }
@@ -78,7 +78,8 @@ impl Config {
             max_gap,
             mismatches,
             output_file: String::from("dummy"),
-            output_format: String::from("dummy"),
+            // initialize to classic to pass early Config::verify
+            output_format: String::from("classic"),
         }
     }
 
@@ -149,15 +150,13 @@ impl Config {
     }
 
     pub fn verify(&self, n: usize) -> Result<()> {
-        match Config::verify_bounds(self, n) {
-            Ok(()) => Ok(()),
-            Err(msg) => {
-                // Print help message if verify_bounds fails
-                let _ = Config::command().print_help();
-                println!();
-                Err(msg)
-            }
+        if let Err(msg) = Config::verify_bounds(self, n) {
+            let _ = Config::command().print_help();
+            println!();
+            return Err(msg);
         }
+        Config::verify_format(self)?;
+        Ok(())
     }
 
     fn verify_bounds(&self, n: usize) -> Result<()> {
@@ -200,6 +199,17 @@ impl Config {
         Ok(())
     }
 
+    fn verify_format(&self) -> Result<()> {
+        let allowed_formats = ["classic", "csv", "custom_csv"];
+        if !allowed_formats.contains(&self.output_format.as_str()) {
+            return Err(anyhow!(
+                "Invalid output format. Allowed formats are: {}.",
+                allowed_formats.join(", ")
+            ));
+        }
+        Ok(())
+    }
+
     // make this an instance of display?
     pub fn display(&self) -> String {
         let mut out = String::new();
@@ -214,5 +224,22 @@ impl Config {
         out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
 
         out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_valid_output_format() {
+        let config = Config::dummy_default();
+        assert!(config.verify_format().is_ok())
+    }
+
+    #[test]
+    fn test_invalid_output_format() {
+        let config = Config::new("f", "f", 0, 0, 0, 0, "f", "wrong");
+        assert!(config.verify_format().is_err())
     }
 }

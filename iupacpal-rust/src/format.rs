@@ -5,8 +5,7 @@ use crate::{
     constants,
     matrix::{self, MatchMatrix},
 };
-use anyhow::{anyhow, Result};
-use clap::CommandFactory;
+use anyhow::Result;
 
 fn int_size(x: i32) -> usize {
     format!("{}", x).len()
@@ -30,15 +29,10 @@ pub fn strinfigy_palindromes(
             out_palindrome_display_header(config, n),
             fmt_classic(palindromes, seq, &matrix, &complement)
         )),
-        // TODO: add matching information
-        "csv" => Ok(fmt_csv(palindromes, seq)),
-        _ => {
-            let _ = Config::command().print_help();
-            Err(anyhow!(
-                "Output format '{}' not supported",
-                config.output_format
-            ))
-        }
+        "csv" => Ok(fmt_csv(palindromes, seq, &matrix, &complement)),
+        "custom_csv" => Ok(fmt_custom_csv(palindromes, seq)),
+        // Already tested in Config::verify
+        _ => unreachable!(),
     }
 }
 
@@ -130,9 +124,57 @@ fn fmt_classic(
     palindromes_out
 }
 
-fn fmt_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+fn fmt_csv(
+    palindromes: &Vec<(i32, i32, i32)>,
+    seq: &[u8],
+    matrix: &MatchMatrix,
+    complement: &[u8; 128],
+) -> String {
     let mut palindromes_out = String::new();
-    palindromes_out.push_str("start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat\n");
+    palindromes_out.push_str("start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat,matching\n");
+
+    for (left, right, gap) in palindromes {
+        let outer_left = left + 1;
+        let outer_right = right + 1;
+        let inner_left = (outer_left + outer_right - 1 - gap) / 2;
+        let inner_right = (outer_right + outer_left + 1 + gap) / 2;
+
+        let nucleotide = (*left as usize..inner_left as usize)
+            .map(|i| seq[i] as char)
+            .collect::<String>();
+        let inverted_repeat = ((inner_right - 1) as usize..outer_right as usize)
+            .rev()
+            .map(|i| seq[i] as char)
+            .collect::<String>();
+        let matching_line = (0..=(inner_left - outer_left))
+            .map(|i| {
+                let l = seq[(left + i) as usize];
+                let r = seq[(right - i) as usize];
+                if matrix.match_u8(l, complement[r as usize]) {
+                    "1"
+                } else {
+                    "0"
+                }
+            })
+            .collect::<String>();
+
+        palindromes_out.push_str(&format!(
+            "{},{},{},{},{},{},{}\n",
+            outer_left,
+            inner_left,
+            nucleotide,
+            outer_right,
+            inner_right,
+            inverted_repeat,
+            matching_line
+        ));
+    }
+
+    palindromes_out
+}
+
+fn fmt_custom_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+    let mut palindromes_out = String::new();
 
     for (left, right, gap) in palindromes {
         let outer_left = left + 1;
@@ -149,8 +191,8 @@ fn fmt_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
             .collect::<String>();
 
         palindromes_out.push_str(&format!(
-            "{},{},{},{},{},{}\n",
-            outer_left, inner_left, nucleotide, outer_right, inner_right, inverted_repeat
+            "{},{},{},{}\n",
+            outer_left, nucleotide, gap, inverted_repeat
         ));
     }
 
@@ -170,7 +212,6 @@ mod tests {
         let n = seq.len();
         let _ = config.verify(n).unwrap();
         let palindromes = find_palindromes(&config, &seq);
-        // Classic format needs matrix & complement
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_classic(&palindromes, &seq, &matrix, &complement);
@@ -240,21 +281,53 @@ mod tests {
         let n = seq.len();
         let _ = config.verify(n).unwrap();
         let palindromes = find_palindromes(&config, &seq);
-        let received = fmt_csv(&palindromes, &seq);
-        let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat
-2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk
-3,14,ucsggtgtwkmm,27,16,ah*nn-nddbkk
-3,15,ucsggtgtwkmmm,30,18,nngah*nn-nddb
-5,15,sggtgtwkmmm,26,16,h*nn-nddbkk
-5,17,sggtgtwkmmmkk,30,18,nngah*nn-nddb
-7,18,gtgtwkmmmkkb,30,19,nngah*nn-ndd
-8,18,tgtwkmmmkkb,30,20,nngah*nn-nd
-8,19,tgtwkmmmkkbd,31,20,anngah*nn-nd
-10,20,twkmmmkkbdd,31,21,anngah*nn-n
-11,20,wkmmmkkbdd,31,22,anngah*nn-
-12,21,kmmmkkbddn,31,22,anngah*nn-
-13,22,mmmkkbddn-,33,24,uganngah*n
-13,23,mmmkkbddn-n,34,24,guganngah*n
+        let matrix = matrix::MatchMatrix::new();
+        let complement = build_complement_array();
+        let received = fmt_csv(&palindromes, &seq, &matrix, &complement);
+        let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,inverted_repeat,matching
+2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
+3,14,ucsggtgtwkmm,27,16,ah*nn-nddbkk,101111111111
+3,15,ucsggtgtwkmmm,30,18,nngah*nn-nddb,1110111111111
+5,15,sggtgtwkmmm,26,16,h*nn-nddbkk,11111111111
+5,17,sggtgtwkmmmkk,30,18,nngah*nn-nddb,1101111111111
+7,18,gtgtwkmmmkkb,30,19,nngah*nn-ndd,110111111111
+8,18,tgtwkmmmkkb,30,20,nngah*nn-nd,11011111111
+8,19,tgtwkmmmkkbd,31,20,anngah*nn-nd,111011111111
+10,20,twkmmmkkbdd,31,21,anngah*nn-n,11110111111
+11,20,wkmmmkkbdd,31,22,anngah*nn-,1111011111
+12,21,kmmmkkbddn,31,22,anngah*nn-,1111111111
+13,22,mmmkkbddn-,33,24,uganngah*n,1101111111
+13,23,mmmkkbddn-n,34,24,guganngah*n,11111101111
+"#;
+        let expected_lines = expected.split("\n");
+        let received_lines = received.split("\n");
+        for (idx, (e, r)) in expected_lines.zip(received_lines).enumerate() {
+            assert_eq!(e, r, "Difference at line {}", idx)
+        }
+    }
+
+    #[test]
+    fn test_format_custom_csv() {
+        let config = Config::dummy(10, 100, 10, 1);
+        let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
+        let seq = string.to_ascii_lowercase().as_bytes().to_vec();
+        let n = seq.len();
+        let _ = config.verify(n).unwrap();
+        let palindromes = find_palindromes(&config, &seq);
+        let received = fmt_custom_csv(&palindromes, &seq);
+        let expected = r#"2,gucsggtgtwkmmm,1,nngah*nn-nddbk
+3,ucsggtgtwkmm,1,ah*nn-nddbkk
+3,ucsggtgtwkmmm,2,nngah*nn-nddb
+5,sggtgtwkmmm,0,h*nn-nddbkk
+5,sggtgtwkmmmkk,0,nngah*nn-nddb
+7,gtgtwkmmmkkb,0,nngah*nn-ndd
+8,tgtwkmmmkkb,1,nngah*nn-nd
+8,tgtwkmmmkkbd,0,anngah*nn-nd
+10,twkmmmkkbdd,0,anngah*nn-n
+11,wkmmmkkbdd,1,anngah*nn-
+12,kmmmkkbddn,0,anngah*nn-
+13,mmmkkbddn-,1,uganngah*n
+13,mmmkkbddn-n,0,guganngah*n
 "#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");
