@@ -12,16 +12,13 @@ use std::io::Write;
 fn main() -> Result<()> {
     // Config and init variables
     let config = Config::from_args();
-    let string = config.extract_string()?;
-    let n = string.len();
-    config.verify(n)?;
-    let seq = string.as_bytes();
+    let seq = config.safe_extract_sequence()?;
 
     // Find all palindromes
-    let palindromes = find_palindromes(&config, seq);
+    let palindromes = find_palindromes(&config, &seq);
 
     // Stringify palindromes
-    let out_str = strinfigy_palindromes(&config, &palindromes, seq)?;
+    let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
 
     // Write palindromes
     let mut file = File::create(&config.output_file)?;

@@ -100,6 +100,13 @@ impl Config {
         }
     }
 
+    pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
+        let string = self.extract_string()?;
+        Config::verify(self, string.len())?;
+
+        Ok(string.into_bytes())
+    }
+
     /// Attemps to extract the sequence (string) from the fasta file. Returns a trimmed lowercase String.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
