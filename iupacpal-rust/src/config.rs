@@ -107,10 +107,10 @@ impl Config {
         Ok(string.into_bytes())
     }
 
-    /// Attemps to extract the sequence (string) from the fasta file. Returns a trimmed lowercase String.
+    /// Attempts to extract the sequence (string) from the fasta file. Returns a trimmed lowercase String.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
-    pub fn extract_string(&self) -> Result<String> {
+    fn extract_string(&self) -> Result<String> {
         Config::check_file_exist(&self.input_file)?;
         let mut reader = Reader::from_path(&self.input_file)?;
         let mut found_seqs = Vec::new();
@@ -121,7 +121,8 @@ impl Config {
                 return Ok(
                     std::str::from_utf8(record.seq())?
                         .to_lowercase()
-                        .replace('\n', ""), // why isn't this the default?
+                        .replace('\n', "") // why isn't this the default?
+                        .replace('\r', "") // For Windows
                 );
             } else {
                 found_seqs.push(rec_id);
