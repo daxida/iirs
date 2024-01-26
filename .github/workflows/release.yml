@@ -15,10 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      # Debug step to print the contents of the workspace
-      - name: Debug Repository Contents
-        run: ls -R /github/workspace
-
       - name: Compile and release
         uses: rust-build/rust-build.action@v1.4.3
         env:
