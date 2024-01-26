@@ -1,18 +1,17 @@
 # py
 __pycache__/
 
-# folders
-2023-victor-IRs-Victor/
-
 # Ignore performance testing files or directories
 perf/
 perf*
 
 # out files
 IUPACpal/IUPACpal.out
-iupacpal-rust/IUPACpalrs.out
+IUPACpalrs.out
 
 # Random data
 IUPACpal/rand.fasta
-iupacpal-rust/rand.fasta
+rand.fasta
 
+# rust
+/target
