@@ -5,6 +5,9 @@ __pycache__/
 perf/
 perf*
 
+# test
+IUPACpal/
+
 # out files
 IUPACpal/IUPACpal.out
 IUPACpalrs.out
