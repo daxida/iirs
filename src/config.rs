@@ -122,7 +122,7 @@ impl Config {
                     std::str::from_utf8(record.seq())?
                         .to_lowercase()
                         .replace('\n', "") // why isn't this the default?
-                        .replace('\r', "") // For Windows
+                        .replace('\r', ""), // For Windows
                 );
             } else {
                 found_seqs.push(rec_id);
@@ -208,7 +208,7 @@ impl Config {
     }
 
     fn verify_format(&self) -> Result<()> {
-        let allowed_formats = ["classic", "csv", "custom_csv"];
+        let allowed_formats = ["classic", "csv", "custom_csv", "custom_csv_mini"];
         if !allowed_formats.contains(&self.output_format.as_str()) {
             return Err(anyhow!(
                 "Invalid output format. Allowed formats are: {}.",
