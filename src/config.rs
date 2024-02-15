@@ -121,8 +121,7 @@ impl Config {
                 return Ok(
                     std::str::from_utf8(record.seq())?
                         .to_lowercase()
-                        .replace('\n', "") // why isn't this the default?
-                        .replace('\r', ""), // For Windows
+                        .replace(['\n', '\r'], ""), // Why isn't this the default?
                 );
             } else {
                 found_seqs.push(rec_id);
