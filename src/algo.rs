@@ -65,17 +65,15 @@ fn real_lce_mismatches(
     mismatch_locs.push(-1);
 
     let mut real_lce = 0;
-    while mismatches >= 0 {
+    while mismatches >= 0 && j + real_lce != s_n {
         // lce function in the original
-        if j + real_lce != s_n {
-            real_lce += lcp[rmq(
-                rmq_prep,
-                lcp,
-                s_n,
-                inv_sa[i + real_lce],
-                inv_sa[j + real_lce],
-            )];
-        }
+        real_lce += lcp[rmq(
+            rmq_prep,
+            lcp,
+            s_n,
+            inv_sa[i + real_lce],
+            inv_sa[j + real_lce],
+        )];
 
         let ni = i + real_lce;
         let nj = j + real_lce;
@@ -131,6 +129,7 @@ pub fn add_palindromes(
 ) -> Vec<(i32, i32, i32)> {
     let mut palindromes: Vec<(i32, i32, i32)> = Vec::new();
     let behind = (2 * n + 1) as f64;
+    let is_max_gap_odd = max_gap % 2 == 1;
 
     for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
         let is_odd = c.fract() == 0.0;
@@ -141,7 +140,7 @@ pub fn add_palindromes(
             (c + 0.5, behind - (c + 0.5))
         };
 
-        let initial_gap = if max_gap % 2 == 1 {
+        let initial_gap = if is_max_gap_odd {
             (max_gap - 1) / 2
         } else if is_odd {
             (max_gap - 2) / 2
@@ -231,9 +230,7 @@ pub fn add_palindromes(
                 break;
             }
 
-            let left: i32;
-            let right: i32;
-            let gap: i32;
+            let (left, right, gap): (i32, i32, i32);
 
             if is_odd {
                 left = (c - end_mismatch as f64) as i32;
@@ -248,17 +245,19 @@ pub fn add_palindromes(
             // println!("(left, gap, right) = {} {} {}", left, right, gap);
 
             // Check that potential palindrome is not too short
-            if (right - left + 1 - gap) / 2 >= min_len {
+            let palindrome_length = (right - left + 1 - gap) / 2;
+
+            if palindrome_length >= min_len {
                 // Check that potential palindrome is not too long
-                let palindrome = if (right - left + 1 - gap) / 2 <= max_len {
+                let palindrome = if palindrome_length <= max_len {
                     // Palindrome is not too long, so add to output
                     (left, right, gap)
                 } else {
                     // Palindrome is too long, so attempt truncation
-                    let prev_end_mismatch_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
+                    let prev_end_mismatch_ptr = if end_it_ptr < 2 { 0 } else { end_it_ptr };
                     let prev_end_mismatch = valid_end_locs[prev_end_mismatch_ptr].0;
                     let mismatch_gap = end_mismatch - prev_end_mismatch - 1;
-                    let overshoot = ((right - left + 1 - gap) / 2) - max_len;
+                    let overshoot = palindrome_length - max_len;
 
                     // Check if truncation results in the potential palindrome ending in a mismatch
                     if overshoot != mismatch_gap {
