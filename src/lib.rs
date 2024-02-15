@@ -15,7 +15,6 @@ use libdivsufsort_rs::*;
 
 /// Panics if the given seq has a character NOT in lowercase IUPAC = "acgturyswkmbdhvn*-"
 ///
-#[elapsed_time::elapsed]
 pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     // This recomputation of n is just for convenience of the API
     let n = seq.len();
