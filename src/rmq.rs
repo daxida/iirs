@@ -8,19 +8,23 @@ pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: u
     // We could pass this as an arg to prevent recomputation but it's not worth.
     let lgn = flog2(s_n);
 
-    assert!(i != j);
+    debug_assert!(i != j);
 
     if i > j {
         std::mem::swap(&mut i, &mut j);
     }
 
     i += 1;
-    assert!(i <= j);
+    debug_assert!(i <= j);
 
     if i < j {
         let k = flog2(j - i + 1);
-        let a = rmq_prep[i * lgn + k];
-        let b = rmq_prep[(j - (1 << k) + 1) * lgn + k];
+
+        // Calculate indices a and b for the two halves of the range.
+        let idx_a = i * lgn + k;
+        let idx_b = (j - (1 << k) + 1) * lgn + k;
+        let a = rmq_prep[idx_a];
+        let b = rmq_prep[idx_b];
 
         if lcp[a] > lcp[b] {
             b
@@ -34,6 +38,7 @@ pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: u
 }
 
 // O(nlogn)-time preprocessing function for Range Minimum Queries.
+// It is a Sparse Table approach like the one that can be seen here: https://cp-algorithms.com/data_structures/sparse-table.html
 // #[elapsed_time::elapsed]
 pub fn rmq_preprocess(lcp: &[usize], s_n: usize) -> Vec<usize> {
     let lgn = flog2(s_n);
@@ -48,6 +53,12 @@ pub fn rmq_preprocess(lcp: &[usize], s_n: usize) -> Vec<usize> {
         for i in 0..=s_n - (1 << j) {
             let idx_1 = i * lgn + j;
             let idx_2 = (i + (1 << (j - 1))) * lgn + j - 1;
+            // This just reads:  
+            // rmq_prep[idx_1] = std::cmp::min_by(
+            //     rmq_prep[idx_1 - 1],
+            //     rmq_prep[idx_2],
+            //     |&a, &b| lcp[a].cmp(&lcp[b])
+            // );
             rmq_prep[idx_1] = if lcp[rmq_prep[idx_1 - 1]] < lcp[rmq_prep[idx_2]] {
                 rmq_prep[idx_1 - 1]
             } else {
