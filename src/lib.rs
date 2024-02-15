@@ -121,6 +121,8 @@ mod tests {
         assert_eq!(test_seq(&config, &string), 481)
     }
 
+    // Start test from local files
+    //
     // Test generator
     fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(i32, i32, i32)> {
         let string = Config::extract_first_string(String::from(path)).unwrap();
@@ -137,6 +139,25 @@ mod tests {
         assert_eq!(
             find_palindromes_from_pathconfig(&path, &config).len(),
             739728
+        )
+    }
+
+    #[test]
+    fn test_palindromes_8100_n() {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/8100N.fasta";
+        assert_eq!(
+            find_palindromes_from_pathconfig(&path, &config).len(),
+            16189
+        )
+    }
+    #[test]
+    fn test_palindromes_d00596() {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/d00596.fasta";
+        assert_eq!(
+            find_palindromes_from_pathconfig(&path, &config).len(),
+            5251
         )
     }
 

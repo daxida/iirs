@@ -1,73 +1,121 @@
 import random
 from time import time
 import os
-from test_equality import test_equality
 import subprocess
 from statistics import mean
+from argparse import ArgumentParser
 
-IUPAC_SYMBOLS = "acgturyswkmbdhvn*-"
+
+parser = ArgumentParser()
+parser.add_argument('--size', type=int, help='Random fasta size')
+parser.add_argument('--ntests', type=int, help='Number of tests')
+args = parser.parse_args()
+
 FILE_NAME = "rand.fasta"
 MAX_GAP = 100
-CPP_FOLDER = "IUPACpal"
-# RUST_FOLDER = "iupacpal-rust/target/debug" # For compiled binary
-RUST_FOLDER = "iupacpal-rust" # For cargo
+MISMATCHES = 2
 
-def generate(size: int) -> str:
-    seq = ''.join(random.choices(IUPAC_SYMBOLS, k=size))
-    return f">seq0\n{seq}"
+GREEN = "\033[32m"
+CYAN = "\033[36m"
+MAGENTA = "\033[35m"
+RESET = "\033[0m"
 
-def write_fasta(fasta: str):
-    with open(f"{CPP_FOLDER}/{FILE_NAME}", "w") as f:
-        f.write(fasta)
-    with open(f"{RUST_FOLDER}/{FILE_NAME}", "w") as f:
-        f.write(fasta)
+CPP_TIMINGS = []
+RUST_TIMINGS = []
 
-def run(folder: str, cmd_beginning:str):
+
+def generate_random_fasta(size: int) -> str:
+    return f">seq0\n{''.join(random.choices('acgturyswkmbdhvn*-', k=size))}"
+
+
+def run(cmd_beginning: str, language: str):
     start = time()
-    os.chdir(folder)
-    command = f"{cmd_beginning} -f {FILE_NAME} -g {MAX_GAP} -x 2"
+
+    command = f"{cmd_beginning} -f {FILE_NAME} -g {MAX_GAP} -x {MISMATCHES}"
     output = subprocess.run(command, shell=True, capture_output=True)
     stdout = output.stdout.decode()
     stderr = output.stderr.decode()
+
     if "panic" in stderr:
         print(f"Stderr: {stderr}")
         # exit(0)
-    print(stderr)
-    print(stdout)
+    # print(stderr)
+    # print(stdout)
     if "Error" in stdout:
         print(f"Error: {stdout}")
         exit(0)
-    original_folder = "/".join([".."] * (1 + folder.count("/")))
-    os.chdir(original_folder)
-    elapsed = time() - start
-    if "rust" in folder:
-        binary = "rust"
-        rust_timings.append(elapsed)
+
+    elapsed = round(time() - start, 4)
+    if language == "RUST":
+        RUST_TIMINGS.append(elapsed)
     else:
-        binary = "cpp"
-        cpp_timings.append(elapsed)
-    print(f"{binary} took {elapsed}")
+        CPP_TIMINGS.append(elapsed)
 
-def test(n: int):
-    fasta = generate(n)
-    write_fasta(fasta)
-    run(CPP_FOLDER, "./IUPACpal")
-    run(RUST_FOLDER, "cargo run --release --")
-    # run(RUST_FOLDER, "./iupacpal")
-    test_equality(CPP_FOLDER, RUST_FOLDER)
+    # print(f"{language: <4} took {elapsed}")
 
-cpp_timings = []
-rust_timings = []
-for _ in range(1):
-    test(int(1e6))
 
-cpp_avg_time = mean(cpp_timings)
-rust_avg_time = mean(rust_timings)
-print(f"cpp average: {cpp_avg_time}")
-print(f"rust average: {rust_avg_time}")
+def test_equality():
+    with open(os.path.join("IUPACpal.out"), "r") as f:
+        expected = f.read().strip()
 
-# 6.246067714691162
-'''
+    with open(os.path.join("IUPACpalrs.out"), "r") as f:
+        received = f.read().strip()
+
+    expected = expected.replace("Palindromes:\n", "")
+    received = received.replace("Palindromes:\n", "")
+    expected_lines = expected.split("\n\n")[1:]  # remove header
+    received_lines = received.split("\n\n")[1:]
+
+    def block_sort(block: str):
+        if len(block.strip()) == 0:  # empty lines
+            return (1e9,)
+        fst, scd, thd = block.split("\n")
+        a, b, c = fst.split()
+        d, e, f = thd.split()
+        return (int(a), int(c), int(d), int(f))
+
+    expected_lines.sort(key=block_sort)
+    received_lines.sort(key=block_sort)
+
+    # Line by line
+    for el, rl in zip(expected_lines, received_lines):
+        assert el == rl, f"Received line:\n{rl}\nbut expected:\n{el}"
+
+    assert len(expected_lines) == len(received_lines), (len(expected_lines), len(received_lines))
+
+    print(f"{GREEN}OK{RESET}: Compared {len(expected_lines) - 1} Palindromes")
+
+
+def run_tests():
+    size_fasta = int(1e4)
+    n_tests = 10
+
+    if args.size:
+        size_fasta = args.size
+    if args.ntests:
+        n_tests = args.ntests
+
+    # Compile rust binary
+    _ = subprocess.run("cargo build --release", shell=True, capture_output=True)
+
+    for _ in range(n_tests):
+        fasta = generate_random_fasta(size_fasta)
+        with open(os.path.join(FILE_NAME), "w") as f:
+            f.write(fasta)
+
+        run("IUPACpal/IUPACpal", language="CPP")
+        run("target/release/iupacpal", language="RUST")
+
+        test_equality()
+
+    print(f"Results for {n_tests} random tests of size {size_fasta}")
+    print(f"cpp  average: {mean(CPP_TIMINGS)}")
+    print(f"rust average: {mean(RUST_TIMINGS)}")
+
+
+run_tests()
+
+"""
 10 x 1e6 (DEFAULT & -x 2)
 
 cpp average: 30.64037811756134
@@ -84,4 +132,4 @@ Elapsed time: 13807 milliseconds (TOTAL)
 -- RUST ONLY
 10 x 1e6 (DEFAULT & -x 2 -F csv)
 rust average: 9.428081846237182
-'''
+"""

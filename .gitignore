@@ -8,6 +8,7 @@ perf*
 # out files
 IUPACpal/IUPACpal.out
 IUPACpalrs.out
+IUPACpal.out
 
 # Random data
 IUPACpal/rand.fasta
