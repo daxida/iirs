@@ -254,7 +254,7 @@ pub fn add_palindromes(
                     (left, right, gap)
                 } else {
                     // Palindrome is too long, so attempt truncation
-                    let prev_end_mismatch_ptr = if end_it_ptr < 2 { 0 } else { end_it_ptr };
+                    let prev_end_mismatch_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
                     let prev_end_mismatch = valid_end_locs[prev_end_mismatch_ptr].0;
                     let mismatch_gap = end_mismatch - prev_end_mismatch - 1;
                     let overshoot = palindrome_length - max_len;
