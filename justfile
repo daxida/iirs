@@ -35,3 +35,6 @@ pytest-correct:
 # test the performance in both binaries
 pytest-performance:
   python3 etc/test.py --size 1_000_000 --ntests 1
+
+tall:
+  cargo run --release -- -s ALL -m 3 -g 5 -F custom_csv_mini

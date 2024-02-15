@@ -12,21 +12,51 @@ use std::io::Write;
 fn main() -> Result<()> {
     // Config and init variables
     let config = Config::from_args();
-    let seq = config.safe_extract_sequence()?;
 
-    // Find all palindromes
-    let palindromes = find_palindromes(&config, &seq);
+    if config.seq_name != "ALL" {
+        let seq = config.safe_extract_sequence()?;
 
-    // Stringify palindromes
-    let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
+        // Find all palindromes
+        let palindromes = find_palindromes(&config, &seq);
+    
+        // Stringify palindromes
+        let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
+    
+        // Write palindromes
+        let mut file = File::create(&config.output_file)?;
+        write!(&mut file, "{}", out_str)?;
+    
+        println!("\n{}", config.display());
+        println!("Search complete!");
+        println!("Found n={} palindromes", palindromes.len());
+    } else {
+        let seqs = config.safe_extract_all_sequences()?;
 
-    // Write palindromes
-    let mut file = File::create(&config.output_file)?;
-    writeln!(&mut file, "{}", out_str)?;
+        let mut file = File::create(&config.output_file)?;
+        
+        for (idx, seq) in seqs.iter().enumerate() {
+            let n = seq.len();
+            if let Err(e) = config.verify_bounds(n) {
+                println!("Constraints violated for seq number {}", idx);
+                println!("{}", e);
+                continue;
+            }
+            let palindromes = find_palindromes(&config, seq);
+            let mut out_str = strinfigy_palindromes(&config, &palindromes, seq)?;
 
-    println!("\n{}", config.display());
-    println!("Search complete!");
-    println!("Found n={} palindromes", palindromes.len());
+            // Skip headers (hacky)
+            if idx > 0 {
+                let mut lines = out_str.lines();
+                lines.next(); 
+                out_str = lines.collect::<Vec<_>>().join("\n");
+            }
+
+            write!(&mut file, "{}", out_str)?;
+        }
+    
+        println!("\n{}", config.display());
+        println!("Search complete!");
+    }
 
     Ok(())
 }

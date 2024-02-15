@@ -112,6 +112,7 @@ impl Config {
     /// If the sequence is not found, returns an Error with the list of found sequences.
     fn extract_string(&self) -> Result<String> {
         Config::check_file_exist(&self.input_file)?;
+
         let mut reader = Reader::from_path(&self.input_file)?;
         let mut found_seqs = Vec::new();
         while let Some(record) = reader.next() {
@@ -123,9 +124,9 @@ impl Config {
                         .to_lowercase()
                         .replace(['\n', '\r'], ""), // Why isn't this the default?
                 );
-            } else {
-                found_seqs.push(rec_id);
             }
+
+            found_seqs.push(rec_id);
         }
 
         Err(anyhow!(
@@ -134,6 +135,39 @@ impl Config {
             &self.input_file,
             found_seqs.join("\n")
         ))
+    }
+
+    pub fn safe_extract_all_sequences(&self) -> Result<Vec<Vec<u8>>> {
+        assert!(self.seq_name == "ALL");
+
+        let strings = self.extract_all_strings()?;
+        let mut sequences = Vec::new();
+        for string in strings {
+            // We will check it later on, and skip those who don't meet the criteria
+            // Config::verify(self, string.len())?;
+            sequences.push(string.into_bytes());
+        }
+
+        Ok(sequences)
+    }
+
+    fn extract_all_strings(&self) -> Result<Vec<String>> {
+        assert!(self.seq_name == "ALL");
+
+        Config::check_file_exist(&self.input_file)?;
+
+        let mut reader = Reader::from_path(&self.input_file)?;
+        let mut found_seqs = Vec::new();
+        while let Some(record) = reader.next() {
+            let record = record.expect("Error reading record");
+            let string = std::str::from_utf8(record.seq())?
+                        .to_lowercase()
+                        .replace(['\n', '\r'], "");
+
+            found_seqs.push(string);
+        }
+
+        Ok(found_seqs)
     }
 
     /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
@@ -166,7 +200,7 @@ impl Config {
         Ok(())
     }
 
-    fn verify_bounds(&self, n: usize) -> Result<()> {
+    pub fn verify_bounds(&self, n: usize) -> Result<()> {
         if self.min_len as usize >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
