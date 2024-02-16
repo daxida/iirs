@@ -15,6 +15,7 @@ pub fn strinfigy_palindromes(
     config: &Config,
     palindromes: &Vec<(i32, i32, i32)>,
     seq: &[u8],
+    offset: usize,
 ) -> Result<String> {
     // This recomputation of n is just for convenience of the API
     let n = seq.len();
@@ -31,7 +32,7 @@ pub fn strinfigy_palindromes(
         )),
         "csv" => Ok(fmt_csv(palindromes, seq, &matrix, &complement)),
         "custom_csv" => Ok(fmt_custom_csv(palindromes, seq)),
-        "custom_csv_mini" => Ok(fmt_custom_csv_mini(palindromes, seq)),
+        "custom_csv_mini" => Ok(fmt_custom_csv_mini(palindromes, seq, offset)),
         // Already tested in Config::verify
         _ => unreachable!(),
     }
@@ -202,7 +203,7 @@ fn fmt_custom_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
     palindromes_out
 }
 
-fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8], offset: usize) -> String {
     let mut palindromes_out = String::new();
 
     let heading = "ir_start,motif,gap_motif\n";
@@ -223,7 +224,7 @@ fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String
 
         palindromes_out.push_str(&format!(
             "{},{},{}\n",
-            outer_left, nucleotide, gap_nucleotide
+            outer_left + offset as i32, nucleotide, gap_nucleotide
         ));
     }
 
@@ -375,7 +376,7 @@ mod tests {
         let n = seq.len();
         let _ = config.verify(n).unwrap();
         let palindromes = find_palindromes(&config, &seq);
-        let received = fmt_custom_csv_mini(&palindromes, &seq);
+        let received = fmt_custom_csv_mini(&palindromes, &seq, 0);
         let expected = r#"ir_start,motif,gap_motif
 2,gucsggtgtwkmmm,k
 3,ucsggtgtwkmm,m

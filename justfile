@@ -38,3 +38,6 @@ pytest-performance:
 
 tall:
   cargo run --release -- -s ALL -m 3 -g 5 -F custom_csv_mini
+
+tmul:
+  cargo run --release -- -f test_data/test_multiple.fna -s ALL -m 3 -g 5 -F custom_csv_mini

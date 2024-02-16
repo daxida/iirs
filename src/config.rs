@@ -4,6 +4,17 @@ use clap::Parser;
 use seq_io::fasta::{Reader, Record};
 use std::fs;
 
+pub struct CustomRecord {
+    pub sequence: Vec<u8>,
+    pub position: usize,
+}
+
+impl CustomRecord {
+    fn new(sequence: Vec<u8>, position: usize) -> Self {
+        Self { sequence, position }
+    }
+}
+
 #[derive(Parser)]
 pub struct Config {
     /// Input filename (FASTA).
@@ -137,37 +148,45 @@ impl Config {
         ))
     }
 
-    pub fn safe_extract_all_sequences(&self) -> Result<Vec<Vec<u8>>> {
-        assert!(self.seq_name == "ALL");
-
-        let strings = self.extract_all_strings()?;
-        let mut sequences = Vec::new();
-        for string in strings {
-            // We will check it later on, and skip those who don't meet the criteria
-            // Config::verify(self, string.len())?;
-            sequences.push(string.into_bytes());
-        }
-
-        Ok(sequences)
-    }
-
-    fn extract_all_strings(&self) -> Result<Vec<String>> {
+    pub fn safe_extract_all_records(&self) -> Result<Vec<CustomRecord>> {
         assert!(self.seq_name == "ALL");
 
         Config::check_file_exist(&self.input_file)?;
 
         let mut reader = Reader::from_path(&self.input_file)?;
-        let mut found_seqs = Vec::new();
+        let mut records = Vec::new();
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
             let string = std::str::from_utf8(record.seq())?
-                        .to_lowercase()
-                        .replace(['\n', '\r'], "");
+                .to_lowercase()
+                .replace(['\n', '\r'], "")
+                .into_bytes();
+            // Config::verify(self, string.len())?;
+            // Assumes the position is in the record id
+            let record_id = std::str::from_utf8(record.head())?;
 
-            found_seqs.push(string);
+            // Extract position from the record id:
+            // [location=10..86]
+            let mut position = 0;
+            let keyword = "location=";
+            if let Some(start_idx) = record_id.find(keyword) {
+                let start_idx = start_idx + keyword.len();
+
+                if let Some(end_idx) = record_id[start_idx..].find("..") {
+                    if let Ok(position_value) = record_id[start_idx..start_idx + end_idx].trim().parse::<usize>() {
+                        position = position_value;
+                    }
+                }
+            }
+            // Fix off by one
+            position -= 1;
+
+            let record = CustomRecord::new(string, position);
+
+            records.push(record);
         }
 
-        Ok(found_seqs)
+        Ok(records)
     }
 
     /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.

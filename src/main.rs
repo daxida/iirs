@@ -20,7 +20,7 @@ fn main() -> Result<()> {
         let palindromes = find_palindromes(&config, &seq);
     
         // Stringify palindromes
-        let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
+        let out_str = strinfigy_palindromes(&config, &palindromes, &seq, 0)?;
     
         // Write palindromes
         let mut file = File::create(&config.output_file)?;
@@ -30,19 +30,21 @@ fn main() -> Result<()> {
         println!("Search complete!");
         println!("Found n={} palindromes", palindromes.len());
     } else {
-        let seqs = config.safe_extract_all_sequences()?;
+        let records = config.safe_extract_all_records()?;
 
         let mut file = File::create(&config.output_file)?;
         
-        for (idx, seq) in seqs.iter().enumerate() {
+        for (idx, rec) in records.iter().enumerate() {
+            let seq = &rec.sequence;
+            let offset = rec.position;
             let n = seq.len();
             if let Err(e) = config.verify_bounds(n) {
                 println!("Constraints violated for seq number {}", idx);
                 println!("{}", e);
                 continue;
             }
-            let palindromes = find_palindromes(&config, seq);
-            let mut out_str = strinfigy_palindromes(&config, &palindromes, seq)?;
+            let palindromes = find_palindromes(&config, &seq);
+            let mut out_str = strinfigy_palindromes(&config, &palindromes, &seq, offset)?;
             let mut lines = out_str.lines();
 
             // Skip headers (hacky)

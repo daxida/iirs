@@ -1,0 +1,4 @@
+>gene-BWP33_RS00005 [location=10..86] [sense=+] [ID=gene-BWP33_RS00005;Name=BWP33_RS00005;gbkey=Gene;gene_biotype=tRNA;locus_tag=BWP33_RS00005;old_locus_tag=BWP33_00005]
+AAANNNCCC
+>gene-BWP33_RS00010 [location=361..790] [sense=-] [ID=gene-BWP33_RS00010;Name=BWP33_RS00010;gbkey=Gene;gene_biotype=protein_coding;locus_tag=BWP33_RS00010;old_locus_tag=BWP33_00010]
+BANANA
