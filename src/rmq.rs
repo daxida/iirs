@@ -4,20 +4,12 @@ fn flog2(v: usize) -> usize {
 }
 
 // Range Minimum Query.
-pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, mut j: usize) -> usize {
-    // We could pass this as an arg to prevent recomputation but it's not worth.
-    let lgn = flog2(s_n);
-
-    debug_assert!(i != j);
-
-    if i > j {
-        std::mem::swap(&mut i, &mut j);
-    }
-
+pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, j: usize) -> usize {
+    debug_assert!(i < j);
     i += 1;
-    debug_assert!(i <= j);
-
+    
     if i < j {
+        let lgn = flog2(s_n);
         let k = flog2(j - i + 1);
 
         // Calculate indices a and b for the two halves of the range.
