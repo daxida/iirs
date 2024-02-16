@@ -167,6 +167,12 @@ impl Config {
     }
 
     fn verify_bounds(&self, n: usize) -> Result<()> {
+        if (self.min_len as usize) < 2 {
+            return Err(anyhow!(
+                "min_len={} must not be less than 2.",
+                self.min_len
+            ));
+        }
         if self.min_len as usize >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
@@ -248,5 +254,11 @@ mod tests {
     fn test_invalid_output_format() {
         let config = Config::new("f", "f", 0, 0, 0, 0, "f", "wrong");
         assert!(config.verify_format().is_err())
+    }
+
+    #[test]
+    fn test_invalid_min_len_less_than_two() {
+        let config = Config::dummy(0, 100, 0, 0);
+        assert!(config.verify_bounds(10).is_err());
     }
 }
