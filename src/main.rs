@@ -43,15 +43,16 @@ fn main() -> Result<()> {
             }
             let palindromes = find_palindromes(&config, seq);
             let mut out_str = strinfigy_palindromes(&config, &palindromes, seq)?;
+            let mut lines = out_str.lines();
 
             // Skip headers (hacky)
             if idx > 0 {
-                let mut lines = out_str.lines();
                 lines.next(); 
-                out_str = lines.collect::<Vec<_>>().join("\n");
             }
+            
+            out_str = lines.collect::<Vec<_>>().join("\n");
 
-            write!(&mut file, "{}", out_str)?;
+            writeln!(&mut file, "{}", out_str)?;
         }
     
         println!("\n{}", config.display());
