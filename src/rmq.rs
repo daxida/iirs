@@ -7,7 +7,7 @@ fn flog2(v: usize) -> usize {
 pub fn rmq(rmq_prep: &[usize], lcp: &[usize], s_n: usize, mut i: usize, j: usize) -> usize {
     debug_assert!(i < j);
     i += 1;
-    
+
     if i < j {
         let lgn = flog2(s_n);
         let k = flog2(j - i + 1);
@@ -45,7 +45,7 @@ pub fn rmq_preprocess(lcp: &[usize], s_n: usize) -> Vec<usize> {
         for i in 0..=s_n - (1 << j) {
             let idx_1 = i * lgn + j;
             let idx_2 = (i + (1 << (j - 1))) * lgn + j - 1;
-            // This just reads:  
+            // This just reads:
             // rmq_prep[idx_1] = std::cmp::min_by(
             //     rmq_prep[idx_1 - 1],
             //     rmq_prep[idx_2],

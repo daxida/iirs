@@ -187,10 +187,7 @@ mod tests {
     fn test_palindromes_d00596() {
         let config = Config::dummy(3, 100, 20, 0);
         let path = "test_data/d00596.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            5251
-        )
+        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 5251)
     }
 
     #[test]
@@ -207,20 +204,14 @@ mod tests {
     fn test_rand_1000() {
         let config = Config::dummy(3, 100, 20, 0);
         let path = "test_data/rand1000.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            254
-        )
+        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 254)
     }
 
     #[test]
     fn test_rand_10000() {
         let config = Config::dummy(3, 100, 20, 0);
         let path = "test_data/rand10000.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            2484
-        )
+        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 2484)
     }
 
     #[test]

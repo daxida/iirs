@@ -168,10 +168,7 @@ impl Config {
 
     fn verify_bounds(&self, n: usize) -> Result<()> {
         if (self.min_len as usize) < 2 {
-            return Err(anyhow!(
-                "min_len={} must not be less than 2.",
-                self.min_len
-            ));
+            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
         }
         if self.min_len as usize >= n {
             return Err(anyhow!(
