@@ -67,13 +67,12 @@ fn real_lce_mismatches(
     let mut real_lce = 0;
     while mismatches >= 0 && j + real_lce != s_n {
         // lce function in the original
-        real_lce += lcp[rmq(
-            rmq_prep,
-            lcp,
-            s_n,
-            inv_sa[i + real_lce],
-            inv_sa[j + real_lce],
-        )];
+        let ii = inv_sa[i + real_lce];
+        let jj = inv_sa[j + real_lce];
+
+        if ii < jj {
+            real_lce += lcp[rmq(rmq_prep, lcp, s_n, ii, jj)];
+        }
 
         let ni = i + real_lce;
         let nj = j + real_lce;

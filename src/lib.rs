@@ -29,11 +29,6 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     for i in 0..n {
         s[i] = seq[i];
         s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
-        assert!(
-            constants::IUPAC_SYMBOLS.contains(seq[i] as char),
-            "Error: sequence contains '{}' which is not a IUPAC symbol.",
-            seq[i] as char
-        )
     }
     s[n] = b'$';
     s[2 * n + 1] = b'#';
@@ -100,6 +95,27 @@ mod tests {
     }
 
     #[test]
+    fn test_palindromes_no_gap_with_mismatches() {
+        let config = Config::dummy(10, 100, 0, 5);
+        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
+        assert_eq!(test_seq(&config, string), 17)
+    }
+
+    #[test]
+    fn test_palindromes_no_mismatches_min_len_two() {
+        let config = Config::dummy(2, 100, 5, 0);
+        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
+        assert_eq!(test_seq(&config, string), 58)
+    }
+
+    #[test]
+    fn test_palindromes_no_mismatches_min_len_two_no_gap() {
+        let config = Config::dummy(2, 100, 0, 0);
+        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
+        assert_eq!(test_seq(&config, string), 18)
+    }
+
+    #[test]
     fn test_palindromes_full_n_default_config() {
         let config = Config::dummy_default();
         let string = "N".repeat(500);
@@ -150,13 +166,65 @@ mod tests {
             16189
         )
     }
+
+    #[test]
+    fn test_palindromes_8100_n_with_mismatches() {
+        let config = Config::dummy(3, 100, 20, 2);
+        let path = "test_data/8100N.fasta";
+        assert_eq!(
+            find_palindromes_from_pathconfig(&path, &config).len(),
+            16189
+        )
+    }
+
     #[test]
     fn test_palindromes_d00596() {
         let config = Config::dummy(3, 100, 20, 0);
         let path = "test_data/d00596.fasta";
+        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 5251)
+    }
+
+    #[test]
+    fn test_palindromes_d00596_with_mismatches() {
+        let config = Config::dummy(3, 100, 20, 2);
+        let path = "test_data/d00596.fasta";
         assert_eq!(
             find_palindromes_from_pathconfig(&path, &config).len(),
-            5251
+            31555
+        )
+    }
+
+    #[test]
+    fn test_rand_1000() {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/rand1000.fasta";
+        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 254)
+    }
+
+    #[test]
+    fn test_rand_10000() {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/rand10000.fasta";
+        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 2484)
+    }
+
+    #[test]
+    fn test_rand_100000() {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/rand100000.fasta";
+        assert_eq!(
+            find_palindromes_from_pathconfig(&path, &config).len(),
+            25440
+        )
+    }
+
+    #[test]
+    fn test_rand_1000000() {
+        let config = Config::dummy(3, 100, 20, 0);
+        let path = "test_data/rand1000000.fasta";
+        assert_eq!(
+            find_palindromes_from_pathconfig(&path, &config).len(),
+            253566
         )
     }
 

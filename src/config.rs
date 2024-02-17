@@ -4,6 +4,8 @@ use clap::Parser;
 use seq_io::fasta::{Reader, Record};
 use std::fs;
 
+use crate::constants::IUPAC_SYMBOLS;
+
 pub struct CustomRecord {
     pub sequence: Vec<u8>,
     pub position: usize,
@@ -111,17 +113,10 @@ impl Config {
         }
     }
 
-    pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
-        let string = self.extract_string()?;
-        Config::verify(self, string.len())?;
-
-        Ok(string.into_bytes())
-    }
-
-    /// Attempts to extract the sequence (string) from the fasta file. Returns a trimmed lowercase String.
+    /// Attempts to extract the sequence from the (fasta) input file.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
-    fn extract_string(&self) -> Result<String> {
+    pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
         Config::check_file_exist(&self.input_file)?;
 
         let mut reader = Reader::from_path(&self.input_file)?;
@@ -130,11 +125,9 @@ impl Config {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
             if rec_id == self.seq_name {
-                return Ok(
-                    std::str::from_utf8(record.seq())?
-                        .to_lowercase()
-                        .replace(['\n', '\r'], ""), // Why isn't this the default?
-                );
+                let seq = Config::sanitize_sequence(&self, record.seq())?;
+                Config::verify(self, seq.len())?;
+                return Ok(seq);
             }
 
             found_seqs.push(rec_id);
@@ -188,6 +181,25 @@ impl Config {
 
         Ok(records)
     }
+    
+    /// Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
+    fn sanitize_sequence(&self, seq: &[u8]) -> Result<Vec<u8>> {
+        let mut sanitized_seq = Vec::new();
+
+        for &byte in seq.iter() {
+            if byte != b'\n' && byte != b'\r' {
+                if !IUPAC_SYMBOLS.contains(byte.to_ascii_lowercase() as char) {
+                    return Err(anyhow!(
+                        "sequence contains '{}' which is not an IUPAC symbol.",
+                        byte as char
+                    ));
+                }
+                sanitized_seq.push(byte.to_ascii_lowercase());
+            }
+        }
+
+        Ok(sanitized_seq)
+    }
 
     /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
     ///
@@ -220,6 +232,9 @@ impl Config {
     }
 
     pub fn verify_bounds(&self, n: usize) -> Result<()> {
+        if (self.min_len as usize) < 2 {
+            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
+        }
         if self.min_len as usize >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
@@ -301,5 +316,39 @@ mod tests {
     fn test_invalid_output_format() {
         let config = Config::new("f", "f", 0, 0, 0, 0, "f", "wrong");
         assert!(config.verify_format().is_err())
+    }
+
+    #[test]
+    fn test_invalid_min_len_less_than_two() {
+        let config = Config::dummy(0, 100, 0, 0);
+        assert!(config.verify_bounds(10).is_err());
+    }
+
+    #[test]
+    fn test_sanitize_sequence_ok() {
+        let seq = "acgturyswkmbdhvn*-".as_bytes().to_vec();
+        assert!(Config::dummy_default().sanitize_sequence(&seq).is_ok());
+    }
+
+    #[test]
+    fn test_sanitize_sequence_newlines_one() {
+        let seq = "acgturyswkmbdhvn*-\nacgturyswkmbdhvn*-".as_bytes().to_vec();
+        let sanitized = Config::dummy_default().sanitize_sequence(&seq).unwrap();
+        let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
+        assert_eq!(expected, sanitized);
+    }
+
+    #[test]
+    fn test_sanitize_sequence_newlines_two() {
+        let seq = "acgturyswkmbdhvn*-\racgturyswkmbdhvn*-".as_bytes().to_vec();
+        let sanitized = Config::dummy_default().sanitize_sequence(&seq).unwrap();
+        let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
+        assert_eq!(expected, sanitized);
+    }
+
+    #[test]
+    fn test_sanitize_sequence_not_in_iupac() {
+        let seq = "de".as_bytes().to_vec();
+        assert!(Config::dummy_default().sanitize_sequence(&seq).is_err());
     }
 }
