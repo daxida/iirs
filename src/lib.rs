@@ -30,11 +30,6 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     for i in 0..n {
         s[i] = seq[i];
         s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
-        assert!(
-            constants::IUPAC_SYMBOLS.contains(seq[i] as char),
-            "Error: sequence contains '{}' which is not a IUPAC symbol.",
-            seq[i] as char
-        )
     }
     s[n] = b'$';
     s[2 * n + 1] = b'#';
