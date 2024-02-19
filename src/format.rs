@@ -202,7 +202,7 @@ pub fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> St
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{config::Config, constants::build_complement_array, find_palindromes, matrix};
+    use crate::{constants::build_complement_array, find_palindromes, matrix};
 
     #[test]
     fn test_format_classic() {

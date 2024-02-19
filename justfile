@@ -40,3 +40,6 @@ pytest-correct:
 # test the performance in both binaries
 pytest-performance:
   python3 etc/test.py --size 1_000_000 --ntests 1
+
+bench:
+  cargo run --release --bin bench -- --size 1000000 --ntests 1
