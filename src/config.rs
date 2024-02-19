@@ -44,7 +44,7 @@ pub struct Config {
 impl Config {
     #[allow(dead_code)] // ::new is actually used for testing...
     #[allow(clippy::too_many_arguments)]
-    fn new(
+    pub fn new(
         input_file: &str,
         seq_name: &str,
         min_len: i32,
@@ -113,7 +113,7 @@ impl Config {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
             if rec_id == self.seq_name {
-                let seq = Config::sanitize_sequence(&self, record.seq())?;
+                let seq = Config::sanitize_sequence(self, record.seq())?;
                 Config::verify(self, seq.len())?;
                 return Ok(seq);
             }

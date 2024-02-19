@@ -1,43 +1,12 @@
 // This may present differences in the ordering with IUPACpal - but it is simpler to write
 
-use crate::{
-    config::Config,
-    constants,
-    matrix::{self, MatchMatrix},
-};
-use anyhow::Result;
+use crate::{config::Config, matrix::MatchMatrix};
 
 fn int_size(x: i32) -> usize {
     format!("{}", x).len()
 }
 
-pub fn strinfigy_palindromes(
-    config: &Config,
-    palindromes: &Vec<(i32, i32, i32)>,
-    seq: &[u8],
-) -> Result<String> {
-    // This recomputation of n is just for convenience of the API
-    let n = seq.len();
-
-    // Build again the matchmatrix needed for printing out matches.
-    let matrix = matrix::MatchMatrix::new();
-    let complement = constants::build_complement_array();
-
-    match config.output_format.as_str() {
-        "classic" => Ok(format!(
-            "{}{}",
-            out_palindrome_display_header(config, n),
-            fmt_classic(palindromes, seq, &matrix, &complement)
-        )),
-        "csv" => Ok(fmt_csv(palindromes, seq, &matrix, &complement)),
-        "custom_csv" => Ok(fmt_custom_csv(palindromes, seq)),
-        "custom_csv_mini" => Ok(fmt_custom_csv_mini(palindromes, seq)),
-        // Already tested in Config::verify
-        _ => unreachable!(),
-    }
-}
-
-fn out_palindrome_display_header(config: &Config, n: usize) -> String {
+pub fn out_palindrome_display_header(config: &Config, n: usize) -> String {
     format!(
         "Palindromes of: {}\n\
         Sequence name: {}\n\
@@ -61,7 +30,7 @@ fn out_palindrome_display_header(config: &Config, n: usize) -> String {
     )
 }
 
-fn fmt_classic(
+pub fn fmt_classic(
     palindromes: &Vec<(i32, i32, i32)>,
     seq: &[u8],
     matrix: &MatchMatrix,
@@ -125,7 +94,7 @@ fn fmt_classic(
     palindromes_out
 }
 
-fn fmt_csv(
+pub fn fmt_csv(
     palindromes: &Vec<(i32, i32, i32)>,
     seq: &[u8],
     matrix: &MatchMatrix,
@@ -176,7 +145,7 @@ fn fmt_csv(
     palindromes_out
 }
 
-fn fmt_custom_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+pub fn fmt_custom_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
 
     for (left, right, gap) in palindromes {
@@ -202,7 +171,7 @@ fn fmt_custom_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
     palindromes_out
 }
 
-fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+pub fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
 
     let heading = "ir_start,motif,gap_motif\n";
