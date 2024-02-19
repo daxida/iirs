@@ -221,10 +221,14 @@ fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8], offset: u
         let gap_nucleotide = (inner_left as usize..(inner_right - 1) as usize)
             .map(|i| seq[i] as char)
             .collect::<String>();
+        let reverse_complement = ((inner_right - 1) as usize..outer_right as usize)
+            .rev()
+            .map(|i| seq[i] as char)
+            .collect::<String>();
 
         palindromes_out.push_str(&format!(
-            "{},{},{}\n",
-            outer_left + offset as i32, nucleotide, gap_nucleotide
+            "{},{},{},{}\n",
+            outer_left + offset as i32, nucleotide, gap_nucleotide, reverse_complement
         ));
     }
 
@@ -378,19 +382,19 @@ mod tests {
         let palindromes = find_palindromes(&config, &seq);
         let received = fmt_custom_csv_mini(&palindromes, &seq, 0);
         let expected = r#"ir_start,motif,gap_motif
-2,gucsggtgtwkmmm,k
-3,ucsggtgtwkmm,m
-3,ucsggtgtwkmmm,kk
-5,sggtgtwkmmm,
-5,sggtgtwkmmmkk,
-7,gtgtwkmmmkkb,
-8,tgtwkmmmkkb,d
-8,tgtwkmmmkkbd,
-10,twkmmmkkbdd,
-11,wkmmmkkbdd,n
-12,kmmmkkbddn,
-13,mmmkkbddn-,n
-13,mmmkkbddn-n,
+2,gucsggtgtwkmmm,k,nngah*nn-nddbk
+3,ucsggtgtwkmm,m,ah*nn-nddbkk
+3,ucsggtgtwkmmm,kk,nngah*nn-nddb
+5,sggtgtwkmmm,,h*nn-nddbkk
+5,sggtgtwkmmmkk,,nngah*nn-nddb
+7,gtgtwkmmmkkb,,nngah*nn-ndd
+8,tgtwkmmmkkb,d,nngah*nn-nd
+8,tgtwkmmmkkbd,,anngah*nn-nd
+10,twkmmmkkbdd,,anngah*nn-n
+11,wkmmmkkbdd,n,anngah*nn-
+12,kmmmkkbddn,,anngah*nn-
+13,mmmkkbddn-,n,uganngah*n
+13,mmmkkbddn-n,,guganngah*n
 "#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");
