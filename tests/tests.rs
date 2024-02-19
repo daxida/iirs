@@ -90,7 +90,7 @@ fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(i32, i3
 #[test]
 fn test_palindromes_alys() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/alys.fna";
+    let path = "tests/test_data/alys.fna";
     assert_eq!(
         find_palindromes_from_pathconfig(&path, &config).len(),
         739728
@@ -100,7 +100,7 @@ fn test_palindromes_alys() {
 #[test]
 fn test_palindromes_8100_n() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/8100N.fasta";
+    let path = "tests/test_data/8100N.fasta";
     assert_eq!(
         find_palindromes_from_pathconfig(&path, &config).len(),
         16189
@@ -110,7 +110,7 @@ fn test_palindromes_8100_n() {
 #[test]
 fn test_palindromes_8100_n_with_mismatches() {
     let config = Config::dummy(3, 100, 20, 2);
-    let path = "test_data/8100N.fasta";
+    let path = "tests/test_data/8100N.fasta";
     assert_eq!(
         find_palindromes_from_pathconfig(&path, &config).len(),
         16189
@@ -120,14 +120,14 @@ fn test_palindromes_8100_n_with_mismatches() {
 #[test]
 fn test_palindromes_d00596() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/d00596.fasta";
+    let path = "tests/test_data/d00596.fasta";
     assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 5251)
 }
 
 #[test]
 fn test_palindromes_d00596_with_mismatches() {
     let config = Config::dummy(3, 100, 20, 2);
-    let path = "test_data/d00596.fasta";
+    let path = "tests/test_data/d00596.fasta";
     assert_eq!(
         find_palindromes_from_pathconfig(&path, &config).len(),
         31555
@@ -137,21 +137,21 @@ fn test_palindromes_d00596_with_mismatches() {
 #[test]
 fn test_rand_1000() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/rand1000.fasta";
+    let path = "tests/test_data/rand1000.fasta";
     assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 254)
 }
 
 #[test]
 fn test_rand_10000() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/rand10000.fasta";
+    let path = "tests/test_data/rand10000.fasta";
     assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 2484)
 }
 
 #[test]
 fn test_rand_100000() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/rand100000.fasta";
+    let path = "tests/test_data/rand100000.fasta";
     assert_eq!(
         find_palindromes_from_pathconfig(&path, &config).len(),
         25440
@@ -161,7 +161,7 @@ fn test_rand_100000() {
 #[test]
 fn test_rand_1000000() {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/rand1000000.fasta";
+    let path = "tests/test_data/rand1000000.fasta";
     assert_eq!(
         find_palindromes_from_pathconfig(&path, &config).len(),
         253566
@@ -183,41 +183,41 @@ fn bench_palindromes_full_n_default_config(b: &mut Bencher) {
 #[bench]
 fn bench_test1(b: &mut Bencher) {
     let config = Config::dummy(10, 100, 10, 0);
-    let path = "test_data/test1.fasta";
+    let path = "tests/test_data/test1.fasta";
     b.iter(|| find_palindromes_from_pathconfig(path, &config))
 }
 
 #[bench]
 fn bench_default_rand_iupac_1000(b: &mut Bencher) {
     let config = Config::dummy_default();
-    let path = "test_data/randIUPAC1000.fasta";
+    let path = "tests/test_data/randIUPAC1000.fasta";
     b.iter(|| find_palindromes_from_pathconfig(path, &config))
 }
 
 #[bench]
 fn bench_default_rand_iupac_10000(b: &mut Bencher) {
     let config = Config::dummy_default();
-    let path = "test_data/randIUPAC10000.fasta";
+    let path = "tests/test_data/randIUPAC10000.fasta";
     b.iter(|| find_palindromes_from_pathconfig(path, &config))
 }
 
 // #[bench]
 // fn bench_default_rand_iupac_100000(b: &mut Bencher) {
 //     let config = Config::dummy_default();
-//     let path = "test_data/randIUPAC100000.fasta";
+//     let path = "tests/test_data/randIUPAC100000.fasta";
 //     b.iter(|| find_palindromes_from_pathconfig(path, &config))
 // }
 
 #[bench]
 fn bench_alys(b: &mut Bencher) {
     let config = Config::dummy(3, 100, 20, 0);
-    let path = "test_data/alys.fna";
+    let path = "tests/test_data/alys.fna";
     b.iter(|| find_palindromes_from_pathconfig(path, &config))
 }
 
 // #[bench]
 // fn bench_default_rand_iupac_1000000(b: &mut Bencher) {
 //     let config = Config::dummy_default();
-//     let path = "test_data/randIUPAC1000000.fasta";
+//     let path = "tests/test_data/randIUPAC1000000.fasta";
 //     b.iter(|| find_palindromes_from_pathconfig(path, &config))
 // }
