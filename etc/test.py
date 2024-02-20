@@ -66,16 +66,16 @@ def test_equality():
     expected_lines = expected.split("\n\n")[1:]  # remove header
     received_lines = received.split("\n\n")[1:]
 
-    def block_sort(block: str):
-        if len(block.strip()) == 0:  # empty lines
-            return (1e9,)
-        fst, scd, thd = block.split("\n")
-        a, b, c = fst.split()
-        d, e, f = thd.split()
-        return (int(a), int(c), int(d), int(f))
+    # def block_sort(block: str):
+    #     if len(block.strip()) == 0:  # empty lines
+    #         return (1e9,)
+    #     fst, scd, thd = block.split("\n")
+    #     a, b, c = fst.split()
+    #     d, e, f = thd.split()
+    #     return (int(a), int(c), int(d), int(f))
 
-    expected_lines.sort(key=block_sort)
-    received_lines.sort(key=block_sort)
+    # expected_lines.sort(key=block_sort)
+    # received_lines.sort(key=block_sort)
 
     # Line by line
     for el, rl in zip(expected_lines, received_lines):
@@ -87,6 +87,8 @@ def test_equality():
 
 
 def run_tests():
+    start = time()
+
     size_fasta = int(1e4)
     n_tests = 10
 
@@ -104,13 +106,15 @@ def run_tests():
             f.write(fasta)
 
         run("IUPACpal/IUPACpal", language="CPP")
-        run("target/release/iupacpal", language="RUST")
+        run("target/release/main", language="RUST")
 
         test_equality()
 
     print(f"Results for {n_tests} random tests of size {size_fasta}")
     print(f"cpp  average: {mean(CPP_TIMINGS)}")
     print(f"rust average: {mean(RUST_TIMINGS)}")
+
+    print(f"\nAll tests finished in {time() - start}")
 
 
 run_tests()

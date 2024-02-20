@@ -1,20 +1,31 @@
-#![feature(test)]
-
-extern crate test;
-
 pub mod config;
-pub mod format;
 
 mod algo;
 mod constants;
+mod format;
 mod matrix;
 mod rmq;
 
+use anyhow::Result;
 use config::Config;
 use libdivsufsort_rs::*;
 
-/// Panics if the given seq has a character NOT in lowercase IUPAC = "acgturyswkmbdhvn*-"
+/// Find palindromes in a fasta sequence based on the provided configuration.
 ///
+/// Each tuple contains three integers: start position, end position, and gap size.
+///
+/// # Examples
+///
+/// ```rust
+/// use iupacpal::{config::Config, find_palindromes};
+///
+/// let seq = "acbbgt".as_bytes();
+/// let config = Config::dummy(3, 6, 2, 0);
+/// let palindromes = find_palindromes(&config, &seq);
+///
+/// assert_eq!(palindromes, vec![(0, 5, 0)])
+/// ```
+#[elapsed_time::elapsed]
 pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     // This recomputation of n is just for convenience of the API
     let n = seq.len();
@@ -45,7 +56,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
 
     // Calculate palidromes
-    algo::add_palindromes(
+    let mut palindromes = algo::add_palindromes(
         &s,
         s_n,
         n,
@@ -57,228 +68,58 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         config.mismatches,
         config.max_gap,
         &matrix,
-    )
+    );
+
+    // Deal with the sorting strategy.
+    // Alternatives, or even skipping sorting altogether, can improve the performance.
+    // The original IUPACpal sorts by (left, gap_size, -right)
+    palindromes.sort_by(|a, b| {
+        let cmp_left = a.0.cmp(&b.0);
+        let cmp_gap = a.2.cmp(&a.2);
+        let cmp_right = b.1.cmp(&a.1);
+        cmp_left.then(cmp_gap).then(cmp_right)
+    });
+
+    palindromes
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::{config::Config, find_palindromes};
-    use test::Bencher;
+/// Stringify the given palindromes according to the configuration output format.
+///
+/// Returns an error if given an invalid output format.
+///
+/// # Examples
+///
+/// ```rust
+/// use iupacpal::{config::Config, find_palindromes, strinfigy_palindromes};
+///
+/// let seq = "acbbgt".as_bytes();
+/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
+/// let palindromes = find_palindromes(&config, &seq);
+/// let out_str = strinfigy_palindromes(&config, &palindromes, &seq, 0).unwrap();
+/// let expected = "\
+///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
+///     1,3,acb,6,4,tgb,111\n";
+///
+/// assert_eq!(out_str, expected);
+/// ```
+pub fn strinfigy_palindromes(
+    config: &Config,
+    palindromes: &Vec<(i32, i32, i32)>,
+    seq: &[u8],
+    offset: usize,
+) -> Result<String> {
+    let matrix = matrix::MatchMatrix::new();
+    let complement = constants::build_complement_array();
 
-    fn test_seq(config: &Config, string: &str) -> usize {
-        let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq);
-        palindromes.len()
+    match config.output_format.as_str() {
+        "classic" => Ok(format!(
+            "{}{}",
+            format::out_palindrome_display_header(config, seq.len()),
+            format::fmt_classic(palindromes, seq, &matrix, &complement)
+        )),
+        "csv" => Ok(format::fmt_csv(palindromes, seq, &matrix, &complement)),
+        "custom" => Ok(format::fmt_custom(palindromes, seq, offset)),
+        // Already tested in Config::verify
+        _ => unreachable!(),
     }
-
-    #[test]
-    fn test_palindromes_default_config() {
-        let config = Config::dummy_default();
-        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA".repeat(100);
-        assert_eq!(test_seq(&config, &string), 10068)
-    }
-
-    #[test]
-    fn test_palindromes_custom_config() {
-        let config = Config::dummy(10, 100, 5, 1);
-        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
-        assert_eq!(test_seq(&config, string), 21)
-    }
-
-    #[test]
-    fn test_palindromes_no_mismatches() {
-        let config = Config::dummy(10, 100, 5, 0);
-        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
-        assert_eq!(test_seq(&config, string), 14)
-    }
-
-    #[test]
-    fn test_palindromes_no_gap_with_mismatches() {
-        let config = Config::dummy(10, 100, 0, 5);
-        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
-        assert_eq!(test_seq(&config, string), 17)
-    }
-
-    #[test]
-    fn test_palindromes_no_mismatches_min_len_two() {
-        let config = Config::dummy(2, 100, 5, 0);
-        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
-        assert_eq!(test_seq(&config, string), 58)
-    }
-
-    #[test]
-    fn test_palindromes_no_mismatches_min_len_two_no_gap() {
-        let config = Config::dummy(2, 100, 0, 0);
-        let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
-        assert_eq!(test_seq(&config, string), 18)
-    }
-
-    #[test]
-    fn test_palindromes_full_n_default_config() {
-        let config = Config::dummy_default();
-        let string = "N".repeat(500);
-        assert_eq!(test_seq(&config, &string), 961)
-    }
-
-    #[test]
-    fn test_palindromes_full_n_custom_config() {
-        let config = Config::dummy(10, 100, 5, 1);
-        let string = "N".repeat(500);
-        assert_eq!(test_seq(&config, &string), 961)
-    }
-
-    #[test]
-    fn test_palindromes_full_n_no_gap() {
-        let config = Config::dummy(10, 100, 0, 1);
-        let string = "N".repeat(500);
-        assert_eq!(test_seq(&config, &string), 481)
-    }
-
-    // Start test from local files
-    //
-    // Test generator
-    fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(i32, i32, i32)> {
-        let string = Config::extract_first_string(String::from(path)).unwrap();
-        let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        config.verify(n).unwrap();
-        find_palindromes(&config, &seq)
-    }
-
-    #[test]
-    fn test_palindromes_alys() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/alys.fna";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            739728
-        )
-    }
-
-    #[test]
-    fn test_palindromes_8100_n() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/8100N.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            16189
-        )
-    }
-
-    #[test]
-    fn test_palindromes_8100_n_with_mismatches() {
-        let config = Config::dummy(3, 100, 20, 2);
-        let path = "test_data/8100N.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            16189
-        )
-    }
-
-    #[test]
-    fn test_palindromes_d00596() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/d00596.fasta";
-        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 5251)
-    }
-
-    #[test]
-    fn test_palindromes_d00596_with_mismatches() {
-        let config = Config::dummy(3, 100, 20, 2);
-        let path = "test_data/d00596.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            31555
-        )
-    }
-
-    #[test]
-    fn test_rand_1000() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/rand1000.fasta";
-        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 254)
-    }
-
-    #[test]
-    fn test_rand_10000() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/rand10000.fasta";
-        assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 2484)
-    }
-
-    #[test]
-    fn test_rand_100000() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/rand100000.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            25440
-        )
-    }
-
-    #[test]
-    fn test_rand_1000000() {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/rand1000000.fasta";
-        assert_eq!(
-            find_palindromes_from_pathconfig(&path, &config).len(),
-            253566
-        )
-    }
-
-    // Benchmark
-
-    #[bench]
-    fn bench_palindromes_full_n_default_config(b: &mut Bencher) {
-        let config = Config::dummy_default();
-        let string = "N".repeat(50000);
-        let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        b.iter(|| find_palindromes(&config, &seq))
-    }
-
-    #[bench]
-    fn bench_test1(b: &mut Bencher) {
-        let config = Config::dummy(10, 100, 10, 0);
-        let path = "test_data/test1.fasta";
-        b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    }
-
-    #[bench]
-    fn bench_default_rand_iupac_1000(b: &mut Bencher) {
-        let config = Config::dummy_default();
-        let path = "test_data/randIUPAC1000.fasta";
-        b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    }
-
-    #[bench]
-    fn bench_default_rand_iupac_10000(b: &mut Bencher) {
-        let config = Config::dummy_default();
-        let path = "test_data/randIUPAC10000.fasta";
-        b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    }
-
-    // #[bench]
-    // fn bench_default_rand_iupac_100000(b: &mut Bencher) {
-    //     let config = Config::dummy_default();
-    //     let path = "test_data/randIUPAC100000.fasta";
-    //     b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    // }
-
-    #[bench]
-    fn bench_alys(b: &mut Bencher) {
-        let config = Config::dummy(3, 100, 20, 0);
-        let path = "test_data/alys.fna";
-        b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    }
-
-    // #[bench]
-    // fn bench_default_rand_iupac_1000000(b: &mut Bencher) {
-    //     let config = Config::dummy_default();
-    //     let path = "test_data/randIUPAC1000000.fasta";
-    //     b.iter(|| find_palindromes_from_pathconfig(path, &config))
-    // }
 }

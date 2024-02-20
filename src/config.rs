@@ -55,7 +55,7 @@ pub struct Config {
 impl Config {
     #[allow(dead_code)] // ::new is actually used for testing...
     #[allow(clippy::too_many_arguments)]
-    fn new(
+    pub fn new(
         input_file: &str,
         seq_name: &str,
         min_len: i32,
@@ -181,7 +181,7 @@ impl Config {
 
         Ok(records)
     }
-    
+
     /// Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
     fn sanitize_sequence(&self, seq: &[u8]) -> Result<Vec<u8>> {
         let mut sanitized_seq = Vec::new();
@@ -275,7 +275,7 @@ impl Config {
     }
 
     fn verify_format(&self) -> Result<()> {
-        let allowed_formats = ["classic", "csv", "custom_csv", "custom_csv_mini"];
+        let allowed_formats = ["classic", "csv", "custom"];
         if !allowed_formats.contains(&self.output_format.as_str()) {
             return Err(anyhow!(
                 "Invalid output format. Allowed formats are: {}.",
