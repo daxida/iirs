@@ -17,18 +17,18 @@ ptestb:
 # test alys
 testalys:
   cargo run --release -- \
-    -f test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+    -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
 
 # perf test for alys
 ptestalys:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/debug/iupacpal -f test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+  sudo perf record -g target/debug/iupacpal -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
 # perf test for randIUPAC1000000
 ptestrand:
   cargo build
-  sudo perf record -g target/debug/iupacpal -f test_data/randIUPAC1000000.fasta -m 3 -M 100 -g 20
+  sudo perf record -g target/debug/iupacpal -f tests/test_data/randIUPAC1000000.fasta -m 3 -M 100 -g 20
   sudo perf report
 
 # test that the results of the rust / cpp binaries are the same
@@ -41,5 +41,9 @@ pytest-correct:
 pytest-performance:
   python3 etc/test.py --size 1_000_000 --ntests 1
 
-bench:
-  cargo run --release --bin bench -- --size 1000000 --ntests 1
+bench-correct:
+  cargo build --release
+  cargo build --release --bin bench
+  ./target/release/bench --size-fasta 1000 --n-tests 20 -g 100 -x 2
+  ./target/release/bench --size-fasta 5000 --n-tests 10 -g 100 -x 2
+  ./target/release/bench --size-fasta 20000 --n-tests 5 -g 100 -x 2

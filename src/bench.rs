@@ -1,14 +1,10 @@
+use clap::Parser;
 use rand::prelude::SliceRandom;
-use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::process::Command;
 use std::time::Instant;
-
-const FILE_NAME: &str = "rand.fasta";
-const MAX_GAP: usize = 100;
-const MISMATCHES: usize = 2;
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
@@ -30,12 +26,17 @@ fn generate_random_fasta(size: usize) -> String {
     )
 }
 
-fn run(cmd_beginning: &str) -> f64 {
+fn run_command(cmd_beginning: &str, config: &BenchConfig) -> f64 {
     let start = Instant::now();
 
     let command = format!(
-        "{} -f {} -g {} -x {}",
-        cmd_beginning, FILE_NAME, MAX_GAP, MISMATCHES
+        "{} -f {} -m {} -M {} -g {} -x {}",
+        cmd_beginning,
+        config.input_file,
+        config.min_len,
+        config.max_len,
+        config.max_gap,
+        config.mismatches
     );
 
     let output = Command::new("sh")
@@ -47,16 +48,13 @@ fn run(cmd_beginning: &str) -> f64 {
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
 
-    // println!("{}", stdout);
-    // println!("{}", stderr);
-
     if stderr.contains("panic") {
         println!("Stderr: {}", stderr);
     }
 
     if stdout.contains("Error") {
         println!("Error: {}", stdout);
-        std::process::exit(0);
+        // std::process::exit(0);
     }
 
     start.elapsed().as_secs_f64()
@@ -120,57 +118,70 @@ fn test_equality() {
     );
 }
 
-fn mean(timings: &Vec<f64>) -> f64 {
-    let sz = timings.len() as f64; // Convert sz to f64
-    let total: f64 = timings.iter().sum(); // Use i64 for total to avoid overflow
+fn average(timings: &Vec<f64>) -> f64 {
+    let total: f64 = timings.iter().sum();
+    total / timings.len() as f64
+}
 
-    total / sz // Perform floating-point division
+#[derive(Parser)]
+struct BenchConfig {
+    /// Input filename (FASTA).
+    #[arg(short = 'f', default_value_t = String::from("rand.fasta"))]
+    input_file: String,
+
+    /// Input sequence name.
+    #[arg(short, default_value_t = String::from("seq0"))]
+    seq_name: String,
+
+    /// Minimum length.
+    #[arg(short, default_value_t = 10)]
+    min_len: i32,
+
+    /// Maximum length.
+    #[arg(short = 'M', default_value_t = 100)]
+    max_len: i32,
+
+    /// Maximum permissible gap.
+    #[arg(short = 'g', default_value_t = 100)]
+    max_gap: i32,
+
+    /// Maximum permissible mismatches.
+    #[arg(short = 'x', default_value_t = 0)]
+    mismatches: i32,
+
+    /// Output filename.
+    #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
+    output_file: String,
+
+    /// Output format (classic, csv or custom_csv).
+    #[arg(short = 'F', default_value_t = String::from("classic"))]
+    output_format: String,
+
+    /// Size of the generated fasta
+    #[arg(long, default_value_t = 1000)]
+    size_fasta: usize,
+
+    /// Number of tests to perform
+    #[arg(long, default_value_t = 20)]
+    n_tests: usize,
 }
 
 fn main() {
     let start = Instant::now();
 
-    // Do this with clap
-    let mut size_fasta = 1_000;
-    let mut n_tests = 20;
-
-    let args: Vec<String> = env::args().collect();
-    let mut args_iter = args.iter();
-
-    while let Some(arg) = args_iter.next() {
-        if arg == "--size" {
-            if let Some(size_str) = args_iter.next() {
-                if let Ok(size) = size_str.parse::<usize>() {
-                    size_fasta = size;
-                }
-            }
-        } else if arg == "--ntests" {
-            if let Some(ntests_str) = args_iter.next() {
-                if let Ok(ntests) = ntests_str.parse::<usize>() {
-                    n_tests = ntests;
-                }
-            }
-        }
-    }
-
-    // Compile Rust binary
-    // Command::new("cargo")
-    //     .arg("build")
-    //     .arg("--release")
-    //     .output()
-    //     .expect("Failed to compile Rust binary");
+    let config = BenchConfig::parse();
 
     let mut rust_timings = Vec::new();
     let mut cpp_timings = Vec::new();
 
-    for _ in 0..n_tests {
-        let fasta = generate_random_fasta(size_fasta);
-        let mut file = File::create(FILE_NAME).expect("Failed to create file");
+    for _ in 0..config.n_tests {
+        let fasta = generate_random_fasta(config.size_fasta);
+        let mut file = File::create(config.input_file.clone()).expect("Failed to create file");
         file.write_all(fasta.as_bytes())
             .expect("Failed to write to file");
 
-        let cpp_timing = run("IUPACpal/IUPACpal");
-        let rust_timing = run("target/release/main");
+        let cpp_timing = run_command("IUPACpal/IUPACpal", &config);
+        let rust_timing = run_command("target/release/main", &config);
 
         cpp_timings.push(cpp_timing);
         rust_timings.push(rust_timing);
@@ -180,11 +191,11 @@ fn main() {
 
     println!(
         "Results for {} random tests of size {}",
-        n_tests, size_fasta
+        config.n_tests, config.size_fasta
     );
 
-    println!("cpp  average: {}", mean(&cpp_timings));
-    println!("rust average: {}", mean(&rust_timings));
+    println!("cpp  average: {}", average(&cpp_timings));
+    println!("rust average: {}", average(&rust_timings));
 
     println!("\nAll tests finished in {}", start.elapsed().as_secs_f64());
 }
