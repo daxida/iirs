@@ -121,7 +121,7 @@ fn test_equality() {
     );
 }
 
-fn average(timings: &Vec<f64>) -> f64 {
+fn average(timings: &[f64]) -> f64 {
     let total: f64 = timings.iter().sum();
     total / timings.len() as f64
 }
