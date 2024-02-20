@@ -74,43 +74,39 @@ fn test_equality() {
 
     let expected = expected.replace("Palindromes:\n", "");
     let received = received.replace("Palindromes:\n", "");
-    let mut expected_lines: Vec<&str> = expected.split("\n\n").skip(1).collect();
-    let mut received_lines: Vec<&str> = received.split("\n\n").skip(1).collect();
+    let expected_lines: Vec<&str> = expected.split("\n\n").skip(1).collect();
+    let received_lines: Vec<&str> = received.split("\n\n").skip(1).collect();
 
-    fn block_sort(block: &str) -> (usize, usize, usize, usize) {
-        if block.trim().is_empty() {
-            return (1_000_000_000, 0, 0, 0);
-        }
-        let lines: Vec<&str> = block.split('\n').collect();
-        let mut iter1 = lines[0].split_whitespace();
-        // dbg!(&iter1.clone().collect::<Vec<&str>>().join("-"));
-        let a = iter1.next().unwrap();
-        let _ = iter1.next(); // Skip the second element
-        let c = iter1.next().unwrap();
+    // Sort then to compare when trying alternative sorting strategies in find_palindromes
+    //
+    // fn block_sort(block: &str) -> (usize, usize, usize, usize) {
+    //     if block.trim().is_empty() {
+    //         return (1_000_000_000, 0, 0, 0);
+    //     }
+    //     let lines: Vec<&str> = block.split('\n').collect();
+    //     let mut iter1 = lines[0].split_whitespace();
+    //     // dbg!(&iter1.clone().collect::<Vec<&str>>().join("-"));
+    //     let a = iter1.next().unwrap();
+    //     let _ = iter1.next(); // Skip the second element
+    //     let c = iter1.next().unwrap();
 
-        let mut iter2 = lines[2].split_whitespace();
-        let d = iter2.next().unwrap();
-        let _ = iter2.next(); // Skip the second element
-        let f = iter2.next().unwrap();
-        // println!("{} {} {} {}", &a, &c, &d, &f);
-        (
-            a.parse().unwrap(),
-            c.parse().unwrap(),
-            d.parse().unwrap(),
-            f.parse().unwrap(),
-        )
-    }
+    //     let mut iter2 = lines[2].split_whitespace();
+    //     let d = iter2.next().unwrap();
+    //     let _ = iter2.next(); // Skip the second element
+    //     let f = iter2.next().unwrap();
+    //     // println!("{} {} {} {}", &a, &c, &d, &f);
+    //     (
+    //         a.parse().unwrap(),
+    //         c.parse().unwrap(),
+    //         d.parse().unwrap(),
+    //         f.parse().unwrap(),
+    //     )
+    // }
 
-    expected_lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
-    received_lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
+    // expected_lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
+    // received_lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
 
-    assert_eq!(
-        expected_lines.len(),
-        received_lines.len(),
-        "Expected {} lines, but received {} lines",
-        expected_lines.len(),
-        received_lines.len()
-    );
+    assert_eq!(expected_lines.len(), received_lines.len(),);
 
     for (el, rl) in expected_lines.iter().zip(received_lines.iter()) {
         assert_eq!(el, rl, "Received line:\n{}\nbut expected:\n{}", rl, el);

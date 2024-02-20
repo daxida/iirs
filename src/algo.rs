@@ -275,6 +275,5 @@ pub fn add_palindromes(
         }
     }
 
-    palindromes.sort();
     palindromes
 }

@@ -219,33 +219,33 @@ mod tests {
          ||| ||||||||||
 30       nngah*nn-nddbk       17
 
+3        ucsggtgtwkmmm       15
+         ||| |||||||||
+30       nngah*nn-nddb       18
+
 3        ucsggtgtwkmm       14
          | ||||||||||
 27       ah*nn-nddbkk       16
 
-3        ucsggtgtwkmmm       15
-         ||| |||||||||
+5        sggtgtwkmmmkk       17
+         || ||||||||||
 30       nngah*nn-nddb       18
 
 5        sggtgtwkmmm       15
          |||||||||||
 26       h*nn-nddbkk       16
 
-5        sggtgtwkmmmkk       17
-         || ||||||||||
-30       nngah*nn-nddb       18
-
 7        gtgtwkmmmkkb       18
          || |||||||||
 30       nngah*nn-ndd       19
 
-8        tgtwkmmmkkb       18
-         || ||||||||
-30       nngah*nn-nd       20
-
 8        tgtwkmmmkkbd       19
          ||| ||||||||
 31       anngah*nn-nd       20
+
+8        tgtwkmmmkkb       18
+         || ||||||||
+30       nngah*nn-nd       20
 
 10       twkmmmkkbdd       20
          |||| ||||||
@@ -259,13 +259,13 @@ mod tests {
          ||||||||||
 31       anngah*nn-       22
 
-13       mmmkkbddn-       22
-         || |||||||
-33       uganngah*n       24
-
 13       mmmkkbddn-n       23
          |||||| ||||
-34       guganngah*n       24"#;
+34       guganngah*n       24
+
+13       mmmkkbddn-       22
+         || |||||||
+33       uganngah*n       24"#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");
         for (idx, (e, r)) in expected_lines.zip(received_lines).enumerate() {
@@ -286,18 +286,18 @@ mod tests {
         let received = fmt_csv(&palindromes, &seq, &matrix, &complement);
         let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
-3,14,ucsggtgtwkmm,27,16,ah*nn-nddbkk,101111111111
 3,15,ucsggtgtwkmmm,30,18,nngah*nn-nddb,1110111111111
-5,15,sggtgtwkmmm,26,16,h*nn-nddbkk,11111111111
+3,14,ucsggtgtwkmm,27,16,ah*nn-nddbkk,101111111111
 5,17,sggtgtwkmmmkk,30,18,nngah*nn-nddb,1101111111111
+5,15,sggtgtwkmmm,26,16,h*nn-nddbkk,11111111111
 7,18,gtgtwkmmmkkb,30,19,nngah*nn-ndd,110111111111
-8,18,tgtwkmmmkkb,30,20,nngah*nn-nd,11011111111
 8,19,tgtwkmmmkkbd,31,20,anngah*nn-nd,111011111111
+8,18,tgtwkmmmkkb,30,20,nngah*nn-nd,11011111111
 10,20,twkmmmkkbdd,31,21,anngah*nn-n,11110111111
 11,20,wkmmmkkbdd,31,22,anngah*nn-,1111011111
 12,21,kmmmkkbddn,31,22,anngah*nn-,1111111111
-13,22,mmmkkbddn-,33,24,uganngah*n,1101111111
 13,23,mmmkkbddn-n,34,24,guganngah*n,11111101111
+13,22,mmmkkbddn-,33,24,uganngah*n,1101111111
 "#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");
@@ -316,18 +316,18 @@ mod tests {
         let palindromes = find_palindromes(&config, &seq);
         let received = fmt_custom_csv(&palindromes, &seq);
         let expected = r#"2,gucsggtgtwkmmm,1,nngah*nn-nddbk
-3,ucsggtgtwkmm,1,ah*nn-nddbkk
 3,ucsggtgtwkmmm,2,nngah*nn-nddb
-5,sggtgtwkmmm,0,h*nn-nddbkk
+3,ucsggtgtwkmm,1,ah*nn-nddbkk
 5,sggtgtwkmmmkk,0,nngah*nn-nddb
+5,sggtgtwkmmm,0,h*nn-nddbkk
 7,gtgtwkmmmkkb,0,nngah*nn-ndd
-8,tgtwkmmmkkb,1,nngah*nn-nd
 8,tgtwkmmmkkbd,0,anngah*nn-nd
+8,tgtwkmmmkkb,1,nngah*nn-nd
 10,twkmmmkkbdd,0,anngah*nn-n
 11,wkmmmkkbdd,1,anngah*nn-
 12,kmmmkkbddn,0,anngah*nn-
-13,mmmkkbddn-,1,uganngah*n
 13,mmmkkbddn-n,0,guganngah*n
+13,mmmkkbddn-,1,uganngah*n
 "#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");
@@ -347,18 +347,18 @@ mod tests {
         let received = fmt_custom_csv_mini(&palindromes, &seq);
         let expected = r#"ir_start,motif,gap_motif
 2,gucsggtgtwkmmm,k
-3,ucsggtgtwkmm,m
 3,ucsggtgtwkmmm,kk
-5,sggtgtwkmmm,
+3,ucsggtgtwkmm,m
 5,sggtgtwkmmmkk,
+5,sggtgtwkmmm,
 7,gtgtwkmmmkkb,
-8,tgtwkmmmkkb,d
 8,tgtwkmmmkkbd,
+8,tgtwkmmmkkb,d
 10,twkmmmkkbdd,
 11,wkmmmkkbdd,n
 12,kmmmkkbddn,
-13,mmmkkbddn-,n
 13,mmmkkbddn-n,
+13,mmmkkbddn-,n
 "#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");

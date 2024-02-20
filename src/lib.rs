@@ -56,7 +56,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
 
     // Calculate palidromes
-    algo::add_palindromes(
+    let mut palindromes = algo::add_palindromes(
         &s,
         s_n,
         n,
@@ -68,7 +68,19 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         config.mismatches,
         config.max_gap,
         &matrix,
-    )
+    );
+
+    // Deal with the sorting strategy.
+    // Alternatives, or even skipping sorting altogether, can improve the performance.
+    // The original IUPACpal sorts by (left, gap_size, -right)
+    palindromes.sort_by(|a, b| {
+        let cmp_left = a.0.cmp(&b.0);
+        let cmp_gap = a.2.cmp(&a.2);
+        let cmp_right = b.1.cmp(&a.1);
+        cmp_left.then(cmp_gap).then(cmp_right)
+    });
+
+    palindromes
 }
 
 /// Stringify the given palindromes according to the configuration output format.
