@@ -8,6 +8,11 @@ testb:
   cargo run --release -- \
     -s banana -m 3 -g 5
 
+# test MCHU in input.fasta
+testm:
+  cargo run --release -- \
+    -s MCHU -m 3 -g 5 -F csv
+
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug

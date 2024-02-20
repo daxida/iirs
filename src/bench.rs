@@ -60,39 +60,32 @@ fn run_command(cmd_beginning: &str, config: &BenchConfig) -> f64 {
     start.elapsed().as_secs_f64()
 }
 
-fn test_equality() {
-    let expected = fs::read_to_string("IUPACpal.out")
-        .expect("Failed to read file")
-        .trim()
-        .to_string();
-    let received = fs::read_to_string("IUPACpalrs.out")
-        .expect("Failed to read file")
-        .trim()
-        .to_string();
-
-    let expected = expected.replace("Palindromes:\n", "");
-    let received = received.replace("Palindromes:\n", "");
-    let expected_lines: Vec<&str> = expected.split("\n\n").skip(1).collect();
-    let received_lines: Vec<&str> = received.split("\n\n").skip(1).collect();
+fn normalize_output(raw_output: &str) -> Vec<String> {
+    let output = raw_output.trim().replace("Palindromes:\n", "");
+    let lines: Vec<String> = output
+        .split("\n\n")
+        .skip(1)
+        .map(|s| s.to_string())
+        .collect();
 
     // Sort then to compare when trying alternative sorting strategies in find_palindromes
-    //
+
     // fn block_sort(block: &str) -> (usize, usize, usize, usize) {
     //     if block.trim().is_empty() {
     //         return (1_000_000_000, 0, 0, 0);
     //     }
     //     let lines: Vec<&str> = block.split('\n').collect();
     //     let mut iter1 = lines[0].split_whitespace();
-    //     // dbg!(&iter1.clone().collect::<Vec<&str>>().join("-"));
+
     //     let a = iter1.next().unwrap();
-    //     let _ = iter1.next(); // Skip the second element
+    //     let _ = iter1.next();
     //     let c = iter1.next().unwrap();
 
     //     let mut iter2 = lines[2].split_whitespace();
     //     let d = iter2.next().unwrap();
-    //     let _ = iter2.next(); // Skip the second element
+    //     let _ = iter2.next();
     //     let f = iter2.next().unwrap();
-    //     // println!("{} {} {} {}", &a, &c, &d, &f);
+
     //     (
     //         a.parse().unwrap(),
     //         c.parse().unwrap(),
@@ -101,8 +94,18 @@ fn test_equality() {
     //     )
     // }
 
-    // expected_lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
-    // received_lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
+    // let mut lines = lines.clone();
+    // lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
+
+    lines
+}
+
+fn test_equality() {
+    let expected = fs::read_to_string("IUPACpal.out").unwrap();
+    let received = fs::read_to_string("IUPACpalrs.out").unwrap();
+
+    let expected_lines = normalize_output(&expected);
+    let received_lines = normalize_output(&received);
 
     assert_eq!(expected_lines.len(), received_lines.len(),);
 
