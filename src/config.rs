@@ -222,7 +222,7 @@ impl Config {
     }
 
     fn verify_format(&self) -> Result<()> {
-        let allowed_formats = ["classic", "csv", "custom_csv", "custom_csv_mini"];
+        let allowed_formats = ["classic", "csv", "custom"];
         if !allowed_formats.contains(&self.output_format.as_str()) {
             return Err(anyhow!(
                 "Invalid output format. Allowed formats are: {}.",

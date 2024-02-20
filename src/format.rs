@@ -145,36 +145,10 @@ pub fn fmt_csv(
     palindromes_out
 }
 
-pub fn fmt_custom_csv(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+pub fn fmt_custom(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
 
-    for (left, right, gap) in palindromes {
-        let outer_left = left + 1;
-        let outer_right = right + 1;
-        let inner_left = (outer_left + outer_right - 1 - gap) / 2;
-        let inner_right = (outer_right + outer_left + 1 + gap) / 2;
-
-        let nucleotide = (*left as usize..inner_left as usize)
-            .map(|i| seq[i] as char)
-            .collect::<String>();
-        let reverse_complement = ((inner_right - 1) as usize..outer_right as usize)
-            .rev()
-            .map(|i| seq[i] as char)
-            .collect::<String>();
-
-        palindromes_out.push_str(&format!(
-            "{},{},{},{}\n",
-            outer_left, nucleotide, gap, reverse_complement
-        ));
-    }
-
-    palindromes_out
-}
-
-pub fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
-    let mut palindromes_out = String::new();
-
-    let heading = "ir_start,motif,gap_motif\n";
+    let heading = "ir_start,motif,gap_motif,reverse_complement\n";
     palindromes_out.push_str(heading);
 
     for (left, right, gap) in palindromes {
@@ -189,10 +163,14 @@ pub fn fmt_custom_csv_mini(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> St
         let gap_nucleotide = (inner_left as usize..(inner_right - 1) as usize)
             .map(|i| seq[i] as char)
             .collect::<String>();
+        let reverse_complement = ((inner_right - 1) as usize..outer_right as usize)
+            .rev()
+            .map(|i| seq[i] as char)
+            .collect::<String>();
 
         palindromes_out.push_str(&format!(
-            "{},{},{}\n",
-            outer_left, nucleotide, gap_nucleotide
+            "{},{},{},{}\n",
+            outer_left as i32, nucleotide, gap_nucleotide, reverse_complement
         ));
     }
 
@@ -307,36 +285,6 @@ mod tests {
     }
 
     #[test]
-    fn test_format_custom_csv() {
-        let config = Config::dummy(10, 100, 10, 1);
-        let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
-        let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq);
-        let received = fmt_custom_csv(&palindromes, &seq);
-        let expected = r#"2,gucsggtgtwkmmm,1,nngah*nn-nddbk
-3,ucsggtgtwkmmm,2,nngah*nn-nddb
-3,ucsggtgtwkmm,1,ah*nn-nddbkk
-5,sggtgtwkmmmkk,0,nngah*nn-nddb
-5,sggtgtwkmmm,0,h*nn-nddbkk
-7,gtgtwkmmmkkb,0,nngah*nn-ndd
-8,tgtwkmmmkkbd,0,anngah*nn-nd
-8,tgtwkmmmkkb,1,nngah*nn-nd
-10,twkmmmkkbdd,0,anngah*nn-n
-11,wkmmmkkbdd,1,anngah*nn-
-12,kmmmkkbddn,0,anngah*nn-
-13,mmmkkbddn-n,0,guganngah*n
-13,mmmkkbddn-,1,uganngah*n
-"#;
-        let expected_lines = expected.split("\n");
-        let received_lines = received.split("\n");
-        for (idx, (e, r)) in expected_lines.zip(received_lines).enumerate() {
-            assert_eq!(e, r, "Difference at line {}", idx)
-        }
-    }
-
-    #[test]
     fn test_format_custom_csv_mini() {
         let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
@@ -344,21 +292,21 @@ mod tests {
         let n = seq.len();
         let _ = config.verify(n).unwrap();
         let palindromes = find_palindromes(&config, &seq);
-        let received = fmt_custom_csv_mini(&palindromes, &seq);
-        let expected = r#"ir_start,motif,gap_motif
-2,gucsggtgtwkmmm,k
-3,ucsggtgtwkmmm,kk
-3,ucsggtgtwkmm,m
-5,sggtgtwkmmmkk,
-5,sggtgtwkmmm,
-7,gtgtwkmmmkkb,
-8,tgtwkmmmkkbd,
-8,tgtwkmmmkkb,d
-10,twkmmmkkbdd,
-11,wkmmmkkbdd,n
-12,kmmmkkbddn,
-13,mmmkkbddn-n,
-13,mmmkkbddn-,n
+        let received = fmt_custom(&palindromes, &seq);
+        let expected = r#"ir_start,motif,gap_motif,reverse_complement
+2,gucsggtgtwkmmm,k,nngah*nn-nddbk
+3,ucsggtgtwkmmm,kk,nngah*nn-nddb
+3,ucsggtgtwkmm,m,ah*nn-nddbkk
+5,sggtgtwkmmmkk,,nngah*nn-nddb
+5,sggtgtwkmmm,,h*nn-nddbkk
+7,gtgtwkmmmkkb,,nngah*nn-ndd
+8,tgtwkmmmkkbd,,anngah*nn-nd
+8,tgtwkmmmkkb,d,nngah*nn-nd
+10,twkmmmkkbdd,,anngah*nn-n
+11,wkmmmkkbdd,n,anngah*nn-
+12,kmmmkkbddn,,anngah*nn-
+13,mmmkkbddn-n,,guganngah*n
+13,mmmkkbddn-,n,uganngah*n
 "#;
         let expected_lines = expected.split("\n");
         let received_lines = received.split("\n");

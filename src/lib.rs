@@ -117,8 +117,7 @@ pub fn strinfigy_palindromes(
             format::fmt_classic(palindromes, seq, &matrix, &complement)
         )),
         "csv" => Ok(format::fmt_csv(palindromes, seq, &matrix, &complement)),
-        "custom_csv" => Ok(format::fmt_custom_csv(palindromes, seq)),
-        "custom_csv_mini" => Ok(format::fmt_custom_csv_mini(palindromes, seq)),
+        "custom" => Ok(format::fmt_custom(palindromes, seq)),
         // Already tested in Config::verify
         _ => unreachable!(),
     }
