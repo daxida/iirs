@@ -83,7 +83,7 @@ fn real_lce_mismatches(
 
         if !matrix.match_u8(s[ni], s[nj]) {
             mismatch_locs.push(real_lce as i32);
-            if real_lce >= initial_gap as usize {
+            if real_lce as i32 >= initial_gap {
                 mismatches -= 1;
             }
         }

@@ -124,10 +124,10 @@ fn test_equality() {
     );
 }
 
-fn average(timings: &[f64]) -> f64 {
-    let total: f64 = timings.iter().sum();
-    total / timings.len() as f64
-}
+// fn average(timings: &[f64]) -> f64 {
+//     let total: f64 = timings.iter().sum();
+//     total / timings.len() as f64
+// }
 
 #[derive(Parser, Debug)]
 struct BenchConfig {
