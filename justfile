@@ -13,6 +13,10 @@ testm:
   cargo run --release -- \
     -s MCHU -m 3 -g 5 -F csv
 
+testmul:
+  cargo run --release -- \
+    -f tests/test_data/test_multiple.fasta -s ALL -m 3 -g 5 -F custom
+
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug

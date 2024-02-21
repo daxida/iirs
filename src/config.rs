@@ -171,8 +171,6 @@ impl Config {
                     }
                 }
             }
-            // Fix off by one
-            position -= 1;
 
             let record = CustomRecord::new(string, position);
 
