@@ -14,7 +14,11 @@ path = "src/main.rs"
 
 [[bin]]
 name = "bench"
-path = "src/bench.rs"
+path = "bench/bench.rs"
+
+[[bin]]
+name = "logs"
+path = "bench/logs.rs"
 
 [dependencies]
 anyhow = "1.0.75"
@@ -24,6 +28,7 @@ clap = { version = "4.4.12", features = ["derive"] }
 seq_io = "0.3.2"
 elapsed-time = "0.1.1"
 rand = "0.8.5"
+csv = "1.1"
 
 # [profile.dev]
 # opt-level = 3
