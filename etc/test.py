@@ -1,14 +1,13 @@
-import random
-from time import time
 import os
+import random
 import subprocess
-from statistics import mean
 from argparse import ArgumentParser
-
+from statistics import mean
+from time import time
 
 parser = ArgumentParser()
-parser.add_argument('--size', type=int, help='Random fasta size')
-parser.add_argument('--ntests', type=int, help='Number of tests')
+parser.add_argument("--size", type=int, help="Random fasta size")
+parser.add_argument("--ntests", type=int, help="Number of tests")
 args = parser.parse_args()
 
 FILE_NAME = "rand.fasta"
@@ -81,7 +80,10 @@ def test_equality():
     for el, rl in zip(expected_lines, received_lines):
         assert el == rl, f"Received line:\n{rl}\nbut expected:\n{el}"
 
-    assert len(expected_lines) == len(received_lines), (len(expected_lines), len(received_lines))
+    assert len(expected_lines) == len(received_lines), (
+        len(expected_lines),
+        len(received_lines),
+    )
 
     print(f"{GREEN}OK{RESET}: Compared {len(expected_lines) - 1} Palindromes")
 

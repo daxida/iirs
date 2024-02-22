@@ -57,3 +57,11 @@ bench-correct:
   ./target/release/bench --size-fasta 1000 --n-tests 20 -g 100 -x 2
   ./target/release/bench --size-fasta 5000 --n-tests 10 -g 100 -x 2
   ./target/release/bench --size-fasta 20000 --n-tests 5 -g 100 -x 2
+
+logs:
+  cargo run --release --bin logs
+
+printlogs:
+  cargo build --release
+  cargo run --release --bin logs
+  python3 bench/heatmaps.py

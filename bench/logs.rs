@@ -177,21 +177,29 @@ fn main() {
 
     let steps: Vec<Vec<i32>> = vec![
         // size_fasta
-        vec![100, 1000, 10000, 100000],
+        vec![10000],
         // min_len
-        vec![2, 3, 4, 5, 10],
+        vec![2, 4, 6, 8, 10, 12, 14, 16],
         // max_gap
-        vec![0, 5, 10, 20, 50],
+        vec![0, 1, 2, 3, 4, 5],
         // mismatches
-        vec![0, 1, 2, 3, 4, 5, 10],
+        vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
     ];
 
     let mut writer = WriterBuilder::new()
         .has_headers(false)
         .from_writer(File::create("bench/results.csv").expect("Failed to create CSV file"));
 
-    writer.write_record(&["size_fasta", "min_len", "max_gap", "mismatches", "cpp_timing", "rust_timing"]).expect("Failed to write CSV header");
-
+    writer
+        .write_record(&[
+            "size_fasta",
+            "min_len",
+            "max_gap",
+            "mismatches",
+            "cpp_timing",
+            "rust_timing",
+        ])
+        .expect("Failed to write CSV header");
 
     for &size_fasta in &steps[0] {
         let fasta = generate_random_fasta(size_fasta as usize);
@@ -214,7 +222,6 @@ fn main() {
                         size_fasta: size_fasta as usize,
                         n_tests: 20,
                     };
-                    // println!("{:?}", config);
 
                     // TODO: compute average over 20 tries?
 
