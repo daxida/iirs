@@ -8,6 +8,9 @@ use std::fs::File;
 use std::io::Write;
 use std::process::Command;
 use std::time::Instant;
+use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
+
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
@@ -181,9 +184,7 @@ fn main() -> Result<()> {
         vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
     ];
 
-    let mut writer = WriterBuilder::new()
-        .has_headers(false)
-        .from_writer(File::create("bench/results.csv")?);
+    let mut writer = WriterBuilder::new().from_writer(File::create("bench/results.csv")?);
 
     writer.write_record([
         "size_fasta",
@@ -194,24 +195,55 @@ fn main() -> Result<()> {
         "rust_timing",
     ])?;
 
-    for &size_fasta in &steps[0] {
-        write_random_fasta(size_fasta as usize)?;
+    let parallel = false;
 
-        for config in generate_configs(size_fasta as usize, &steps) {
-            let ctiming = run_command("IUPACpal/IUPACpal", &config);
-            let rtiming = run_command("target/release/main", &config);
+    if parallel {
+        let writer = Arc::new(Mutex::new(writer));
 
-            if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
-                writer.write_record(&[
-                    size_fasta.to_string(),
-                    config.min_len.to_string(),
-                    config.max_gap.to_string(),
-                    config.mismatches.to_string(),
-                    ctiming.to_string(),
-                    rtiming.to_string(),
-                ])?;
-
-                // test_equality();
+        for &size_fasta in &steps[0] {
+            write_random_fasta(size_fasta as usize)?;
+    
+            generate_configs(size_fasta as usize, &steps)
+                .collect::<Vec<_>>()
+                .into_par_iter()
+                .for_each(|config| {
+                    let ctiming = run_command("IUPACpal/IUPACpal", &config);
+                    let rtiming = run_command("target/release/main", &config);
+            
+                    if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
+                        let mut writer = writer.lock().unwrap();
+    
+                        writer.write_record(&[
+                            size_fasta.to_string(),
+                            config.min_len.to_string(),
+                            config.max_gap.to_string(),
+                            config.mismatches.to_string(),
+                            ctiming.to_string(),
+                            rtiming.to_string(),
+                        ]).unwrap();
+                    }
+                });
+        }
+    } else {
+        for &size_fasta in &steps[0] {
+            write_random_fasta(size_fasta as usize)?;
+    
+            for config in generate_configs(size_fasta as usize, &steps) {
+                let ctiming = run_command("IUPACpal/IUPACpal", &config);
+                let rtiming = run_command("target/release/main", &config);
+        
+                if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
+                    writer.write_record(&[
+                        size_fasta.to_string(),
+                        config.min_len.to_string(),
+                        config.max_gap.to_string(),
+                        config.mismatches.to_string(),
+                        ctiming.to_string(),
+                        rtiming.to_string(),
+                    ])?;
+    
+                    test_equality();
+                }
             }
         }
     }
