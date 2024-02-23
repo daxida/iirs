@@ -1,4 +1,6 @@
-use crate::{matrix::MatchMatrix, rmq::rmq};
+use rmq::{optimal::Optimal, RMQ};
+
+use crate::matrix::MatchMatrix;
 
 // Calculates the Longest Common Prefix array of a text and stores value in given variable LCP
 //
@@ -54,10 +56,11 @@ fn real_lce_mismatches(
     s_n: usize,
     inv_sa: &[usize],
     lcp: &[usize],
-    rmq_prep: &[usize],
+    // rmq_prep: &[usize],
     mut mismatches: i32,
     initial_gap: i32,
     matrix: &MatchMatrix,
+    rmq_birc: &Optimal<'_>,
 ) -> Vec<i32> {
     debug_assert!(i < j);
 
@@ -71,7 +74,7 @@ fn real_lce_mismatches(
         let jj = inv_sa[j + real_lce];
 
         if ii < jj {
-            real_lce += lcp[rmq(rmq_prep, lcp, s_n, ii, jj)];
+            real_lce += lcp[rmq_birc.rmq(ii+1, jj+1).unwrap_or(0)];
         }
 
         let ni = i + real_lce;
@@ -119,12 +122,13 @@ pub fn add_palindromes(
     n: usize,
     inv_sa: &[usize],
     lcp: &[usize],
-    rmq_prep: &[usize],
+    // rmq_prep: &[usize],
     min_len: i32,
     max_len: i32,
     mismatches: i32,
     max_gap: i32,
     matrix: &MatchMatrix,
+    rmq_birc: &Optimal<'_>,
 ) -> Vec<(i32, i32, i32)> {
     let mut palindromes: Vec<(i32, i32, i32)> = Vec::new();
     let behind = (2 * n + 1) as f64;
@@ -154,10 +158,11 @@ pub fn add_palindromes(
             s_n,
             inv_sa,
             lcp,
-            rmq_prep,
+            // rmq_prep,
             mismatches,
             initial_gap,
             matrix,
+            rmq_birc,
         );
 
         let mut valid_start_locs: Vec<(i32, i32)> = Vec::new();

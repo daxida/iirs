@@ -4,11 +4,12 @@ mod algo;
 mod constants;
 mod format;
 mod matrix;
-mod rmq;
+// mod rmq;
 
 use anyhow::Result;
 use config::Config;
 use libdivsufsort_rs::*;
+use std::time::Instant;
 
 /// Find palindromes in a fasta sequence based on the provided configuration.
 ///
@@ -27,7 +28,8 @@ use libdivsufsort_rs::*;
 /// ```
 #[elapsed_time::elapsed]
 pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
-    // This recomputation of n is just for convenience of the API
+    let start_time = Instant::now();
+
     let n = seq.len();
 
     // Build matchmatrix
@@ -53,7 +55,9 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
 
     // Calculate LCP & RMQ
     let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
-    let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
+    // let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
+    let rmq_birc = rmq::optimal::Optimal::new(&lcp);
+    println!("Elapsed time (precomp): {:?}", Instant::now() - start_time);
 
     // Calculate palidromes
     let mut palindromes = algo::add_palindromes(
@@ -62,12 +66,13 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         n,
         &inv_sa,
         &lcp,
-        &rmq_prep,
+        // &rmq_prep,
         config.min_len,
         config.max_len,
         config.mismatches,
         config.max_gap,
         &matrix,
+        &rmq_birc,
     );
 
     // Deal with the sorting strategy.

@@ -170,7 +170,7 @@ pub fn fmt_custom(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
 
         palindromes_out.push_str(&format!(
             "{},{},{},{}\n",
-            outer_left as i32, nucleotide, gap_nucleotide, reverse_complement
+            outer_left, nucleotide, gap_nucleotide, reverse_complement
         ));
     }
 

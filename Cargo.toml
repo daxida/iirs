@@ -29,6 +29,7 @@ seq_io = "0.3.2"
 elapsed-time = "0.1.1"
 rand = "0.8.5"
 csv = "1.1"
+rmq = { git = "https://github.com/daxida/rmq", branch = "main" }
 
 # [profile.dev]
 # opt-level = 3
