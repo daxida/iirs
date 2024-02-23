@@ -30,15 +30,15 @@ ptestalys:
   sudo perf record -g target/debug/main -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
-# test for randIUPAC10000
+# test for randIUPAC1000000
 testrand:
   cargo run --profile=release-with-debug -- \
-    -f tests/test_data/randIUPAC10000.fasta -m 3 -M 100 -g 0 -x 0
+    -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
 
-# perf test for randIUPAC10000
+# perf test for randIUPAC100000
 ptestrand:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/debug/main -f tests/test_data/randIUPAC10000.fasta -m 3 -M 100 -g 0 -x 0
+  sudo perf record -g target/debug/main -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
   sudo perf report
 
 # test that the results of the rust / cpp binaries are the same

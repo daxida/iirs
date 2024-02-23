@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
+use itertools::iproduct;
 use rand::prelude::SliceRandom;
 use std::fs;
 use std::fs::File;
@@ -11,21 +12,25 @@ use std::time::Instant;
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
 
-fn generate_random_fasta(size: usize) -> String {
+const SYMBOLS: [char; 17] = [
+    'a', 'c', 'g', 't', 'u', 'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v', '*', '-',
+];
+
+fn generate_random_fasta(size_fasta: usize) -> String {
     let mut rng = rand::thread_rng();
-    format!(
-        ">seq0\n{}",
-        (0..size)
-            .map(|_| {
-                *[
-                    "a", "c", "g", "t", "u", "r", "y", "s", "w", "k", "m", "b", "d", "h", "v", "*",
-                    "-",
-                ]
-                .choose(&mut rng)
-                .unwrap()
-            })
-            .collect::<String>()
-    )
+    let random_sequence: String = (0..size_fasta)
+        .map(|_| *SYMBOLS.choose(&mut rng).unwrap())
+        .collect();
+
+    format!(">seq0\n{}", random_sequence)
+}
+
+fn write_random_fasta(size_fasta: usize) -> Result<()> {
+    let fasta = generate_random_fasta(size_fasta as usize);
+    let mut file = File::create("rand.fasta").unwrap();
+    file.write_all(fasta.as_bytes())?;
+
+    Ok(())
 }
 
 fn run_command(cmd_beginning: &str, config: &BenchConfig) -> Result<f64> {
@@ -56,53 +61,23 @@ fn run_command(cmd_beginning: &str, config: &BenchConfig) -> Result<f64> {
 
     if stdout.contains("Error") {
         return Err(anyhow!("Error: {}", stdout));
-        // println!("Error: {}", stdout);
-        // std::process::exit(0);
     }
 
     Ok(start.elapsed().as_secs_f64())
 }
 
+#[allow(dead_code)]
 fn normalize_output(raw_output: &str) -> Vec<String> {
-    let output = raw_output.trim().replace("Palindromes:\n", "");
-    let lines: Vec<String> = output
+    raw_output
+        .trim()
+        .replace("Palindromes:\n", "")
         .split("\n\n")
         .skip(1)
         .map(|s| s.to_string())
-        .collect();
-
-    // Sort then to compare when trying alternative sorting strategies in find_palindromes
-
-    // fn block_sort(block: &str) -> (usize, usize, usize, usize) {
-    //     if block.trim().is_empty() {
-    //         return (1_000_000_000, 0, 0, 0);
-    //     }
-    //     let lines: Vec<&str> = block.split('\n').collect();
-    //     let mut iter1 = lines[0].split_whitespace();
-
-    //     let a = iter1.next().unwrap();
-    //     let _ = iter1.next();
-    //     let c = iter1.next().unwrap();
-
-    //     let mut iter2 = lines[2].split_whitespace();
-    //     let d = iter2.next().unwrap();
-    //     let _ = iter2.next();
-    //     let f = iter2.next().unwrap();
-
-    //     (
-    //         a.parse().unwrap(),
-    //         c.parse().unwrap(),
-    //         d.parse().unwrap(),
-    //         f.parse().unwrap(),
-    //     )
-    // }
-
-    // let mut lines = lines.clone();
-    // lines.sort_by(|a, b| block_sort(a).cmp(&block_sort(b)));
-
-    lines
+        .collect()
 }
 
+#[allow(dead_code)]
 fn test_equality() {
     let expected = fs::read_to_string("IUPACpal.out").unwrap();
     let received = fs::read_to_string("IUPACpalrs.out").unwrap();
@@ -172,7 +147,27 @@ struct BenchConfig {
     n_tests: usize,
 }
 
-fn main() {
+fn generate_configs<'a>(
+    size_fasta: usize,
+    steps: &'a Vec<Vec<i32>>,
+) -> impl Iterator<Item = BenchConfig> + 'a {
+    iproduct!(&steps[1], &steps[2], &steps[3]).map(move |(&min_len, &max_gap, &mismatches)| {
+        BenchConfig {
+            input_file: "rand.fasta".to_string(),
+            seq_name: "seq0".to_string(),
+            min_len,
+            max_len: 100,
+            max_gap,
+            mismatches,
+            output_file: "IUPACpalrs.out".to_string(),
+            output_format: "classic".to_string(),
+            size_fasta,
+            n_tests: 20,
+        }
+    })
+}
+
+fn main() -> Result<()> {
     let start = Instant::now();
 
     let steps: Vec<Vec<i32>> = vec![
@@ -188,67 +183,45 @@ fn main() {
 
     let mut writer = WriterBuilder::new()
         .has_headers(false)
-        .from_writer(File::create("bench/results.csv").expect("Failed to create CSV file"));
+        .from_writer(File::create("bench/results.csv")?);
 
-    writer
-        .write_record(&[
-            "size_fasta",
-            "min_len",
-            "max_gap",
-            "mismatches",
-            "cpp_timing",
-            "rust_timing",
-        ])
-        .expect("Failed to write CSV header");
+    writer.write_record([
+        "size_fasta",
+        "min_len",
+        "max_gap",
+        "mismatches",
+        "cpp_timing",
+        "rust_timing",
+    ])?;
 
     for &size_fasta in &steps[0] {
-        let fasta = generate_random_fasta(size_fasta as usize);
-        let mut file = File::create("rand.fasta").unwrap();
-        file.write_all(fasta.as_bytes())
-            .expect("Failed to write to file");
+        write_random_fasta(size_fasta as usize)?;
 
-        for &min_len in &steps[1] {
-            for &max_gap in &steps[2] {
-                for &mismatches in &steps[3] {
-                    let config = BenchConfig {
-                        input_file: "rand.fasta".to_string(),
-                        seq_name: "seq0".to_string(),
-                        min_len,
-                        max_len: 100,
-                        max_gap,
-                        mismatches,
-                        output_file: "IUPACpalrs.out".to_string(),
-                        output_format: "classic".to_string(),
-                        size_fasta: size_fasta as usize,
-                        n_tests: 20,
-                    };
+        for config in generate_configs(size_fasta as usize, &steps) {
+            let ctiming = run_command("IUPACpal/IUPACpal", &config);
+            let rtiming = run_command("target/release/main", &config);
 
-                    // TODO: compute average over 20 tries?
+            if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
+                writer.write_record(&[
+                    size_fasta.to_string(),
+                    config.min_len.to_string(),
+                    config.max_gap.to_string(),
+                    config.mismatches.to_string(),
+                    ctiming.to_string(),
+                    rtiming.to_string(),
+                ])?;
 
-                    let cpp_timing = run_command("IUPACpal/IUPACpal", &config);
-                    let rust_timing = run_command("target/release/main", &config);
-
-                    match (cpp_timing, rust_timing) {
-                        (Ok(cpp_timing), Ok(rust_timing)) => {
-                            writer
-                                .write_record(&[
-                                    size_fasta.to_string(),
-                                    min_len.to_string(),
-                                    max_gap.to_string(),
-                                    mismatches.to_string(),
-                                    cpp_timing.to_string(),
-                                    rust_timing.to_string(),
-                                ])
-                                .expect("Failed to write CSV record");
-
-                            test_equality();
-                        }
-                        _ => (),
-                    }
-                }
+                // test_equality();
             }
         }
     }
 
-    println!("\nAll tests finished in {}", start.elapsed().as_secs_f64());
+    println!(
+        "\n{}OK{}: All tests finished in {}",
+        GREEN,
+        RESET,
+        start.elapsed().as_secs_f64()
+    );
+
+    Ok(())
 }
