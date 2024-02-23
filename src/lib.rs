@@ -6,7 +6,7 @@ mod format;
 mod matrix;
 mod rmq;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use config::Config;
 use libdivsufsort_rs::*;
 
@@ -118,7 +118,10 @@ pub fn strinfigy_palindromes(
         )),
         "csv" => Ok(format::fmt_csv(palindromes, seq, &matrix, &complement)),
         "custom" => Ok(format::fmt_custom(palindromes, seq)),
-        // Already tested in Config::verify
-        _ => unreachable!(),
+        // Already tested in Config::verify but not for a manual Config::new
+        other => Err(anyhow!(
+            "The given output format: '{}' doesn't exist.",
+            other
+        )),
     }
 }
