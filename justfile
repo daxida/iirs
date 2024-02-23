@@ -31,13 +31,18 @@ testalys:
 # perf test for alys
 ptestalys:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/debug/iupacpal -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+  sudo perf record -g target/debug/main -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
-# perf test for randIUPAC1000000
+# test for randIUPAC1000000
+testrand:
+  cargo run --profile=release-with-debug -- \
+    -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
+
+# perf test for randIUPAC100000
 ptestrand:
-  cargo build
-  sudo perf record -g target/debug/iupacpal -f tests/test_data/randIUPAC1000000.fasta -m 3 -M 100 -g 20
+  cargo build --profile=release-with-debug
+  sudo perf record -g target/debug/main -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
   sudo perf report
 
 # test that the results of the rust / cpp binaries are the same
@@ -56,3 +61,11 @@ bench-correct:
   ./target/release/bench --size-fasta 1000 --n-tests 20 -g 100 -x 2
   ./target/release/bench --size-fasta 5000 --n-tests 10 -g 100 -x 2
   ./target/release/bench --size-fasta 20000 --n-tests 5 -g 100 -x 2
+
+logs:
+  cargo run --release --bin logs
+
+printlogs:
+  cargo build --release
+  cargo run --release --bin logs
+  python3 bench/heatmaps.py

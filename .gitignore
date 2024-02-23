@@ -1,4 +1,5 @@
 # py
+venv
 __pycache__/
 
 # Ignore performance testing files or directories
