@@ -208,7 +208,7 @@ fn main() -> Result<()> {
                 .into_par_iter()
                 .for_each(|config| {
                     let ctiming = run_command("IUPACpal/IUPACpal", &config);
-                    let rtiming = run_command("target/release/main", &config);
+                    let rtiming = run_command("target/release/iupacpal", &config);
             
                     if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
                         let mut writer = writer.lock().unwrap();
@@ -230,7 +230,7 @@ fn main() -> Result<()> {
     
             for config in generate_configs(size_fasta as usize, &steps) {
                 let ctiming = run_command("IUPACpal/IUPACpal", &config);
-                let rtiming = run_command("target/release/main", &config);
+                let rtiming = run_command("target/release/iupacpal", &config);
         
                 if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
                     writer.write_record(&[
