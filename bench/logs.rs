@@ -226,7 +226,7 @@ fn main() {
                     // TODO: compute average over 20 tries?
 
                     let cpp_timing = run_command("IUPACpal/IUPACpal", &config);
-                    let rust_timing = run_command("target/release/main", &config);
+                    let rust_timing = run_command("target/release/iupacpal", &config);
 
                     match (cpp_timing, rust_timing) {
                         (Ok(cpp_timing), Ok(rust_timing)) => {
