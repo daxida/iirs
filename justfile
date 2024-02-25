@@ -30,10 +30,10 @@ ptestalys:
   sudo perf record -g target/debug/main -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
-# test for randIUPAC1000000
+# test for rand10000000 (1e7)
 testrand:
   cargo run --profile=release-with-debug -- \
-    -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
+    -f tests/test_data/rand10000000.fasta -m 10 -M 100 -g 20 -x 5
 
 # perf test for randIUPAC100000
 ptestrand:
