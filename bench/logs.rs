@@ -29,7 +29,7 @@ fn generate_random_fasta(size_fasta: usize) -> String {
 }
 
 fn write_random_fasta(size_fasta: usize) -> Result<()> {
-    let fasta = generate_random_fasta(size_fasta as usize);
+    let fasta = generate_random_fasta(size_fasta);
     let mut file = File::create("rand.fasta").unwrap();
     file.write_all(fasta.as_bytes())?;
 
@@ -150,10 +150,10 @@ struct BenchConfig {
     n_tests: usize,
 }
 
-fn generate_configs<'a>(
+fn generate_configs(
     size_fasta: usize,
-    steps: &'a Vec<Vec<i32>>,
-) -> impl Iterator<Item = BenchConfig> + 'a {
+    steps: &[Vec<i32>],
+) -> impl Iterator<Item = BenchConfig> + '_ {
     iproduct!(&steps[1], &steps[2], &steps[3]).map(move |(&min_len, &max_gap, &mismatches)| {
         BenchConfig {
             input_file: "rand.fasta".to_string(),
