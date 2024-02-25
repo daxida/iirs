@@ -53,7 +53,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
 
     // Calculate LCP & RMQ
     let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
-    let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
+    let rmq = rmq::Sparse::new(&lcp);
 
     // Calculate palidromes
     let mut palindromes = algo::add_palindromes(
@@ -61,8 +61,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         s_n,
         n,
         &inv_sa,
-        &lcp,
-        &rmq_prep,
+        &rmq,
         config.min_len,
         config.max_len,
         config.mismatches,

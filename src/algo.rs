@@ -1,4 +1,7 @@
-use crate::{matrix::MatchMatrix, rmq::rmq};
+use crate::{
+    matrix::MatchMatrix,
+    rmq::{Rmq, Sparse},
+};
 
 // Calculates the Longest Common Prefix array of a text and stores value in given variable LCP
 //
@@ -53,31 +56,33 @@ fn real_lce_mismatches(
     j: usize,
     s_n: usize,
     inv_sa: &[usize],
-    lcp: &[usize],
-    rmq_prep: &[usize],
+    rmq: &Sparse,
     mut mismatches: i32,
     initial_gap: i32,
     matrix: &MatchMatrix,
 ) -> Vec<i32> {
-    debug_assert!(i < j);
-
-    let mut mismatch_locs = Vec::new(); // Originally LinkedList<i32>
-    mismatch_locs.push(-1);
-
+    // Kangaroo algorithm. A simple explanation can be found here:
+    // https://www.youtube.com/watch?v=Njv_q9RA-hs
+    //
+    // For the BANANA case, the given (i, j) will be:
+    // (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
+    let mut mismatch_locs = vec![-1]; // Originally LinkedList<i32>
     let mut real_lce = 0;
+
     while mismatches >= 0 && j + real_lce != s_n {
-        // lce function in the original
+        // LCE function in the original
         let ii = inv_sa[i + real_lce];
         let jj = inv_sa[j + real_lce];
 
         if ii < jj {
-            real_lce += lcp[rmq(rmq_prep, lcp, s_n, ii, jj)];
+            real_lce += rmq.rmq(ii, jj);
         }
 
         let ni = i + real_lce;
         let nj = j + real_lce;
 
-        if ni >= (s_n / 2) || nj >= s_n {
+        // if ni >= (s_n / 2) || nj >= s_n {
+        if ni >= s_n / 2 {
             break;
         }
 
@@ -118,8 +123,7 @@ pub fn add_palindromes(
     s_n: usize,
     n: usize,
     inv_sa: &[usize],
-    lcp: &[usize],
-    rmq_prep: &[usize],
+    rmq: &Sparse,
     min_len: i32,
     max_len: i32,
     mismatches: i32,
@@ -153,8 +157,7 @@ pub fn add_palindromes(
             j as usize,
             s_n,
             inv_sa,
-            lcp,
-            rmq_prep,
+            rmq,
             mismatches,
             initial_gap,
             matrix,
