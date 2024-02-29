@@ -221,15 +221,17 @@ pub fn add_palindromes(
             }
 
             let start_mismatch = (start.0 + 1) as usize;
-            let end_mismatch = valid_end_locs[end_it_ptr - 1].0;
-
-            // println!("(start_mismatch, end_mismatch) = {} {}", start_mismatch, end_mismatch);
-
             // // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
             if start_mismatch as i32 > initial_gap {
                 break;
             }
+            let end_mismatch = valid_end_locs[end_it_ptr - 1].0;
 
+            // The following part is equivalent to:
+            // let margin = c.fract();
+            // let left  = (c + margin) as usize - end_mismatch;
+            // let right = (c - margin) as usize + end_mismatch;
+            // let gap   = 2 * start_mismatch + 1 - (margin * 2.0) as usize;
             let (left, right, gap): (usize, usize, usize);
 
             if is_odd {
