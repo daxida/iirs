@@ -30,6 +30,11 @@ ptestalys:
   sudo perf record -g target/release-with-debug/iupacpal -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
+# test full N (stress test the algorithm and not the writing)
+testn:
+  cargo run --release -- \
+    -f tests/test_data/200000N.fasta -m 2 -M 100 -g 20 -x 1
+
 # test for rand10000000 (1e7)
 testrand:
   cargo run --release -- \
