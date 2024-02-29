@@ -3,14 +3,13 @@ use clap::Parser;
 use csv::WriterBuilder;
 use itertools::iproduct;
 use rand::prelude::SliceRandom;
+use rayon::prelude::*;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::process::Command;
-use std::time::Instant;
-use rayon::prelude::*;
 use std::sync::{Arc, Mutex};
-
+use std::time::Instant;
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
@@ -70,14 +69,8 @@ fn run_command(cmd_beginning: &str, config: &BenchConfig) -> Result<f64> {
 }
 
 #[allow(dead_code)]
-fn normalize_output(raw_output: &str) -> Vec<String> {
-    raw_output
-        .trim()
-        .replace("Palindromes:\n", "")
-        .split("\n\n")
-        .skip(1)
-        .map(|s| s.to_string())
-        .collect()
+fn normalize_output(raw_output: &str) -> Vec<&str> {
+    raw_output.trim().lines().collect()
 }
 
 #[allow(dead_code)]
@@ -202,36 +195,38 @@ fn main() -> Result<()> {
 
         for &size_fasta in &steps[0] {
             write_random_fasta(size_fasta as usize)?;
-    
+
             generate_configs(size_fasta as usize, &steps)
                 .collect::<Vec<_>>()
                 .into_par_iter()
                 .for_each(|config| {
                     let ctiming = run_command("IUPACpal/IUPACpal", &config);
                     let rtiming = run_command("target/release/iupacpal", &config);
-            
+
                     if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
                         let mut writer = writer.lock().unwrap();
-    
-                        writer.write_record(&[
-                            size_fasta.to_string(),
-                            config.min_len.to_string(),
-                            config.max_gap.to_string(),
-                            config.mismatches.to_string(),
-                            ctiming.to_string(),
-                            rtiming.to_string(),
-                        ]).unwrap();
+
+                        writer
+                            .write_record(&[
+                                size_fasta.to_string(),
+                                config.min_len.to_string(),
+                                config.max_gap.to_string(),
+                                config.mismatches.to_string(),
+                                ctiming.to_string(),
+                                rtiming.to_string(),
+                            ])
+                            .unwrap();
                     }
                 });
         }
     } else {
         for &size_fasta in &steps[0] {
             write_random_fasta(size_fasta as usize)?;
-    
+
             for config in generate_configs(size_fasta as usize, &steps) {
                 let ctiming = run_command("IUPACpal/IUPACpal", &config);
                 let rtiming = run_command("target/release/iupacpal", &config);
-        
+
                 if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
                     writer.write_record(&[
                         size_fasta.to_string(),
@@ -241,7 +236,7 @@ fn main() -> Result<()> {
                         ctiming.to_string(),
                         rtiming.to_string(),
                     ])?;
-    
+
                     test_equality();
                 }
             }
