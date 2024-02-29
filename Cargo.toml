@@ -9,10 +9,6 @@ name = "iupacpal"
 path = "src/lib.rs"
 
 [[bin]]
-name = "bench"
-path = "bench/bench.rs"
-
-[[bin]]
 name = "logs"
 path = "bench/logs.rs"
 
