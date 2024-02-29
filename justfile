@@ -58,3 +58,7 @@ printlogs:
   cargo build --release
   cargo run --release --bin logs
   python3 bench/heatmaps.py
+
+bench:
+  cargo build --release
+  cargo run --release --bin bench
