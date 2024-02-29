@@ -1,16 +1,12 @@
 [package]
 name = "iupacpal"
-default-run = "main"
+default-run = "iupacpal"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
 name = "iupacpal"
 path = "src/lib.rs"
-
-[[bin]]
-name = "main"
-path = "src/main.rs"
 
 [[bin]]
 name = "bench"
@@ -30,6 +26,8 @@ elapsed-time = "0.1.1"
 rand = "0.8.5"
 csv = "1.1"
 rmq = { git = "https://github.com/daxida/rmq", branch = "main" }
+itertools = "0.12.1"
+rayon = "1.8.1"
 
 # [profile.dev]
 # opt-level = 3
