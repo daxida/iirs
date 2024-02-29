@@ -62,10 +62,10 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         n,
         &inv_sa,
         &rmq,
-        config.min_len,
-        config.max_len,
-        config.mismatches,
-        config.max_gap,
+        config.min_len as i32,
+        config.max_len as i32,
+        config.mismatches as i32,
+        config.max_gap as i32,
         &matrix,
     );
 

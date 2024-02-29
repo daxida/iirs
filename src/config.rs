@@ -18,19 +18,19 @@ pub struct Config {
 
     /// Minimum length.
     #[arg(short, default_value_t = 10)]
-    pub min_len: i32,
+    pub min_len: usize,
 
     /// Maximum length.
     #[arg(short = 'M', default_value_t = 100)]
-    pub max_len: i32,
+    pub max_len: usize,
 
     /// Maximum permissible gap.
     #[arg(short = 'g', default_value_t = 100)]
-    pub max_gap: i32,
+    pub max_gap: usize,
 
     /// Maximum permissible mismatches.
     #[arg(short = 'x', default_value_t = 0)]
-    pub mismatches: i32,
+    pub mismatches: usize,
 
     /// Output filename.
     #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
@@ -47,10 +47,10 @@ impl Config {
     pub fn new(
         input_file: &str,
         seq_name: &str,
-        min_len: i32,
-        max_len: i32,
-        max_gap: i32,
-        mismatches: i32,
+        min_len: usize,
+        max_len: usize,
+        max_gap: usize,
+        mismatches: usize,
         output_file: &str,
         output_format: &str,
     ) -> Self {
@@ -71,7 +71,7 @@ impl Config {
     }
 
     #[allow(dead_code)] // For unit tests
-    pub fn dummy(min_len: i32, max_len: i32, max_gap: i32, mismatches: i32) -> Self {
+    pub fn dummy(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
         Self {
             input_file: String::from("dummy"),
             seq_name: String::from("dummy"),
@@ -179,17 +179,17 @@ impl Config {
     }
 
     fn verify_bounds(&self, n: usize) -> Result<()> {
-        if (self.min_len as usize) < 2 {
+        if self.min_len < 2 {
             return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
         }
-        if self.min_len as usize >= n {
+        if self.min_len >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
                 self.min_len,
                 n
             ));
         }
-        if self.max_gap as usize >= n {
+        if self.max_gap >= n {
             return Err(anyhow!(
                 "max_gap={} must be less than sequence length={}.",
                 self.max_gap,
@@ -203,7 +203,7 @@ impl Config {
                 self.max_len
             ));
         }
-        if self.mismatches as usize >= n {
+        if self.mismatches >= n {
             return Err(anyhow!(
                 "mismatches={} must be less than sequence length={}.",
                 self.mismatches,
