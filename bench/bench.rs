@@ -41,19 +41,23 @@ fn run_command(cmd_beginning: &str, config: &config::Config) -> Result<Duration>
 fn main() -> Result<()> {
     let start = Instant::now();
 
-    // Only change this
-    let input_file = "tests/test_data/alys.fna";
-    let seq_name = "NZ_CP059564.1";
-    // let input_file = "tests/test_data/rand10000000.fasta";
-    // let seq_name = "seq0";
-
+    // let config = config::Config {
+    //     input_file: "tests/test_data/alys.fna".to_string(),
+    //     seq_name: "NZ_CP059564.1".to_string(),
+    //     min_len: 3,
+    //     max_len: 100,
+    //     max_gap: 20,
+    //     mismatches: 0,
+    //     output_file: "IUPACpalrs.out".to_string(),
+    //     output_format: "classic".to_string(),
+    // };
     let config = config::Config {
-        input_file: input_file.to_string(),
-        seq_name: seq_name.to_string(),
-        min_len: 3,
+        input_file: "tests/test_data/rand10000000.fasta".to_string(),
+        seq_name: "seq0".to_string(),
+        min_len: 2,
         max_len: 100,
-        max_gap: 20,
-        mismatches: 0,
+        max_gap: 5,
+        mismatches: 1,
         output_file: "IUPACpalrs.out".to_string(),
         output_format: "classic".to_string(),
     };
