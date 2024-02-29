@@ -26,7 +26,7 @@ use libdivsufsort_rs::*;
 /// assert_eq!(palindromes, vec![(0, 5, 0)])
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
+pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(usize, usize, usize)> {
     // This recomputation of n is just for convenience of the API
     let n = seq.len();
 
@@ -62,10 +62,10 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         n,
         &inv_sa,
         &rmq,
-        config.min_len as i32,
-        config.max_len as i32,
-        config.mismatches as i32,
-        config.max_gap as i32,
+        config.min_len,
+        config.max_len,
+        config.mismatches,
+        config.max_gap,
         &matrix,
     );
 
@@ -103,7 +103,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
 /// ```
 pub fn strinfigy_palindromes(
     config: &Config,
-    palindromes: &Vec<(i32, i32, i32)>,
+    palindromes: &Vec<(usize, usize, usize)>,
     seq: &[u8],
 ) -> Result<String> {
     let matrix = matrix::MatchMatrix::new();

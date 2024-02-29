@@ -2,7 +2,7 @@
 
 use crate::{config::Config, matrix::MatchMatrix};
 
-fn int_size(x: i32) -> usize {
+fn int_size(x: usize) -> usize {
     (x.ilog10() + 1) as usize
 }
 
@@ -31,7 +31,7 @@ pub fn out_palindrome_display_header(config: &Config, n: usize) -> String {
 }
 
 pub fn fmt_classic(
-    palindromes: &Vec<(i32, i32, i32)>,
+    palindromes: &Vec<(usize, usize, usize)>,
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
@@ -54,8 +54,8 @@ pub fn fmt_classic(
             // First line: the nucleotide.
             ol = outer_left,
             ol_pad = " ".repeat(pad_length - int_size(outer_left)),
-            nucleotide = (outer_left..=inner_left)
-                .map(|i| seq[(i - 1) as usize] as char)
+            nucleotide = (*left..inner_left)
+                .map(|i| seq[i] as char)
                 .collect::<String>(),
             il_pad = " ".repeat(pad_length - int_size(inner_left)),
             il = inner_left,
@@ -63,8 +63,8 @@ pub fn fmt_classic(
             pad = pad,
             matching_chars = (0..=(inner_left - outer_left))
                 .map(|i| {
-                    let l = seq[(left + i) as usize];
-                    let r = seq[(right - i) as usize];
+                    let l = seq[left + i];
+                    let r = seq[right - i];
                     if matrix.match_u8(l, complement[r as usize]) {
                         "|"
                     } else {
@@ -77,7 +77,7 @@ pub fn fmt_classic(
             or_pad = " ".repeat(pad_length - int_size(outer_right)),
             rcomplementary = (inner_right..=outer_right)
                 .rev()
-                .map(|i| seq[(i - 1) as usize] as char)
+                .map(|i| seq[i - 1] as char)
                 .collect::<String>(),
             ir_pad = " ".repeat(pad_length - int_size(inner_right)),
             ir = inner_right,
@@ -90,7 +90,7 @@ pub fn fmt_classic(
 }
 
 pub fn fmt_csv(
-    palindromes: &Vec<(i32, i32, i32)>,
+    palindromes: &Vec<(usize, usize, usize)>,
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
@@ -106,17 +106,17 @@ pub fn fmt_csv(
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        let nucleotide = (*left as usize..inner_left as usize)
+        let nucleotide = (*left..inner_left)
             .map(|i| seq[i] as char)
             .collect::<String>();
-        let reverse_complement = ((inner_right - 1) as usize..outer_right as usize)
+        let reverse_complement = ((inner_right - 1)..outer_right)
             .rev()
             .map(|i| seq[i] as char)
             .collect::<String>();
         let matching_line = (0..=(inner_left - outer_left))
             .map(|i| {
-                let l = seq[(left + i) as usize];
-                let r = seq[(right - i) as usize];
+                let l = seq[left + i];
+                let r = seq[right - i];
                 if matrix.match_u8(l, complement[r as usize]) {
                     "1"
                 } else {
@@ -140,7 +140,7 @@ pub fn fmt_csv(
     palindromes_out
 }
 
-pub fn fmt_custom(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
+pub fn fmt_custom(palindromes: &Vec<(usize, usize, usize)>, seq: &[u8]) -> String {
     let mut palindromes_out = String::new();
 
     let heading = "ir_start,motif,gap_motif,reverse_complement\n";
@@ -152,13 +152,13 @@ pub fn fmt_custom(palindromes: &Vec<(i32, i32, i32)>, seq: &[u8]) -> String {
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        let nucleotide = (*left as usize..inner_left as usize)
+        let nucleotide = (*left..inner_left)
             .map(|i| seq[i] as char)
             .collect::<String>();
-        let gap_nucleotide = (inner_left as usize..(inner_right - 1) as usize)
+        let gap_nucleotide = (inner_left..(inner_right - 1))
             .map(|i| seq[i] as char)
             .collect::<String>();
-        let reverse_complement = ((inner_right - 1) as usize..outer_right as usize)
+        let reverse_complement = ((inner_right - 1)..outer_right)
             .rev()
             .map(|i| seq[i] as char)
             .collect::<String>();
