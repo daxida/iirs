@@ -106,6 +106,7 @@ pub fn add_palindromes(
     let mut palindromes: Vec<(usize, usize, usize)> = Vec::new();
     let behind = (2 * n + 1) as f64;
     let is_max_gap_odd = max_gap % 2 == 1;
+    let half_gap = max_gap as i32 / 2;
 
     for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
         // Determine if value of centre corresponds to an odd or even palindrome
@@ -121,11 +122,11 @@ pub fn add_palindromes(
         };
 
         let initial_gap = if is_max_gap_odd {
-            (max_gap as i32 - 1) / 2
+            half_gap
         } else if is_odd {
-            (max_gap as i32 - 2) / 2
+            half_gap - 1
         } else {
-            max_gap as i32 / 2
+            half_gap
         };
 
         let mismatch_locs = real_lce_mismatches(
@@ -149,9 +150,7 @@ pub fn add_palindromes(
         for (id, loc) in mismatch_locs.iter().enumerate() {
             if id < sz - 1 && mismatch_locs[id + 1] != *loc + 1 {
                 valid_start_locs.push((*loc, id));
-            }
-            if id > 0 && mismatch_locs[id - 1] != *loc - 1 {
-                valid_end_locs.push((*loc, id));
+                valid_end_locs.push((mismatch_locs[id + 1], id + 1));
             }
         }
 
@@ -221,7 +220,6 @@ pub fn add_palindromes(
                 gap = 2 * start_mismatch;
             }
 
-            // Check that potential palindrome is not too long
             let palindrome = if palindrome_length <= max_len {
                 // Palindrome is not too long, so add to output
                 (left, right, gap)
