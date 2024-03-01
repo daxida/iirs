@@ -203,6 +203,9 @@ pub fn add_palindromes(
                 mismatch_diff = end.1 - start.1 - 1;
             }
 
+            debug_assert!(end_it_ptr > start_it_ptr);
+            // And since start_it_ptr >= 0 because usize, we have: end_it_ptr > 0
+
             let end_mismatch = valid_end_locs[end_it_ptr - 1].0;
             
             let palindrome_length = end_mismatch as usize - start_mismatch;
@@ -237,13 +240,10 @@ pub fn add_palindromes(
                 (left, right, gap)
             } else {
                 // Palindrome is too long, so attempt truncation
-                let prev_end_mismatch_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
-                let prev_end_mismatch = valid_end_locs[prev_end_mismatch_ptr].0;
-                let mismatch_gap = end_mismatch - prev_end_mismatch - 1;
                 let overshoot = palindrome_length - max_len;
 
                 // Check if truncation results in the potential palindrome ending in a mismatch
-                if overshoot != mismatch_gap as usize {
+                if overshoot != 0 {
                     // Potential palindrome does not end in a mismatch, so add to output
                     (left + overshoot, right - overshoot, gap)
                 } else {
