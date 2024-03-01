@@ -15,19 +15,19 @@ pub struct Sparse {
 impl Sparse {
     pub fn new(array: &[usize]) -> Self {
         let n = array.len();
-        let lgn = flog2(n);
+        let lgn = flog2(n) + 1;
 
-        let mut table: Vec<usize> = vec![0; (lgn + 1) * n];
+        let mut table: Vec<usize> = vec![0; lgn * n];
 
         for j in 0..n {
-            table[j * (lgn + 1)] = array[j];
+            table[j * lgn] = array[j];
         }
 
-        for i in 1..=lgn {
+        for i in 1..lgn {
             for j in 0..=(n - (1 << i)) {
-                table[j * (lgn + 1) + i] = std::cmp::min(
-                    table[j * (lgn + 1) + i - 1],
-                    table[(j + (1 << (i - 1))) * (lgn + 1) + i - 1],
+                table[j * lgn + i] = std::cmp::min(
+                    table[j * lgn + i - 1],
+                    table[(j + (1 << (i - 1))) * lgn + i - 1],
                 );
             }
         }
@@ -42,8 +42,8 @@ impl Rmq for Sparse {
 
         let k = flog2(j - i + 1);
         std::cmp::min(
-            self.table[i * (self.lgn + 1) + k],
-            self.table[(j + 1 - (1 << k)) * (self.lgn + 1) + k],
+            self.table[i * self.lgn + k],
+            self.table[(j + 1 - (1 << k)) * self.lgn + k],
         )
     }
 }
