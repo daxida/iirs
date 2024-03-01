@@ -32,7 +32,7 @@ impl MatchMatrix {
                 let j = iupac_to_value[*it2_char as usize];
 
                 let matching = !it1_set.is_disjoint(it2_set);
-                match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j] = matching;
+                match_matrix[i * ALL_SYMBOLS_COUNT + j] = matching;
             }
         }
 
@@ -48,7 +48,7 @@ impl MatchMatrix {
         let j = self.iupac_to_value[b2 as usize];
         debug_assert!(i <= 20, "{}", b1);
         debug_assert!(j <= 20, "{}", b2);
-        self.match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j]
+        self.match_matrix[i * ALL_SYMBOLS_COUNT + j]
     }
 }
 
