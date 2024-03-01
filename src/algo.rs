@@ -1,9 +1,7 @@
 use rmq::optimal::Optimal;
 use rmq::RMQ;
 
-use crate::{
-    matrix::MatchMatrix,
-};
+use crate::matrix::MatchMatrix;
 
 // Calculates the Longest Common Prefix array of a text and stores value in given variable LCP
 //
@@ -213,6 +211,12 @@ pub fn add_palindromes(
                 start = valid_start_locs[start_it_ptr];
                 mismatch_diff = end.1 - start.1 - 1;
             }
+            
+            let start_mismatch = (start.0 + 1) as usize;
+            // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
+            if start_mismatch as i32 > initial_gap {
+                break;
+            }
 
             // While mismatch difference is within acceptable bound,
             // move end location to the right until mismatch difference becomes unacceptable
@@ -225,12 +229,13 @@ pub fn add_palindromes(
                 mismatch_diff = end.1 - start.1 - 1;
             }
 
-            let start_mismatch = (start.0 + 1) as usize;
-            // // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
-            if start_mismatch as i32 > initial_gap {
-                break;
-            }
             let end_mismatch = valid_end_locs[end_it_ptr - 1].0;
+            
+            let palindrome_length = end_mismatch as usize - start_mismatch;
+            if palindrome_length < min_len {
+                start_it_ptr += 1;
+                continue;
+            }
 
             // The following part is equivalent to:
             // let margin = c.fract();
@@ -251,37 +256,28 @@ pub fn add_palindromes(
 
             // println!("(left, gap, right) = {} {} {}", left, right, gap);
 
-            // Check that potential palindrome is not too short
-            let palindrome_length = (right - left + 1 - gap) / 2;
-            // (c + end) - (c - end) + 1 - (2 * start + 2 + 1) / 2
-            // (2 * end + 1 - 2 * start - 3) / 2
-            // end - start - 1
-            // assert_eq!(palindrome_length, end_mismatch - start_mismatch - 1);
+            // Check that potential palindrome is not too long
+            let palindrome = if palindrome_length <= max_len {
+                // Palindrome is not too long, so add to output
+                (left, right, gap)
+            } else {
+                // Palindrome is too long, so attempt truncation
+                let prev_end_mismatch_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
+                let prev_end_mismatch = valid_end_locs[prev_end_mismatch_ptr].0;
+                let mismatch_gap = end_mismatch - prev_end_mismatch - 1;
+                let overshoot = palindrome_length - max_len;
 
-            if palindrome_length >= min_len {
-                // Check that potential palindrome is not too long
-                let palindrome = if palindrome_length <= max_len {
-                    // Palindrome is not too long, so add to output
-                    (left, right, gap)
+                // Check if truncation results in the potential palindrome ending in a mismatch
+                if overshoot != mismatch_gap as usize {
+                    // Potential palindrome does not end in a mismatch, so add to output
+                    (left + overshoot, right - overshoot, gap)
                 } else {
-                    // Palindrome is too long, so attempt truncation
-                    let prev_end_mismatch_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
-                    let prev_end_mismatch = valid_end_locs[prev_end_mismatch_ptr].0;
-                    let mismatch_gap = end_mismatch - prev_end_mismatch - 1;
-                    let overshoot = palindrome_length - max_len;
-
-                    // Check if truncation results in the potential palindrome ending in a mismatch
-                    if overshoot != mismatch_gap as usize {
-                        // Potential palindrome does not end in a mismatch, so add to output
-                        (left + overshoot, right - overshoot, gap)
-                    } else {
-                        // Potential palindrome does end in a mismatch, so truncate an additional 1
-                        // character either side then add to output
-                        (left + overshoot + 1, right - overshoot - 1, gap)
-                    }
-                };
-                palindromes.push(palindrome);
-            }
+                    // Potential palindrome does end in a mismatch, so truncate an additional 1
+                    // character either side then add to output
+                    (left + overshoot + 1, right - overshoot - 1, gap)
+                }
+            };
+            palindromes.push(palindrome);
 
             start_it_ptr += 1;
         }
