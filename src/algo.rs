@@ -46,10 +46,10 @@ fn real_lce_mismatches(
     inv_sa: &[usize],
     rmq: &Sparse,
     mut mismatches: i32,
-    initial_gap: i32,
+    initial_gap: usize,
     matrix: &MatchMatrix,
-) -> Vec<i32> {
-    let mut mismatch_locs = vec![-1]; // Originally LinkedList<i32>
+) -> Vec<u32> {
+    let mut mismatch_locs = vec![0]; // Originally LinkedList<i32>
     let mut real_lce = 0;
 
     while mismatches >= 0 && j + real_lce != s_n {
@@ -70,8 +70,8 @@ fn real_lce_mismatches(
         }
 
         if !matrix.match_u8(s[ni], s[nj]) {
-            mismatch_locs.push(real_lce as i32);
-            if real_lce as i32 >= initial_gap {
+            mismatch_locs.push((real_lce + 1) as u32);
+            if real_lce + 1 >= initial_gap {
                 mismatches -= 1;
             }
         }
@@ -106,7 +106,7 @@ pub fn add_palindromes(
     let mut palindromes: Vec<(usize, usize, usize)> = Vec::new();
     let behind = (2 * n + 1) as f64;
     let is_max_gap_odd = max_gap % 2 == 1;
-    let half_gap = max_gap as i32 / 2;
+    let half_gap = max_gap / 2;
 
     for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
         // Determine if value of centre corresponds to an odd or even palindrome
@@ -121,10 +121,9 @@ pub fn add_palindromes(
             ((c + 0.5) as usize, (behind - (c + 0.5)) as usize)
         };
 
-        let initial_gap = if is_max_gap_odd {
-            half_gap
-        } else if is_odd {
-            half_gap - 1
+        // We add 1 compared to the original implementation to guarantee >= 0
+        let initial_gap = if is_max_gap_odd || !is_odd {
+            half_gap + 1
         } else {
             half_gap
         };
@@ -143,8 +142,8 @@ pub fn add_palindromes(
 
         // Determine list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
-        let mut valid_start_locs: Vec<(i32, usize)> = Vec::new();
-        let mut valid_end_locs: Vec<(i32, usize)> = Vec::new();
+        let mut valid_start_locs = Vec::new();
+        let mut valid_end_locs = Vec::new();
         let sz = mismatch_locs.len();
 
         for (id, loc) in mismatch_locs.iter().enumerate() {
@@ -153,6 +152,9 @@ pub fn add_palindromes(
                 valid_end_locs.push((mismatch_locs[id + 1], id + 1));
             }
         }
+
+        // If there are no valid starts, there should not be valid ends.
+        debug_assert!(valid_start_locs.is_empty() || !valid_end_locs.is_empty());
 
         let mut start_it_ptr = 0;
         let mut end_it_ptr = 0;
@@ -172,9 +174,9 @@ pub fn add_palindromes(
                 mismatch_diff = end.1 - start.1 - 1;
             }
 
-            let start_mismatch = (start.0 + 1) as usize;
+            let start_mismatch = start.0 as usize;
             // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
-            if start_mismatch as i32 > initial_gap {
+            if start_mismatch >= initial_gap {
                 break;
             }
 
@@ -192,7 +194,7 @@ pub fn add_palindromes(
             debug_assert!(end_it_ptr > start_it_ptr);
             // And since start_it_ptr >= 0 because usize, we have: end_it_ptr > 0
 
-            let end_mismatch = valid_end_locs[end_it_ptr - 1].0;
+            let end_mismatch = valid_end_locs[end_it_ptr - 1].0 - 1;
 
             let palindrome_length = end_mismatch as usize - start_mismatch;
             if palindrome_length < min_len {
