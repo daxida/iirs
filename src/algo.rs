@@ -103,7 +103,7 @@ pub fn add_palindromes(
     max_gap: usize,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
-    let mut palindromes: Vec<(usize, usize, usize)> = Vec::new();
+    let mut palindromes = Vec::new();
     let behind = (2 * n + 1) as f64;
     let is_max_gap_odd = max_gap % 2 == 1;
     let half_gap = max_gap / 2;
@@ -140,7 +140,7 @@ pub fn add_palindromes(
             matrix,
         );
 
-        // Determine list of valid start and end mismatch locations
+        // Get a list of valid start and end mismatch locations 
         // (that could mark the potential start or end of a palindrome)
         let mut valid_start_locs = Vec::new();
         let mut valid_end_locs = Vec::new();
@@ -166,8 +166,7 @@ pub fn add_palindromes(
             // Count the difference in mismatches between the start and end location
             let mut mismatch_diff = end.1 - start.1 - 1;
 
-            // While mismatch difference is too large,
-            // move start location to the right until mismatch difference is within acceptable bound
+            // While mismatch difference is too large, move start location to the right
             while mismatch_diff > mismatches {
                 start_it_ptr += 1;
                 start = valid_start_locs[start_it_ptr];
@@ -175,13 +174,11 @@ pub fn add_palindromes(
             }
 
             let start_mismatch = start.0 as usize;
-            // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
             if start_mismatch >= initial_gap {
                 break;
             }
 
-            // While mismatch difference is within acceptable bound,
-            // move end location to the right until mismatch difference becomes unacceptable
+            // While mismatch difference is within acceptable bound, move end location to the right
             while mismatch_diff <= mismatches {
                 end_it_ptr += 1;
                 if end_it_ptr == valid_end_locs.len() {
@@ -234,8 +231,7 @@ pub fn add_palindromes(
                     // Potential palindrome does not end in a mismatch, so add to output
                     (left + overshoot, right - overshoot, gap)
                 } else {
-                    // Potential palindrome does end in a mismatch, so truncate an additional 1
-                    // character either side then add to output
+                    // Potential palindrome does end in a mismatch, so truncate a character
                     (left + overshoot + 1, right - overshoot - 1, gap)
                 }
             };
