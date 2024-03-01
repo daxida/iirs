@@ -140,8 +140,8 @@ pub fn add_palindromes(
             matrix,
         );
 
-        let mut valid_start_locs: Vec<(i32, i32)> = Vec::new();
-        let mut valid_end_locs: Vec<(i32, i32)> = Vec::new();
+        let mut valid_start_locs: Vec<(i32, usize)> = Vec::new();
+        let mut valid_end_locs: Vec<(i32, usize)> = Vec::new();
 
         // Determine list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
@@ -169,18 +169,17 @@ pub fn add_palindromes(
 
         let mut start_it_ptr = 0;
         let mut end_it_ptr = 0;
-        let mut mismatch_diff: i32;
 
         while start_it_ptr < valid_start_locs.len() && end_it_ptr < valid_end_locs.len() {
             let mut start = valid_start_locs[start_it_ptr];
             let mut end = valid_end_locs[end_it_ptr];
 
             // Count the difference in mismatches between the start and end location
-            mismatch_diff = end.1 - start.1 - 1;
+            let mut mismatch_diff = end.1 - start.1 - 1;
 
             // While mismatch difference is too large,
             // move start location to the right until mismatch difference is within acceptable bound
-            while mismatch_diff as usize > mismatches {
+            while mismatch_diff > mismatches {
                 start_it_ptr += 1;
                 start = valid_start_locs[start_it_ptr];
                 mismatch_diff = end.1 - start.1 - 1;
@@ -194,7 +193,7 @@ pub fn add_palindromes(
 
             // While mismatch difference is within acceptable bound,
             // move end location to the right until mismatch difference becomes unacceptable
-            while mismatch_diff as usize <= mismatches {
+            while mismatch_diff <= mismatches {
                 end_it_ptr += 1;
                 if end_it_ptr == valid_end_locs.len() {
                     break;
