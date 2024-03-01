@@ -23,16 +23,16 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usiz
     lcp
 }
 
-// Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches, 
+// Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches,
 // up to maximum number of allowed mismatches.
 //
 // EXTRA INFO:
 // - Only considers "real" mismatches (degenerate string mismatching according to IUPAC character matrix)
 // - Takes into account the matching possibility of non A, C, G, T/U characters
 // - Longest Common Extension calculated from positions i and j
-// - Only starts counting number of allowed mismatches that occur after the given initial gap, 
+// - Only starts counting number of allowed mismatches that occur after the given initial gap,
 //   however earlier mismatches are still storeds
-// 
+//
 // - Kangaroo algorithm. A simple explanation can be found here: https://www.youtube.com/watch?v=Njv_q9RA-hs
 // - For the BANANA case, the given (i, j) will be:
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
@@ -140,31 +140,19 @@ pub fn add_palindromes(
             matrix,
         );
 
-        let mut valid_start_locs: Vec<(i32, usize)> = Vec::new();
-        let mut valid_end_locs: Vec<(i32, usize)> = Vec::new();
-
         // Determine list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
-        let mut mismatch_id = 0;
-        let mut prev: Option<&i32> = None;
-        let mut iter = mismatch_locs.iter().peekable();
-        while let Some(current) = iter.next() {
-            if let Some(&next) = iter.peek() {
-                if *next != *current + 1 {
-                    valid_start_locs.push((*current, mismatch_id));
-                }
-            }
-            if let Some(prev) = prev {
-                if *prev != *current - 1 {
-                    valid_end_locs.push((*current, mismatch_id));
-                }
-            }
-            prev = Some(current);
-            mismatch_id += 1;
-        }
+        let mut valid_start_locs: Vec<(i32, usize)> = Vec::new();
+        let mut valid_end_locs: Vec<(i32, usize)> = Vec::new();
+        let sz = mismatch_locs.len();
 
-        if valid_start_locs.is_empty() || valid_end_locs.is_empty() {
-            continue;
+        for (id, loc) in mismatch_locs.iter().enumerate() {
+            if id < sz - 1 && mismatch_locs[id + 1] != *loc + 1 {
+                valid_start_locs.push((*loc, id));
+            }
+            if id > 0 && mismatch_locs[id - 1] != *loc - 1 {
+                valid_end_locs.push((*loc, id));
+            }
         }
 
         let mut start_it_ptr = 0;
@@ -184,7 +172,7 @@ pub fn add_palindromes(
                 start = valid_start_locs[start_it_ptr];
                 mismatch_diff = end.1 - start.1 - 1;
             }
-            
+
             let start_mismatch = (start.0 + 1) as usize;
             // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
             if start_mismatch as i32 > initial_gap {
@@ -206,7 +194,7 @@ pub fn add_palindromes(
             // And since start_it_ptr >= 0 because usize, we have: end_it_ptr > 0
 
             let end_mismatch = valid_end_locs[end_it_ptr - 1].0;
-            
+
             let palindrome_length = end_mismatch as usize - start_mismatch;
             if palindrome_length < min_len {
                 start_it_ptr += 1;
