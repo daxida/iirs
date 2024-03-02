@@ -168,7 +168,7 @@ fn generate_configs(
             max_len: 100,
             max_gap,
             mismatches,
-            output_file: "IUPACpalrs.out".to_string(),
+            output_file: "DUMMY".to_string(),
             output_format: "classic".to_string(),
             size_fasta,
             n_tests: 20,
