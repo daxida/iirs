@@ -57,6 +57,7 @@ pytest-performance:
   python3 etc/test.py --size 1_000_000 --ntests 1
 
 logs:
+  cargo build --release
   cargo run --release --bin logs
 
 printlogs:

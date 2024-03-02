@@ -74,17 +74,28 @@ fn normalize_output(raw_output: &str) -> Vec<&str> {
 }
 
 #[allow(dead_code)]
-fn test_equality() {
+fn test_equality() -> Result<()> {
     let expected = fs::read_to_string("IUPACpal.out").unwrap();
     let received = fs::read_to_string("IUPACpalrs.out").unwrap();
 
     let expected_lines = normalize_output(&expected);
     let received_lines = normalize_output(&received);
 
-    assert_eq!(expected_lines.len(), received_lines.len(),);
+    let expected_size = expected_lines.len();
+    let received_size = received_lines.len();
+
+    if expected_size != received_size {
+        return Err(anyhow!(
+            "Different lengths:\ncpp has {} lines\nrst has {} lines",
+            expected_size,
+            received_size
+        ));
+    }
 
     for (el, rl) in expected_lines.iter().zip(received_lines.iter()) {
-        assert_eq!(el, rl, "Received line:\n{}\nbut expected:\n{}", rl, el);
+        if el != rl {
+            return Err(anyhow!("Received line:\n{}\nbut expected:\n{}", rl, el));
+        }
     }
 
     println!(
@@ -93,6 +104,8 @@ fn test_equality() {
         RESET,
         expected_lines.len() - 1
     );
+
+    Ok(())
 }
 
 // fn average(timings: &[f64]) -> f64 {
@@ -166,15 +179,25 @@ fn generate_configs(
 fn main() -> Result<()> {
     let start = Instant::now();
 
+    // let steps: Vec<Vec<i32>> = vec![
+    //     // size_fasta
+    //     vec![10000],
+    //     // min_len
+    //     vec![2, 4, 6, 8, 10, 12, 14, 16],
+    //     // max_gap
+    //     vec![0, 1, 2, 3, 4, 5],
+    //     // mismatches
+    //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
+    // ];
     let steps: Vec<Vec<i32>> = vec![
         // size_fasta
-        vec![10000],
+        vec![200],
         // min_len
-        vec![2, 4, 6, 8, 10, 12, 14, 16],
+        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16],
         // max_gap
-        vec![0, 1, 2, 3, 4, 5],
+        vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
         // mismatches
-        vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
+        vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
     ];
 
     let mut writer = WriterBuilder::new().from_writer(File::create("bench/results.csv")?);
@@ -237,7 +260,10 @@ fn main() -> Result<()> {
                         rtiming.to_string(),
                     ])?;
 
-                    test_equality();
+                    if let Err(msg) = test_equality() {
+                        println!("{:?}", &config);
+                        return Err(msg);
+                    }
                 }
             }
         }

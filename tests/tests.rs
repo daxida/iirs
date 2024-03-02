@@ -90,6 +90,14 @@ fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(usize, 
 }
 
 #[test]
+fn test_palindromes_edge_gap() {
+    // The original IUPACpal won't find this palindrome
+    let config = Config::dummy(14, 100, 3, 0);
+    let path = "tests/test_data/edge_gap.fasta";
+    assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 1)
+}
+
+#[test]
 fn test_palindromes_alys() {
     let config = Config::dummy(3, 100, 20, 0);
     let path = "tests/test_data/alys.fna";
