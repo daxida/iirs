@@ -58,6 +58,12 @@ fn real_lce_mismatches(
         let jj = inv_sa[j + real_lce];
 
         if ii < jj {
+            // These are also valid for some reason (investigate why):
+            // real_lce += rmq.rmq(ii - 1, jj + 1);
+            // real_lce += rmq.rmq(ii, jj + 1);
+            // real_lce += rmq.rmq(ii, jj + 2);
+            // real_lce += rmq.rmq(ii, jj + 3);
+            // real_lce += rmq.rmq(ii - 1, jj + 3);
             real_lce += rmq.rmq(ii, jj);
         }
 
