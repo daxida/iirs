@@ -13,6 +13,14 @@ testm:
   cargo run --release -- \
     -s MCHU -m 3 -g 5 -F csv
 
+testt:
+  cargo run --release -- \
+    -s t2 -m 2 -g 5 -F csv
+
+teststar:
+  cargo run --release -- \
+    -s tstar -m 2 -g 5 -F csv
+
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug
