@@ -184,7 +184,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq);
+        let palindromes = find_palindromes(&config, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_classic(&palindromes, &seq, &matrix, &complement);
@@ -253,7 +253,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq);
+        let palindromes = find_palindromes(&config, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_csv(&palindromes, &seq, &matrix, &complement);
@@ -286,7 +286,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let n = seq.len();
         let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq);
+        let palindromes = find_palindromes(&config, &seq).unwrap();
         let received = fmt_custom(&palindromes, &seq);
         let expected = r#"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk

@@ -8,11 +8,12 @@ mod rmq;
 
 use anyhow::{anyhow, Result};
 use config::Config;
+use constants::IUPAC_SYMBOLS;
 use libdivsufsort_rs::*;
 
-/// Find palindromes in a fasta sequence based on the provided configuration.
+/// Find palindromes in a sequence based on the provided configuration.
 ///
-/// Each tuple contains three integers: start position, end position, and gap size.
+/// Each palindrome is a tuple of three integers (usize): start position, end position, and gap size.
 ///
 /// # Examples
 ///
@@ -22,12 +23,15 @@ use libdivsufsort_rs::*;
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::dummy(3, 6, 2, 0);
 /// let palindromes = find_palindromes(&config, &seq);
+/// assert_eq!(palindromes.unwrap(), vec![(0, 5, 0)]);
 ///
-/// assert_eq!(palindromes, vec![(0, 5, 0)])
+/// // Returns an error if the given sequence contains invalid characters
+/// let seq = "jj".as_bytes();
+/// let palindromes = find_palindromes(&config, &seq);
+/// assert!(palindromes.is_err());
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(usize, usize, usize)> {
-    // This recomputation of n is just for convenience of the API
+pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     let n = seq.len();
 
     // Build matchmatrix
@@ -38,6 +42,14 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(usize, usize, usize
     let s_n = 2 * n + 2;
     let mut s = vec![0u8; s_n];
     for i in 0..n {
+        // Note that this was already checked if we were using the CLI. We recheck it
+        // because it's cheap and makes sense in the standalone version of this function
+        if !IUPAC_SYMBOLS.contains(seq[i] as char) {
+            return Err(anyhow!(
+                "sequence contains '{}' which is not an IUPAC symbol.",
+                seq[i] as char
+            ));
+        }
         s[i] = seq[i];
         s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
     }
@@ -79,7 +91,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(usize, usize, usize
         cmp_left.then(cmp_gap).then(cmp_right)
     });
 
-    palindromes
+    Ok(palindromes)
 }
 
 /// Stringify the given palindromes according to the configuration output format.
@@ -93,7 +105,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(usize, usize, usize
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
-/// let palindromes = find_palindromes(&config, &seq);
+/// let palindromes = find_palindromes(&config, &seq).unwrap();
 /// let out_str = strinfigy_palindromes(&config, &palindromes, &seq).unwrap();
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
