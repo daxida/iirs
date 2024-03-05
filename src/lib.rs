@@ -32,10 +32,8 @@ use libdivsufsort_rs::*;
 /// ```
 #[elapsed_time::elapsed]
 pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
-    // Build matchmatrix
-    let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
-    
+
     // Construct s = seq + '$' + complement(reverse(seq)) + '#'
     let n = seq.len();
     let s_n = 2 * n + 2;
@@ -55,6 +53,9 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize
     s[n] = b'$';
     s[2 * n + 1] = b'#';
 
+    // Build matchmatrix from s
+    let matrix = matrix::Matcher::new(&s);
+
     // Construct Suffix Array (sa) & Inverse Suffix Array
     let sa: Vec<i64> = divsufsort64(&s).unwrap();
     let mut inv_sa = vec![0; s_n];
@@ -68,7 +69,6 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize
 
     // Calculate palidromes
     let mut palindromes = algo::add_palindromes(
-        &s,
         &inv_sa,
         &rmq,
         config.min_len,

@@ -36,13 +36,31 @@ impl MatchMatrix {
         }
     }
 
-    // Match function for bytes
     pub fn match_u8(&self, b1: u8, b2: u8) -> bool {
         let i = self.iupac_to_value[b1 as usize];
         let j = self.iupac_to_value[b2 as usize];
         debug_assert!(i <= 20, "{}", b1);
         debug_assert!(j <= 20, "{}", b2);
         self.match_matrix[i * ALL_SYMBOLS_COUNT + j]
+    }
+}
+
+pub struct Matcher<'a> {
+    mtx: MatchMatrix,
+    s: &'a [u8],
+}
+
+impl<'a> Matcher<'a> {
+    pub fn new(s: &'a [u8]) -> Self {
+        Matcher {
+            mtx: MatchMatrix::new(),
+            s,
+        }
+    }
+
+    /// Return if the characters at indices i and j match in self.s
+    pub fn matches(&self, i: usize, j: usize) -> bool {
+        self.mtx.match_u8(self.s[i], self.s[j])
     }
 }
 
