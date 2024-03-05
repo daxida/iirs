@@ -42,14 +42,14 @@ fn real_lce_mismatches(
     s: &[u8],
     i: usize,
     j: usize,
-    s_n: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
     mut mismatches: i32,
     initial_gap: usize,
     matrix: &MatchMatrix,
 ) -> Vec<u32> {
-    let mut mismatch_locs = vec![0]; // Originally LinkedList<i32>
+    let s_n = s.len();
+    let mut mismatch_locs = vec![0];
     let mut real_lce = 0;
 
     while mismatches >= 0 && j + real_lce != s_n {
@@ -94,13 +94,11 @@ fn real_lce_mismatches(
 // - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
 //   It was marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
 //   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
-// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data will be printed sorted
-//   afterwards in "format". The palindromes found are the same without sorting, they are just not returned in the expected order.
+// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
+//   will be printed sorted afterwards in "format".
 #[allow(clippy::too_many_arguments)]
 pub fn add_palindromes(
     s: &[u8],
-    s_n: usize,
-    n: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
     min_len: usize,
@@ -110,12 +108,12 @@ pub fn add_palindromes(
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
     let mut palindromes = Vec::new();
-    let behind = (2 * n + 1) as f64;
+    let s_n = s.len();
+    let behind = (s_n - 1) as f64;
     let is_max_gap_odd = max_gap % 2 == 1;
     let half_gap = max_gap / 2;
 
-    // We only need to explore the range 2..=2 * (n - 2) since min_len > 1
-    for palindrome_center in 2..=2 * (n - 2) {
+    for palindrome_center in min_len..(s_n - min_len) {
         let c = palindrome_center as f64 / 2.0;
         // Note that the current palindrome is odd iif margin is equal to zero
         let margin = c.fract();
@@ -130,17 +128,8 @@ pub fn add_palindromes(
         let i = (1.0 + c - margin) as usize;
         let j = (behind - c - margin) as usize;
 
-        let mismatch_locs = real_lce_mismatches(
-            s,
-            i,
-            j,
-            s_n,
-            inv_sa,
-            rmq,
-            mismatches as i32,
-            initial_gap,
-            matrix,
-        );
+        let mismatch_locs =
+            real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
 
         // Get a list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
