@@ -114,25 +114,21 @@ pub fn add_palindromes(
     let is_max_gap_odd = max_gap % 2 == 1;
     let half_gap = max_gap / 2;
 
-    for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
-        // Determine if value of centre corresponds to an odd or even palindrome
-        let is_odd = c.fract() == 0.0;
-
-        // The following part is equivalent to:
-        // let margin = c.fract();
-        // let (i, j) = (1.0 + c - margin, behind - c - margin);
-        let (i, j) = if is_odd {
-            ((c + 1.0) as usize, (behind - c) as usize)
-        } else {
-            ((c + 0.5) as usize, (behind - (c + 0.5)) as usize)
-        };
+    // We only need to explore the range 2..=2 * (n - 2) since min_len > 1
+    for palindrome_center in 2..=2 * (n - 2) {
+        let c = palindrome_center as f64 / 2.0;
+        // Note that the current palindrome is odd iif margin is equal to zero
+        let margin = c.fract();
 
         // We add 1 compared to the original implementation to guarantee >= 0
-        let initial_gap = if is_max_gap_odd || !is_odd {
+        let initial_gap = if is_max_gap_odd {
             half_gap + 1
         } else {
-            half_gap
+            half_gap + (2.0 * margin) as usize
         };
+
+        let i = (1.0 + c - margin) as usize;
+        let j = (behind - c - margin) as usize;
 
         let mismatch_locs = real_lce_mismatches(
             s,
@@ -146,7 +142,7 @@ pub fn add_palindromes(
             matrix,
         );
 
-        // Get a list of valid start and end mismatch locations 
+        // Get a list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
         let mut valid_start_locs = Vec::new();
         let mut valid_end_locs = Vec::new();
@@ -197,33 +193,18 @@ pub fn add_palindromes(
             debug_assert!(end_it_ptr > start_it_ptr);
             // And since start_it_ptr >= 0 because usize, we have: end_it_ptr > 0
 
-            let end_mismatch = valid_end_locs[end_it_ptr - 1].0 - 1;
+            let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
-            let palindrome_length = end_mismatch as usize - start_mismatch;
+            let palindrome_length = end_mismatch - start_mismatch;
             if palindrome_length < min_len {
                 start_it_ptr += 1;
                 continue;
             }
 
-            // The following part is equivalent to:
-            // let margin = c.fract();
-            // let left  = (c + margin) as usize - end_mismatch;
-            // let right = (c - margin) as usize + end_mismatch;
-            // let gap   = 2 * start_mismatch + 1 - (margin * 2.0) as usize;
-            //
-            // NOTE: we find again that:
-            // let palindrome_length = (right - left + 1 - gap) / 2;
-            let (left, right, gap): (usize, usize, usize);
-
-            if is_odd {
-                left = (c - end_mismatch as f64) as usize;
-                right = (c + end_mismatch as f64) as usize;
-                gap = 2 * start_mismatch + 1;
-            } else {
-                left = (c - 0.5 - (end_mismatch as f64 - 1.0)) as usize;
-                right = (c + 0.5 + (end_mismatch as f64 - 1.0)) as usize;
-                gap = 2 * start_mismatch;
-            }
+            let left = (c + margin) as usize - end_mismatch;
+            let right = (c - margin) as usize + end_mismatch;
+            let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
+            debug_assert!(gap <= max_gap);
 
             let palindrome = if palindrome_length <= max_len {
                 // Palindrome is not too long, so add to output
