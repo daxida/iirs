@@ -232,12 +232,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
- "csv",
  "divsufsort",
  "elapsed-time",
- "itertools",
- "rand",
- "rayon",
  "seq_io",
 ]
 
@@ -417,6 +413,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tmp"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "csv",
+ "itertools",
+ "iupacpal",
+ "rand",
+ "rayon",
 ]
 
 [[package]]

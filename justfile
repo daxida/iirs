@@ -66,13 +66,13 @@ pytest-performance:
 
 logs:
   cargo build --release
-  cargo run --release --bin logs
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
 
 printlogs:
   cargo build --release
-  cargo run --release --bin logs
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
   python3 bench/heatmaps.py
 
 bench:
   cargo build --release
-  cargo run --release --bin bench
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin bench

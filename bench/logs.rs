@@ -1,9 +1,17 @@
+extern crate anyhow;
+extern crate clap;
+extern crate csv;
+extern crate itertools;
+extern crate rayon;
+extern crate rand;
+
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
 use itertools::iproduct;
 use rand::prelude::SliceRandom;
 use rayon::prelude::*;
+
 use std::fs;
 use std::fs::File;
 use std::io::Write;
