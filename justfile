@@ -56,13 +56,13 @@ ptestrand:
 
 # test that the results of the rust / cpp binaries are the same
 pytest-correct:
-  python3 etc/test.py --size 1_000 --ntests 20
-  python3 etc/test.py --size 5_000 --ntests 10
-  python3 etc/test.py --size 20_000 --ntests 5
+  python3 bench/test.py --size 1_000 --ntests 20
+  python3 bench/test.py --size 5_000 --ntests 10
+  python3 bench/test.py --size 20_000 --ntests 5
 
 # test the performance in both binaries
 pytest-performance:
-  python3 etc/test.py --size 1_000_000 --ntests 1
+  python3 bench/test.py --size 1_000_000 --ntests 1
 
 logs:
   cargo build --release

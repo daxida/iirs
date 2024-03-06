@@ -50,8 +50,6 @@ def run(cmd_beginning: str, language: str):
     else:
         CPP_TIMINGS.append(elapsed)
 
-    # print(f"{language: <4} took {elapsed}")
-
 
 def test_equality():
     with open(os.path.join("IUPACpal.out"), "r") as f:
@@ -60,30 +58,15 @@ def test_equality():
     with open(os.path.join("IUPACpalrs.out"), "r") as f:
         received = f.read().strip()
 
-    expected = expected.replace("Palindromes:\n", "")
-    received = received.replace("Palindromes:\n", "")
-    expected_lines = expected.split("\n\n")[1:]  # remove header
-    received_lines = received.split("\n\n")[1:]
-
-    # def block_sort(block: str):
-    #     if len(block.strip()) == 0:  # empty lines
-    #         return (1e9,)
-    #     fst, scd, thd = block.split("\n")
-    #     a, b, c = fst.split()
-    #     d, e, f = thd.split()
-    #     return (int(a), int(c), int(d), int(f))
-
-    # expected_lines.sort(key=block_sort)
-    # received_lines.sort(key=block_sort)
-
-    # Line by line
-    for el, rl in zip(expected_lines, received_lines):
-        assert el == rl, f"Received line:\n{rl}\nbut expected:\n{el}"
+    expected_lines = expected.split("\n\n")
+    received_lines = received.split("\n\n")
 
     assert len(expected_lines) == len(received_lines), (
         len(expected_lines),
         len(received_lines),
     )
+    for el, rl in zip(expected_lines, received_lines):
+        assert el == rl, f"Received line:\n{rl}\nbut expected:\n{el}"
 
     print(f"{GREEN}OK{RESET}: Compared {len(expected_lines) - 1} Palindromes")
 
@@ -108,7 +91,7 @@ def run_tests():
             f.write(fasta)
 
         run("IUPACpal/IUPACpal", language="CPP")
-        run("target/release/main", language="RUST")
+        run("target/release/iupacpal", language="RUST")
 
         test_equality()
 
@@ -120,22 +103,3 @@ def run_tests():
 
 
 run_tests()
-
-"""
-10 x 1e6 (DEFAULT & -x 2)
-
-cpp average: 30.64037811756134
-rust average: 14.46787075996399
-
--- example for one
-Elapsed time: 9 milliseconds (PRECOMP)
-Elapsed time: 5799 milliseconds (END PALINDROMES)
-Found n=11529468 palindromes
-Search complete!
-Elapsed time: 13807 milliseconds (TOTAL)
--- 1.1 GB .out file
-
--- RUST ONLY
-10 x 1e6 (DEFAULT & -x 2 -F csv)
-rust average: 9.428081846237182
-"""
