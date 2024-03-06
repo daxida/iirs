@@ -9,9 +9,8 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+        target: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@master
 
@@ -21,5 +20,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           RUSTTARGET: ${{ matrix.target }}
-          # TOOLCHAIN_VERSION: "1.73"
-          TOOLCHAIN_VERSION: "nightly"
+          TOOLCHAIN_VERSION: "1.73"
