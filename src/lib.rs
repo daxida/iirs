@@ -9,7 +9,7 @@ mod rmq;
 use anyhow::{anyhow, Result};
 use config::Config;
 use constants::IUPAC_SYMBOLS;
-use libdivsufsort_rs::*;
+use divsufsort;
 
 /// Find palindromes in a sequence based on the provided configuration.
 ///
@@ -57,7 +57,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize
     let matrix = matrix::Matcher::new(&s);
 
     // Construct Suffix Array (sa) & Inverse Suffix Array
-    let sa: Vec<i64> = divsufsort64(&s).unwrap();
+    let sa: Vec<i32> = divsufsort::sort(&s).into_parts().1;
     let mut inv_sa = vec![0; s_n];
     for (i, value) in sa.iter().enumerate() {
         inv_sa[*value as usize] = i;

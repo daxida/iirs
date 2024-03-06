@@ -3,7 +3,7 @@ use crate::{
     rmq::{Rmq, Sparse},
 };
 
-pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usize> {
+pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usize> {
     let mut lcp: Vec<usize> = vec![0; s_n];
     let mut j: usize;
 
