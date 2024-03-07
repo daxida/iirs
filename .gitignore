@@ -17,3 +17,6 @@ rand.fasta
 
 # rust
 /target
+
+# heatmaps
+bench/results.csv

@@ -6,7 +6,7 @@ use std::fs;
 
 use crate::constants::IUPAC_SYMBOLS;
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 pub struct Config {
     /// Input filename (FASTA).
     #[arg(short = 'f', default_value_t = String::from("input.fasta"))]
@@ -178,7 +178,7 @@ impl Config {
         Ok(())
     }
 
-    fn verify_bounds(&self, n: usize) -> Result<()> {
+    pub fn verify_bounds(&self, n: usize) -> Result<()> {
         if self.min_len < 2 {
             return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
         }
