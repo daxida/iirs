@@ -23,7 +23,7 @@ teststar:
 
 testedge:
   cargo run --release -- \
-    -f tests/test_data/edge_case.fasta -m 8 -M 100 -g 10 -x 6
+    -f tests/test_data/truncation_edge_case.fasta -m 8 -M 100 -g 10 -x 6
 
 # perf test for banana
 ptestb:
