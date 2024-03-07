@@ -1,5 +1,5 @@
 use crate::{
-    matrix::Matcher,
+    matrix::MatchMatrix,
     rmq::{Rmq, Sparse},
 };
 
@@ -38,15 +38,16 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
 fn real_lce_mismatches(
+    s: &[u8],
     i: usize,
     j: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
     mut mismatches: i32,
     initial_gap: usize,
-    matrix: &Matcher,
+    matrix: &MatchMatrix,
 ) -> Vec<u32> {
-    let s_n = inv_sa.len();
+    let s_n = s.len();
     let mut mismatch_locs = vec![0];
     let mut real_lce = 0;
 
@@ -73,7 +74,7 @@ fn real_lce_mismatches(
             break;
         }
 
-        if !matrix.matches(ni, nj) {
+        if !matrix.match_u8(s[ni], s[nj]) {
             mismatch_locs.push((real_lce + 1) as u32);
             if real_lce + 1 >= initial_gap {
                 mismatches -= 1;
@@ -95,16 +96,17 @@ fn real_lce_mismatches(
 // - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
 //   will be printed sorted afterwards in "format".
 pub fn add_palindromes(
+    s: &[u8],
     inv_sa: &[usize],
     rmq: &Sparse,
     min_len: usize,
     max_len: usize,
     mismatches: usize,
     max_gap: usize,
-    matrix: &Matcher,
+    matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
     let mut palindromes = Vec::new();
-    let s_n = inv_sa.len(); // same length of "s" in lib::find_palindromes
+    let s_n = s.len();
     let behind = (s_n - 1) as f64;
     let is_max_gap_odd = max_gap % 2 == 1;
     let half_gap = max_gap / 2;
@@ -125,7 +127,7 @@ pub fn add_palindromes(
         let j = (behind - c - margin) as usize;
 
         let mismatch_locs =
-            real_lce_mismatches(i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
+            real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
 
         // Get a list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
@@ -198,8 +200,16 @@ pub fn add_palindromes(
                 // Palindrome is too long, so attempt truncation
                 let overshoot = palindrome_length - max_len;
 
+                let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
+                let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
+                let mismatch_gap = if end_mismatch == prev {
+                    0
+                } else {
+                    end_mismatch - prev - 1
+                };
+
                 // Check if truncation results in the potential palindrome ending in a mismatch
-                if overshoot != 0 {
+                if overshoot != mismatch_gap {
                     // Potential palindrome does not end in a mismatch, so add to output
                     (left + overshoot, right - overshoot, gap)
                 } else {

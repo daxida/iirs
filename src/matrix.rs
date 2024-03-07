@@ -45,25 +45,6 @@ impl MatchMatrix {
     }
 }
 
-pub struct Matcher<'a> {
-    mtx: MatchMatrix,
-    s: &'a [u8],
-}
-
-impl<'a> Matcher<'a> {
-    pub fn new(s: &'a [u8]) -> Self {
-        Matcher {
-            mtx: MatchMatrix::new(),
-            s,
-        }
-    }
-
-    /// Return if the characters at indices i and j match in self.s
-    pub fn matches(&self, i: usize, j: usize) -> bool {
-        self.mtx.match_u8(self.s[i], self.s[j])
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

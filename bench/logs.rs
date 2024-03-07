@@ -22,10 +22,10 @@ use std::time::Instant;
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
 
-// const SYMBOLS: [char; 17] = [
-//     'a', 'c', 'g', 't', 'u', 'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v', '*', '-',
-// ];
-const SYMBOLS: [char; 5] = ['a', 'c', 'g', 't', 'n'];
+const SYMBOLS: [char; 17] = [
+    'a', 'c', 'g', 't', 'u', 'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v', '*', '-',
+];
+// const SYMBOLS: [char; 5] = ['a', 'c', 'g', 't', 'n'];
 
 fn generate_random_fasta(size_fasta: usize) -> String {
     let mut rng = rand::thread_rng();
@@ -165,16 +165,6 @@ fn main() -> Result<()> {
         // mismatches
         vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
     ];
-    // let steps: Vec<Vec<usize>> = vec![
-    //     // size_fasta
-    //     (4..=20).collect(),
-    //     // min_len
-    //     (1..=20).collect(),
-    //     // max_gap
-    //     (1..=20).collect(),
-    //     // mismatches
-    //     (1..=20).collect(),
-    // ];
 
     let mut writer = WriterBuilder::new().from_writer(File::create("bench/results.csv")?);
 

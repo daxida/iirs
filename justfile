@@ -21,6 +21,10 @@ teststar:
   cargo run --release -- \
     -s tstar -m 2 -g 5 -F csv
 
+testedge:
+  cargo run --release -- \
+    -f tests/test_data/edge_case.fasta -m 8 -M 100 -g 10 -x 6
+
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug
