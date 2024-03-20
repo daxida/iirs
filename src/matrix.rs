@@ -2,7 +2,7 @@ use crate::constants::{build_iupac_rules, ALL_SYMBOLS_COUNT};
 use std::collections::HashMap;
 
 pub struct MatchMatrix {
-    match_matrix: Vec<bool>,    // 1D-array of bool for faster access (than 2D)
+    match_matrix: Vec<bool>,    // linearized 1D bool array
     iupac_to_value: Vec<usize>, // used for faster indexing
 }
 
@@ -10,7 +10,6 @@ impl MatchMatrix {
     pub fn new() -> Self {
         let iupac_rules = build_iupac_rules();
 
-        // Builds iupac_map & iupac_to_value
         // iupac_map is a hash of: (IUPAC_char, set(complements[IUPAC_char]))
         // iupac_to_value is a slice for faster indexing:
         // F.e. ord('$') = 36, which is the 19th key in iupac_rules, so iupac_to_value[36] = 19
@@ -20,19 +19,14 @@ impl MatchMatrix {
             iupac_map.insert(*iupac_char, mapped_chars.to_owned());
             iupac_to_value[*iupac_char as usize] = index;
         }
-        // dbg!(&iupac_map);
-        // dbg!(&iupac_to_value);
 
-        // Build match matrix
         let mut match_matrix: Vec<bool> = vec![false; ALL_SYMBOLS_COUNT * ALL_SYMBOLS_COUNT];
         for (it1_char, it1_set) in iupac_map.iter() {
             let i = iupac_to_value[*it1_char as usize];
-
             for (it2_char, it2_set) in iupac_map.iter() {
                 let j = iupac_to_value[*it2_char as usize];
-
                 let matching = !it1_set.is_disjoint(it2_set);
-                match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j] = matching;
+                match_matrix[i * ALL_SYMBOLS_COUNT + j] = matching;
             }
         }
 
@@ -42,13 +36,12 @@ impl MatchMatrix {
         }
     }
 
-    // Match function for bytes
     pub fn match_u8(&self, b1: u8, b2: u8) -> bool {
         let i = self.iupac_to_value[b1 as usize];
         let j = self.iupac_to_value[b2 as usize];
         debug_assert!(i <= 20, "{}", b1);
         debug_assert!(j <= 20, "{}", b2);
-        self.match_matrix[i + i * (ALL_SYMBOLS_COUNT - 1) + j]
+        self.match_matrix[i * ALL_SYMBOLS_COUNT + j]
     }
 }
 

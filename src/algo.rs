@@ -1,13 +1,9 @@
-use crate::{matrix::MatchMatrix, rmq::rmq};
+use crate::{
+    matrix::MatchMatrix,
+    rmq::{Rmq, Sparse},
+};
 
-// Calculates the Longest Common Prefix array of a text and stores value in given variable LCP
-//
-// INPUT:
-// - Text
-// - Text length
-// - Suffix Array
-// - Longest Common Prefix data structure (empty)
-pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usize> {
+pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usize> {
     let mut lcp: Vec<usize> = vec![0; s_n];
     let mut j: usize;
 
@@ -27,63 +23,60 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usiz
     lcp
 }
 
-// Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches, up to maximum number of allowed mismatches
+// Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches,
+// up to maximum number of allowed mismatches.
 //
 // EXTRA INFO:
 // - Only considers "real" mismatches (degenerate string mismatching according to IUPAC character matrix)
 // - Takes into account the matching possibility of non A, C, G, T/U characters
-// - Longest Common Extension calculated from positions i and j (order of i, j input does not matter)
-// - Only starts counting number of allowed mismatches that occur after the given initial gap, however earlier mismatches are still stored
-// - Should only be used after MatchMatrix has been instantiated with necessary data
+// - Longest Common Extension calculated from positions i and j
+// - Only starts counting number of allowed mismatches that occur after the given initial gap,
+//   however earlier mismatches are still storeds
 //
-// INPUT:
-// - Text
-// - Indexes i and j
-// - Text length
-// - Inverse Suffix Array
-// - Longest Common Prefix Array (LCP)
-// - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
-// - Maximum number of allowed mismatches
-// - Initial gap
-// - Data structure to store resulting mismatch locations
-#[allow(clippy::too_many_arguments)]
+// - Kangaroo algorithm. A simple explanation can be found here: https://www.youtube.com/watch?v=Njv_q9RA-hs
+// - For the BANANA case, the given (i, j) will be:
+//     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
+//
 fn real_lce_mismatches(
     s: &[u8],
     i: usize,
     j: usize,
-    s_n: usize,
     inv_sa: &[usize],
-    lcp: &[usize],
-    rmq_prep: &[usize],
+    rmq: &Sparse,
     mut mismatches: i32,
-    initial_gap: i32,
+    initial_gap: usize,
     matrix: &MatchMatrix,
-) -> Vec<i32> {
-    debug_assert!(i < j);
-
-    let mut mismatch_locs = Vec::new(); // Originally LinkedList<i32>
-    mismatch_locs.push(-1);
-
+) -> Vec<u32> {
+    let s_n = s.len();
+    let mut mismatch_locs = vec![0];
     let mut real_lce = 0;
+
     while mismatches >= 0 && j + real_lce != s_n {
-        // lce function in the original
+        // LCE function in the original
         let ii = inv_sa[i + real_lce];
         let jj = inv_sa[j + real_lce];
 
         if ii < jj {
-            real_lce += lcp[rmq(rmq_prep, lcp, s_n, ii, jj)];
+            // These are also valid for some reason (investigate why):
+            // real_lce += rmq.rmq(ii - 1, jj + 1);
+            // real_lce += rmq.rmq(ii, jj + 1);
+            // real_lce += rmq.rmq(ii, jj + 2);
+            // real_lce += rmq.rmq(ii, jj + 3);
+            // real_lce += rmq.rmq(ii - 1, jj + 3);
+            real_lce += rmq.rmq(ii, jj);
         }
 
         let ni = i + real_lce;
         let nj = j + real_lce;
 
-        if ni >= (s_n / 2) || nj >= s_n {
+        // if ni >= (s_n / 2) || nj >= s_n {
+        if ni >= s_n / 2 {
             break;
         }
 
         if !matrix.match_u8(s[ni], s[nj]) {
-            mismatch_locs.push(real_lce as i32);
-            if real_lce as i32 >= initial_gap {
+            mismatch_locs.push((real_lce + 1) as u32);
+            if real_lce + 1 >= initial_gap {
                 mismatches -= 1;
             }
         }
@@ -96,120 +89,85 @@ fn real_lce_mismatches(
 
 // Finds all inverted repeats (palindromes) with given parameters and adds them to an output set
 //
-// INPUT:
-// - Data structure (set of integer 3-tuples) to store palindromes in form (left_index, right_index, gap)
-// - S = text + '$' + complement(reverse(text) + '#'
-// - Length of S
-// - Text length
-// - Inverse Suffix Array
-// - Longest Common Prefix Array (LCP)
-// - Data structure (filled) with preprocessed values to perform Range Minimum Queries (Type 1: 'A', Type 2: 'rmq')
-// - Tuple of parameters for palindromes to be found (minimum_length, maximum_length, maximum_allowed_number_of_mismatches, maximum_gap)
-//
 // NOTES:
-// - The original algorithm returned a set of tuples. The use of the corresponding BTreeSet<(i32, i32, i32)
-//   here is marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
+// - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
+//   It was marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
 //   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
-// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data will be printed sorted
-//   afterwards in "format". The palindromes found are the same without sorting, they are just not returned in the expected order.
-#[allow(clippy::too_many_arguments)]
+// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
+//   will be printed sorted afterwards in "format".
 pub fn add_palindromes(
     s: &[u8],
-    s_n: usize,
-    n: usize,
     inv_sa: &[usize],
-    lcp: &[usize],
-    rmq_prep: &[usize],
-    min_len: i32,
-    max_len: i32,
-    mismatches: i32,
-    max_gap: i32,
+    rmq: &Sparse,
+    min_len: usize,
+    max_len: usize,
+    mismatches: usize,
+    max_gap: usize,
     matrix: &MatchMatrix,
-) -> Vec<(i32, i32, i32)> {
-    let mut palindromes: Vec<(i32, i32, i32)> = Vec::new();
-    let behind = (2 * n + 1) as f64;
+) -> Vec<(usize, usize, usize)> {
+    let mut palindromes = Vec::new();
+    let s_n = s.len();
+    let behind = (s_n - 1) as f64;
     let is_max_gap_odd = max_gap % 2 == 1;
+    let half_gap = max_gap / 2;
 
-    for c in (0..=2 * (n - 1)).map(|c| (c as f64) / 2.0) {
-        let is_odd = c.fract() == 0.0;
+    for palindrome_center in min_len..(s_n - min_len) {
+        let c = palindrome_center as f64 / 2.0;
+        // Note that the current palindrome is odd iif margin is equal to zero
+        let margin = c.fract();
 
-        let (i, j) = if is_odd {
-            (c + 1.0, behind - c)
-        } else {
-            (c + 0.5, behind - (c + 0.5))
-        };
-
+        // We add 1 compared to the original implementation to guarantee >= 0
         let initial_gap = if is_max_gap_odd {
-            (max_gap - 1) / 2
-        } else if is_odd {
-            (max_gap - 2) / 2
+            half_gap + 1
         } else {
-            max_gap / 2
+            half_gap + (2.0 * margin) as usize
         };
 
-        let mismatch_locs = real_lce_mismatches(
-            s,
-            i as usize,
-            j as usize,
-            s_n,
-            inv_sa,
-            lcp,
-            rmq_prep,
-            mismatches,
-            initial_gap,
-            matrix,
-        );
+        let i = (1.0 + c - margin) as usize;
+        let j = (behind - c - margin) as usize;
 
-        let mut valid_start_locs: Vec<(i32, i32)> = Vec::new();
-        let mut valid_end_locs: Vec<(i32, i32)> = Vec::new();
+        let mismatch_locs =
+            real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
 
-        // Determine list of valid start and end mismatch locations
+        // Get a list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
-        let mut mismatch_id = 0;
-        let mut prev: Option<&i32> = None;
-        let mut iter = mismatch_locs.iter().peekable();
-        while let Some(current) = iter.next() {
-            if let Some(&next) = iter.peek() {
-                if *next != *current + 1 {
-                    valid_start_locs.push((*current, mismatch_id));
-                }
+        let mut valid_start_locs = Vec::new();
+        let mut valid_end_locs = Vec::new();
+        let sz = mismatch_locs.len();
+
+        for (id, loc) in mismatch_locs.iter().enumerate() {
+            if id < sz - 1 && mismatch_locs[id + 1] != *loc + 1 {
+                valid_start_locs.push((*loc, id));
+                valid_end_locs.push((mismatch_locs[id + 1], id + 1));
             }
-            if let Some(prev) = prev {
-                if *prev != *current - 1 {
-                    valid_end_locs.push((*current, mismatch_id));
-                }
-            }
-            prev = Some(current);
-            mismatch_id += 1;
         }
 
-        if valid_start_locs.is_empty() || valid_end_locs.is_empty() {
-            continue;
-        }
+        // If there are no valid starts, there should not be valid ends.
+        debug_assert!(valid_start_locs.is_empty() || !valid_end_locs.is_empty());
 
         let mut start_it_ptr = 0;
         let mut end_it_ptr = 0;
-        let mut mismatch_diff: i32;
-        let mut start_mismatch: i32;
-        let mut end_mismatch: i32;
 
         while start_it_ptr < valid_start_locs.len() && end_it_ptr < valid_end_locs.len() {
             let mut start = valid_start_locs[start_it_ptr];
             let mut end = valid_end_locs[end_it_ptr];
 
             // Count the difference in mismatches between the start and end location
-            mismatch_diff = end.1 - start.1 - 1;
+            let mut mismatch_diff = end.1 - start.1 - 1;
 
-            // While mismatch difference is too large,
-            // move start location to the right until mismatch difference is within acceptable bound
+            // While mismatch difference is too large, move start location to the right
             while mismatch_diff > mismatches {
                 start_it_ptr += 1;
                 start = valid_start_locs[start_it_ptr];
                 mismatch_diff = end.1 - start.1 - 1;
             }
 
-            // While mismatch difference is within acceptable bound,
-            // move end location to the right until mismatch difference becomes unacceptable
+            let start_mismatch = start.0 as usize;
+            if start_mismatch >= initial_gap {
+                break;
+            }
+
+            // While mismatch difference is within acceptable bound, move end location to the right
             while mismatch_diff <= mismatches {
                 end_it_ptr += 1;
                 if end_it_ptr == valid_end_locs.len() {
@@ -219,57 +177,47 @@ pub fn add_palindromes(
                 mismatch_diff = end.1 - start.1 - 1;
             }
 
-            start_mismatch = start.0;
-            end_mismatch = valid_end_locs[end_it_ptr - 1].0;
+            debug_assert!(end_it_ptr > start_it_ptr);
+            // And since start_it_ptr >= 0 because usize, we have: end_it_ptr > 0
 
-            // println!("(start_mismatch, end_mismatch) = {} {}", start_mismatch, end_mismatch);
+            let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
-            // // Skip this iteration if the start mismatch chosen is such that the gap is not within the acceptable bound
-            if start_mismatch >= initial_gap {
-                break;
+            let palindrome_length = end_mismatch - start_mismatch;
+            if palindrome_length < min_len {
+                start_it_ptr += 1;
+                continue;
             }
 
-            let (left, right, gap): (i32, i32, i32);
+            let left = (c + margin) as usize - end_mismatch;
+            let right = (c - margin) as usize + end_mismatch;
+            let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
+            debug_assert!(gap <= max_gap);
 
-            if is_odd {
-                left = (c - end_mismatch as f64) as i32;
-                right = (c + end_mismatch as f64) as i32;
-                gap = 2 * (start_mismatch + 1) + 1;
+            let palindrome = if palindrome_length <= max_len {
+                // Palindrome is not too long, so add to output
+                (left, right, gap)
             } else {
-                left = (c - 0.5 - (end_mismatch as f64 - 1.0)) as i32;
-                right = (c + 0.5 + (end_mismatch as f64 - 1.0)) as i32;
-                gap = 2 * (start_mismatch + 1);
-            }
+                // Palindrome is too long, so attempt truncation
+                let overshoot = palindrome_length - max_len;
 
-            // println!("(left, gap, right) = {} {} {}", left, right, gap);
-
-            // Check that potential palindrome is not too short
-            let palindrome_length = (right - left + 1 - gap) / 2;
-
-            if palindrome_length >= min_len {
-                // Check that potential palindrome is not too long
-                let palindrome = if palindrome_length <= max_len {
-                    // Palindrome is not too long, so add to output
-                    (left, right, gap)
+                let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
+                let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
+                let mismatch_gap = if end_mismatch == prev {
+                    0
                 } else {
-                    // Palindrome is too long, so attempt truncation
-                    let prev_end_mismatch_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
-                    let prev_end_mismatch = valid_end_locs[prev_end_mismatch_ptr].0;
-                    let mismatch_gap = end_mismatch - prev_end_mismatch - 1;
-                    let overshoot = palindrome_length - max_len;
-
-                    // Check if truncation results in the potential palindrome ending in a mismatch
-                    if overshoot != mismatch_gap {
-                        // Potential palindrome does not end in a mismatch, so add to output
-                        (left + overshoot, right - overshoot, gap)
-                    } else {
-                        // Potential palindrome does end in a mismatch, so truncate an additional 1
-                        // character either side then add to output
-                        (left + overshoot + 1, right - overshoot - 1, gap)
-                    }
+                    end_mismatch - prev - 1
                 };
-                palindromes.push(palindrome);
-            }
+
+                // Check if truncation results in the potential palindrome ending in a mismatch
+                if overshoot != mismatch_gap {
+                    // Potential palindrome does not end in a mismatch, so add to output
+                    (left + overshoot, right - overshoot, gap)
+                } else {
+                    // Potential palindrome does end in a mismatch, so truncate a character
+                    (left + overshoot + 1, right - overshoot - 1, gap)
+                }
+            };
+            palindromes.push(palindrome);
 
             start_it_ptr += 1;
         }

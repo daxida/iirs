@@ -4,7 +4,7 @@ fn test_seq(config: &Config, string: &str) -> usize {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     let _ = config.verify(n).unwrap();
-    let palindromes = find_palindromes(&config, &seq);
+    let palindromes = find_palindromes(&config, &seq).unwrap();
     palindromes.len()
 }
 
@@ -81,12 +81,20 @@ fn test_palindromes_full_n_5000() {
 // Start test from local files
 //
 // Test generator
-fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(i32, i32, i32)> {
+fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(usize, usize, usize)> {
     let string = Config::extract_first_string(String::from(path)).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.verify(n).unwrap();
-    find_palindromes(&config, &seq)
+    find_palindromes(&config, &seq).unwrap()
+}
+
+#[test]
+fn test_palindromes_edge_gap() {
+    // The original IUPACpal won't find this palindrome
+    let config = Config::dummy(14, 100, 3, 0);
+    let path = "tests/test_data/edge_gap.fasta";
+    assert_eq!(find_palindromes_from_pathconfig(&path, &config).len(), 1)
 }
 
 #[test]

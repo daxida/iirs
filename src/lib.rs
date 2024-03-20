@@ -8,11 +8,11 @@ mod rmq;
 
 use anyhow::{anyhow, Result};
 use config::Config;
-use libdivsufsort_rs::*;
+use constants::IUPAC_SYMBOLS;
 
-/// Find palindromes in a fasta sequence based on the provided configuration.
+/// Find palindromes in a sequence based on the provided configuration.
 ///
-/// Each tuple contains three integers: start position, end position, and gap size.
+/// Each palindrome is a tuple of three integers (usize): start position, end position, and gap size.
 ///
 /// # Examples
 ///
@@ -22,22 +22,32 @@ use libdivsufsort_rs::*;
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::dummy(3, 6, 2, 0);
 /// let palindromes = find_palindromes(&config, &seq);
+/// assert_eq!(palindromes.unwrap(), vec![(0, 5, 0)]);
 ///
-/// assert_eq!(palindromes, vec![(0, 5, 0)])
+/// // Returns an error if the given sequence contains invalid characters
+/// let seq = "jj".as_bytes();
+/// let palindromes = find_palindromes(&config, &seq);
+/// assert!(palindromes.is_err());
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
-    // This recomputation of n is just for convenience of the API
-    let n = seq.len();
-
+pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
     // Construct s = seq + '$' + complement(reverse(seq)) + '#'
+    let n = seq.len();
     let s_n = 2 * n + 2;
     let mut s = vec![0u8; s_n];
     for i in 0..n {
+        // Note that this was already checked if we were using the CLI. We recheck it
+        // because it's cheap and makes sense in the standalone version of this function
+        if !IUPAC_SYMBOLS.contains(seq[i] as char) {
+            return Err(anyhow!(
+                "sequence contains '{}' which is not an IUPAC symbol.",
+                seq[i] as char
+            ));
+        }
         s[i] = seq[i];
         s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
     }
@@ -45,7 +55,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
     s[2 * n + 1] = b'#';
 
     // Construct Suffix Array (sa) & Inverse Suffix Array
-    let sa: Vec<i64> = divsufsort64(&s).unwrap();
+    let sa: Vec<i32> = divsufsort::sort(&s).into_parts().1;
     let mut inv_sa = vec![0; s_n];
     for (i, value) in sa.iter().enumerate() {
         inv_sa[*value as usize] = i;
@@ -53,16 +63,13 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
 
     // Calculate LCP & RMQ
     let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
-    let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
+    let rmq = rmq::Sparse::new(&lcp);
 
     // Calculate palidromes
     let mut palindromes = algo::add_palindromes(
         &s,
-        s_n,
-        n,
         &inv_sa,
-        &lcp,
-        &rmq_prep,
+        &rmq,
         config.min_len,
         config.max_len,
         config.mismatches,
@@ -80,7 +87,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
         cmp_left.then(cmp_gap).then(cmp_right)
     });
 
-    palindromes
+    Ok(palindromes)
 }
 
 /// Stringify the given palindromes according to the configuration output format.
@@ -94,7 +101,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
-/// let palindromes = find_palindromes(&config, &seq);
+/// let palindromes = find_palindromes(&config, &seq).unwrap();
 /// let out_str = strinfigy_palindromes(&config, &palindromes, &seq, 0).unwrap();
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
@@ -104,7 +111,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Vec<(i32, i32, i32)> {
 /// ```
 pub fn strinfigy_palindromes(
     config: &Config,
-    palindromes: &Vec<(i32, i32, i32)>,
+    palindromes: &Vec<(usize, usize, usize)>,
     seq: &[u8],
     offset: usize,
 ) -> Result<String> {
@@ -125,4 +132,49 @@ pub fn strinfigy_palindromes(
             other
         )),
     }
+}
+
+// Move this somewhere else (atm it needs complement and matrix)
+fn correct_truncation_helper(config: &Config, path: &str) {
+    let string = Config::extract_first_string(String::from(path)).unwrap();
+    let seq = string.to_ascii_lowercase().as_bytes().to_vec();
+    let n = seq.len();
+    config.verify(n).unwrap();
+    let palindromes = find_palindromes(config, &seq).unwrap();
+
+    let complement = constants::build_complement_array();
+    let s_n = 2 * n + 2;
+    let mut s = vec![0u8; s_n];
+    for i in 0..n {
+        s[i] = seq[i];
+        s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
+    }
+    s[n] = b'$';
+    s[2 * n + 1] = b'#';
+    let matrix = matrix::MatchMatrix::new();
+
+    for (left, right, _) in palindromes {
+        assert!(matrix.match_u8(s[left], complement[s[right] as usize]),);
+    }
+}
+
+#[test]
+fn test_correct_truncation_one() {
+    let config = Config::dummy(8, 100, 10, 6);
+    let path = "tests/test_data/test1.fasta";
+    correct_truncation_helper(&config, path)
+}
+
+#[test]
+fn test_correct_truncation_two() {
+    let config = Config::dummy(8, 100, 10, 6);
+    let path = "tests/test_data/truncation_edge_case.fasta";
+    correct_truncation_helper(&config, path)
+}
+
+#[test]
+fn test_correct_truncation_three() {
+    let config = Config::dummy(6, 100, 0, 5);
+    let path = "tests/test_data/truncation_edge_case.fasta";
+    correct_truncation_helper(&config, path)
 }

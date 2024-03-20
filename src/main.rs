@@ -14,7 +14,7 @@ fn main() -> Result<()> {
     if config.seq_name != "ALL" {
         let seq = config.safe_extract_sequence()?;
 
-        let palindromes = find_palindromes(&config, &seq);
+        let palindromes = find_palindromes(&config, &seq).unwrap();
         let out_str = strinfigy_palindromes(&config, &palindromes, &seq, 0)?;
     
         let mut file = File::create(&config.output_file)?;
@@ -37,8 +37,8 @@ fn main() -> Result<()> {
                 println!("{}", e);
                 continue;
             }
-            let palindromes = find_palindromes(&config, &seq);
-            let mut out_str = strinfigy_palindromes(&config, &palindromes, &seq, offset)?;
+            let palindromes = find_palindromes(&config, seq).unwrap();
+            let mut out_str = strinfigy_palindromes(&config, &palindromes, seq, offset)?;
             let mut lines = out_str.lines();
 
             // Skip headers (hacky)

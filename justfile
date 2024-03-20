@@ -13,14 +13,22 @@ testm:
   cargo run --release -- \
     -s MCHU -m 3 -g 5 -F csv
 
-testmul:
+testt:
   cargo run --release -- \
-    -f tests/test_data/test_multiple.fasta -s ALL -m 3 -g 5 -F custom
+    -s t2 -m 2 -g 5 -F csv
+
+teststar:
+  cargo run --release -- \
+    -s tstar -m 2 -g 5 -F csv
+
+testedge:
+  cargo run --release -- \
+    -f tests/test_data/truncation_edge_case.fasta -m 8 -M 100 -g 10 -x 6
 
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/debug/iupacpal -s banana -m 3 -g 5
+  sudo perf record -g target/release-with-debug/iupacpal -s banana -m 3 -g 5
   sudo perf report
 
 # test alys
@@ -31,41 +39,44 @@ testalys:
 # perf test for alys
 ptestalys:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/debug/main -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+  sudo perf record -g target/release-with-debug/iupacpal -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
-# test for randIUPAC1000000
-testrand:
-  cargo run --profile=release-with-debug -- \
-    -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
+# test full N (stress test the algorithm and not the writing)
+testn:
+  cargo run --release -- \
+    -f tests/test_data/200000N.fasta -m 2 -M 100 -g 20 -x 1
 
-# perf test for randIUPAC100000
+# test for rand10000000 (1e7)
+testrand:
+  cargo run --release -- \
+    -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
+
+# perf test for rand10000000
 ptestrand:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/debug/main -f tests/test_data/randIUPAC1000000.fasta -m 10 -M 100 -g 20 -x 5
+  sudo perf record -g target/release-with-debug/iupacpal -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
   sudo perf report
 
 # test that the results of the rust / cpp binaries are the same
 pytest-correct:
-  python3 etc/test.py --size 1_000 --ntests 20
-  python3 etc/test.py --size 5_000 --ntests 10
-  python3 etc/test.py --size 20_000 --ntests 5
+  python3 bench/test.py --size 1_000 --ntests 20
+  python3 bench/test.py --size 5_000 --ntests 10
+  python3 bench/test.py --size 20_000 --ntests 5
 
 # test the performance in both binaries
 pytest-performance:
-  python3 etc/test.py --size 1_000_000 --ntests 1
-
-bench-correct:
-  cargo build --release
-  cargo build --release --bin bench
-  ./target/release/bench --size-fasta 1000 --n-tests 20 -g 100 -x 2
-  ./target/release/bench --size-fasta 5000 --n-tests 10 -g 100 -x 2
-  ./target/release/bench --size-fasta 20000 --n-tests 5 -g 100 -x 2
+  python3 bench/test.py --size 1_000_000 --ntests 1
 
 logs:
-  cargo run --release --bin logs
+  cargo build --release
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
 
 printlogs:
   cargo build --release
-  cargo run --release --bin logs
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
   python3 bench/heatmaps.py
+
+bench:
+  cargo build --release
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin bench
