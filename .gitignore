@@ -1,3 +1,5 @@
+.vscode
+
 # py
 venv
 __pycache__/
@@ -17,3 +19,6 @@ rand.fasta
 
 # rust
 /target
+
+# heatmaps
+bench/results.csv

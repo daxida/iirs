@@ -8,26 +8,16 @@ edition = "2021"
 name = "iupacpal"
 path = "src/lib.rs"
 
-[[bin]]
-name = "bench"
-path = "bench/bench.rs"
-
-[[bin]]
-name = "logs"
-path = "bench/logs.rs"
+[workspace]
+members = [".", "bench"]
 
 [dependencies]
-anyhow = "1.0.75"
-libdivsufsort-rs = "0.1.2"
-linked-list = "0.0.3"
+anyhow = "1.0"
+divsufsort = "2.0.0"
 clap = { version = "4.4.12", features = ["derive"] }
-seq_io = "0.3.2"
 elapsed-time = "0.1.1"
-rand = "0.8.5"
-csv = "1.1"
-rmq = { git = "https://github.com/daxida/rmq", branch = "main" }
-itertools = "0.12.1"
-rayon = "1.8.1"
+rmq-tabulation = { git = "https://github.com/daxida/rmq-tabulation", branch = "master" }
+seq_io = "0.3.2"
 
 # [profile.dev]
 # opt-level = 3
