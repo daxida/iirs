@@ -111,7 +111,7 @@ pub fn add_palindromes(
     let is_max_gap_odd = max_gap % 2 == 1;
     let half_gap = max_gap / 2;
 
-    for palindrome_center in min_len..(s_n - min_len) {
+    for palindrome_center in min_len..(s_n - 1 - min_len) {
         let c = palindrome_center as f64 / 2.0;
         // Note that the current palindrome is odd iif margin is equal to zero
         let margin = c.fract();
