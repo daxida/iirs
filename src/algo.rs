@@ -3,7 +3,7 @@ use crate::{
     rmq::{Rmq, Sparse},
 };
 
-pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usize> {
+pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usize> {
     let mut lcp: Vec<usize> = vec![0; s_n];
     let mut j: usize;
 
@@ -37,19 +37,18 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i64], inv_sa: &[usize]) -> Vec<usiz
 // - For the BANANA case, the given (i, j) will be:
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
-#[allow(clippy::too_many_arguments)]
 fn real_lce_mismatches(
     s: &[u8],
     i: usize,
     j: usize,
-    s_n: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
     mut mismatches: i32,
     initial_gap: usize,
     matrix: &MatchMatrix,
 ) -> Vec<u32> {
-    let mut mismatch_locs = vec![0]; // Originally LinkedList<i32>
+    let s_n = s.len();
+    let mut mismatch_locs = vec![0];
     let mut real_lce = 0;
 
     while mismatches >= 0 && j + real_lce != s_n {
@@ -94,14 +93,12 @@ fn real_lce_mismatches(
 // - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
 //   It was marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
 //   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
-// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data will be printed sorted
-//   afterwards in "format". The palindromes found are the same without sorting, they are just not returned in the expected order.
+// - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
+//   will be printed sorted afterwards in "format".
 use rayon::prelude::*;
 #[allow(clippy::too_many_arguments)]
 pub fn add_palindromes(
     s: &[u8],
-    s_n: usize,
-    n: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
     min_len: usize,
@@ -110,11 +107,13 @@ pub fn add_palindromes(
     max_gap: usize,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
-    (0..=2 * (n - 1))
+    let s_n = s.len();
+    let n = s_n / 2 - 1;
+    (min_len..(s_n - 1 - min_len))
         .into_par_iter()
         .flat_map(|c| {
             add_palindromes_at_this_center(
-                s, s_n, n, inv_sa, rmq, min_len, max_len, mismatches, max_gap, matrix, c,
+                s, n, inv_sa, rmq, min_len, max_len, mismatches, max_gap, matrix, c,
             )
         })
         .collect()
@@ -123,7 +122,6 @@ pub fn add_palindromes(
 #[allow(clippy::too_many_arguments)]
 fn add_palindromes_at_this_center(
     s: &[u8],
-    s_n: usize,
     n: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
@@ -143,36 +141,21 @@ fn add_palindromes_at_this_center(
     let is_max_gap_odd = max_gap % 2 == 1;
     let half_gap = max_gap / 2;
 
-    // Determine if value of centre corresponds to an odd or even palindrome
-    let is_odd = c.fract() == 0.0;
-
-    // The following part is equivalent to:
-    // let margin = c.fract();
-    // let (i, j) = (1.0 + c - margin, behind - c - margin);
-    let (i, j) = if is_odd {
-        ((c + 1.0) as usize, (behind - c) as usize)
-    } else {
-        ((c + 0.5) as usize, (behind - (c + 0.5)) as usize)
-    };
+    // Note that the current palindrome is odd iif margin is equal to zero
+    let margin = c.fract();
 
     // We add 1 compared to the original implementation to guarantee >= 0
-    let initial_gap = if is_max_gap_odd || !is_odd {
+    let initial_gap = if is_max_gap_odd {
         half_gap + 1
     } else {
-        half_gap
+        half_gap + (2.0 * margin) as usize
     };
 
-    let mismatch_locs = real_lce_mismatches(
-        s,
-        i,
-        j,
-        s_n,
-        inv_sa,
-        rmq,
-        mismatches as i32,
-        initial_gap,
-        matrix,
-    );
+    let i = (1.0 + c - margin) as usize;
+    let j = (behind - c - margin) as usize;
+
+    let mismatch_locs =
+        real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
 
     // Get a list of valid start and end mismatch locations
     // (that could mark the potential start or end of a palindrome)
@@ -225,33 +208,18 @@ fn add_palindromes_at_this_center(
         debug_assert!(end_it_ptr > start_it_ptr);
         // And since start_it_ptr >= 0 because usize, we have: end_it_ptr > 0
 
-        let end_mismatch = valid_end_locs[end_it_ptr - 1].0 - 1;
+        let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
-        let palindrome_length = end_mismatch as usize - start_mismatch;
+        let palindrome_length = end_mismatch - start_mismatch;
         if palindrome_length < min_len {
             start_it_ptr += 1;
             continue;
         }
 
-        // The following part is equivalent to:
-        // let margin = c.fract();
-        // let left  = (c + margin) as usize - end_mismatch;
-        // let right = (c - margin) as usize + end_mismatch;
-        // let gap   = 2 * start_mismatch + 1 - (margin * 2.0) as usize;
-        //
-        // NOTE: we find again that:
-        // let palindrome_length = (right - left + 1 - gap) / 2;
-        let (left, right, gap): (usize, usize, usize);
-
-        if is_odd {
-            left = (c - end_mismatch as f64) as usize;
-            right = (c + end_mismatch as f64) as usize;
-            gap = 2 * start_mismatch + 1;
-        } else {
-            left = (c - 0.5 - (end_mismatch as f64 - 1.0)) as usize;
-            right = (c + 0.5 + (end_mismatch as f64 - 1.0)) as usize;
-            gap = 2 * start_mismatch;
-        }
+        let left = (c + margin) as usize - end_mismatch;
+        let right = (c - margin) as usize + end_mismatch;
+        let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
+        debug_assert!(gap <= max_gap);
 
         let palindrome = if palindrome_length <= max_len {
             // Palindrome is not too long, so add to output
@@ -260,8 +228,16 @@ fn add_palindromes_at_this_center(
             // Palindrome is too long, so attempt truncation
             let overshoot = palindrome_length - max_len;
 
+            let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
+            let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
+            let mismatch_gap = if end_mismatch == prev {
+                0
+            } else {
+                end_mismatch - prev - 1
+            };
+
             // Check if truncation results in the potential palindrome ending in a mismatch
-            if overshoot != 0 {
+            if overshoot != mismatch_gap {
                 // Potential palindrome does not end in a mismatch, so add to output
                 (left + overshoot, right - overshoot, gap)
             } else {

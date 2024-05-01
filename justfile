@@ -13,6 +13,18 @@ testm:
   cargo run --release -- \
     -s MCHU -m 3 -g 5 -F csv
 
+testt:
+  cargo run --release -- \
+    -s t2 -m 2 -g 5 -F csv
+
+teststar:
+  cargo run --release -- \
+    -s tstar -m 2 -g 5 -F csv
+
+testedge:
+  cargo run --release -- \
+    -f tests/test_data/truncation_edge_case.fasta -m 8 -M 100 -g 10 -x 6
+
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug
@@ -48,23 +60,23 @@ ptestrand:
 
 # test that the results of the rust / cpp binaries are the same
 pytest-correct:
-  python3 etc/test.py --size 1_000 --ntests 20
-  python3 etc/test.py --size 5_000 --ntests 10
-  python3 etc/test.py --size 20_000 --ntests 5
+  python3 bench/test.py --size 1_000 --ntests 20
+  python3 bench/test.py --size 5_000 --ntests 10
+  python3 bench/test.py --size 20_000 --ntests 5
 
 # test the performance in both binaries
 pytest-performance:
-  python3 etc/test.py --size 1_000_000 --ntests 1
+  python3 bench/test.py --size 1_000_000 --ntests 1
 
 logs:
   cargo build --release
-  cargo run --release --bin logs
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
 
 printlogs:
   cargo build --release
-  cargo run --release --bin logs
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
   python3 bench/heatmaps.py
 
 bench:
   cargo build --release
-  cargo run --release --bin bench
+  cargo run --manifest-path "bench/Cargo.toml" --release --bin bench

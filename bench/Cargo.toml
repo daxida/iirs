@@ -1,0 +1,20 @@
+[package]
+name = "bench"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "bench"
+path = "bench.rs"
+
+[[bin]]
+name = "logs"
+path = "logs.rs"
+
+[dependencies]
+anyhow = "1.0"
+rayon = "1.8.1"
+iupacpal = { path = ".." }
+rand = "0.8.5"
+csv = "1.1"
+itertools = "0.12.1"

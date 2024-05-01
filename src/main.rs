@@ -12,7 +12,7 @@ fn main() -> Result<()> {
     let config = Config::from_args();
     let seq = config.safe_extract_sequence()?;
 
-    let palindromes = find_palindromes(&config, &seq);
+    let palindromes = find_palindromes(&config, &seq)?;
     let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
 
     let mut file = File::create(&config.output_file)?;

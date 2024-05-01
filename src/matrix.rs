@@ -36,7 +36,6 @@ impl MatchMatrix {
         }
     }
 
-    // Match function for bytes
     pub fn match_u8(&self, b1: u8, b2: u8) -> bool {
         let i = self.iupac_to_value[b1 as usize];
         let j = self.iupac_to_value[b2 as usize];
