@@ -5,6 +5,11 @@ from argparse import ArgumentParser
 from statistics import mean
 from time import time
 
+CPP_BINARY_PATH = "IUPACpal/IUPACpal"
+RUST_BINARY_PATH = "target/release/iupacpal"
+CPP_OUTPUT_PATH = "IUPACpal.out"
+RUST_OUTPUT_PATH = "IUPACpalrs.out"
+
 parser = ArgumentParser()
 parser.add_argument("--size", type=int, help="Random fasta size")
 parser.add_argument("--ntests", type=int, help="Number of tests")
@@ -52,10 +57,10 @@ def run(cmd_beginning: str, language: str):
 
 
 def test_equality():
-    with open(os.path.join("IUPACpal.out"), "r") as f:
+    with open(os.path.join(CPP_OUTPUT_PATH), "r") as f:
         expected = f.read().strip()
 
-    with open(os.path.join("IUPACpalrs.out"), "r") as f:
+    with open(os.path.join(RUST_OUTPUT_PATH), "r") as f:
         received = f.read().strip()
 
     expected_lines = expected.split("\n\n")
@@ -90,8 +95,8 @@ def run_tests():
         with open(os.path.join(FILE_NAME), "w") as f:
             f.write(fasta)
 
-        run("IUPACpal/IUPACpal", language="CPP")
-        run("target/release/iupacpal", language="RUST")
+        run(CPP_BINARY_PATH, language="CPP")
+        run(RUST_BINARY_PATH, language="RUST")
 
         test_equality()
 

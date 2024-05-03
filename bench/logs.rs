@@ -5,6 +5,9 @@ extern crate iupacpal;
 extern crate rand;
 extern crate rayon;
 
+mod helper;
+use helper::run_command;
+
 use anyhow::{anyhow, Result};
 use csv::WriterBuilder;
 use itertools::iproduct;
@@ -15,9 +18,13 @@ use rayon::prelude::*;
 use std::fs;
 use std::fs::File;
 use std::io::Write;
-use std::process::Command;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
+
+const CPP_BINARY_PATH: &str = "IUPACpal/IUPACpal";
+const RUST_BINARY_PATH: &str = "target/release/iupacpal";
+const CPP_OUTPUT_PATH: &str = "IUPACpal.out";
+const RUST_OUTPUT_PATH: &str = "IUPACpalrs.out";
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
@@ -44,38 +51,6 @@ fn write_random_fasta(size_fasta: usize) -> Result<()> {
     Ok(())
 }
 
-fn run_command(cmd_beginning: &str, config: &Config) -> Result<f64> {
-    let start = Instant::now();
-
-    let command = format!(
-        "{} -f {} -m {} -M {} -g {} -x {}",
-        cmd_beginning,
-        config.input_file,
-        config.min_len,
-        config.max_len,
-        config.max_gap,
-        config.mismatches
-    );
-
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg(&command)
-        .output()
-        .expect("Failed to run command");
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-
-    if stderr.contains("Error") {
-        return Err(anyhow!("Error: {}", stderr));
-    }
-    if stdout.contains("Error") {
-        return Err(anyhow!("Error: {}", stdout));
-    }
-
-    Ok(start.elapsed().as_secs_f64())
-}
-
 #[allow(dead_code)]
 fn normalize_output(raw_output: &str) -> Vec<&str> {
     raw_output.trim().lines().collect()
@@ -83,8 +58,8 @@ fn normalize_output(raw_output: &str) -> Vec<&str> {
 
 #[allow(dead_code)]
 fn test_equality() -> Result<()> {
-    let expected = fs::read_to_string("IUPACpal.out").unwrap();
-    let received = fs::read_to_string("IUPACpalrs.out").unwrap();
+    let expected = fs::read_to_string(CPP_OUTPUT_PATH).unwrap();
+    let received = fs::read_to_string(RUST_OUTPUT_PATH).unwrap();
 
     let expected_lines = normalize_output(&expected);
     let received_lines = normalize_output(&received);
@@ -144,27 +119,27 @@ fn generate_configs(steps: &[Vec<usize>]) -> impl Iterator<Item = Config> + '_ {
 fn main() -> Result<()> {
     let start = Instant::now();
 
-    // let steps: Vec<Vec<i32>> = vec![
-    //     // size_fasta
-    //     vec![10000],
-    //     // min_len
-    //     vec![2, 4, 6, 8, 10, 12, 14, 16],
-    //     // max_gap
-    //     vec![0, 1, 2, 3, 4, 5],
-    //     // mismatches
-    //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
-    // ];
-    let n_tests = 1;
     let steps: Vec<Vec<usize>> = vec![
         // size_fasta
-        vec![1000, 10000, 100000],
+        vec![1000],
         // min_len
-        vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        vec![2, 4, 6, 8, 10, 12, 14, 16],
         // max_gap
-        vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        vec![0, 1, 2, 3, 4, 5],
         // mismatches
-        vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
     ];
+    let n_tests = 1;
+    // let steps: Vec<Vec<usize>> = vec![
+    //     // size_fasta
+    //     vec![1000, 10000, 100000],
+    //     // min_len
+    //     vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+    //     // max_gap
+    //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+    //     // mismatches
+    //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+    // ];
 
     let mut writer = WriterBuilder::new().from_writer(File::create("bench/results.csv")?);
 
@@ -189,8 +164,8 @@ fn main() -> Result<()> {
                 .collect::<Vec<_>>()
                 .into_par_iter()
                 .for_each(|config| {
-                    let ctiming = run_command("IUPACpal/IUPACpal", &config);
-                    let rtiming = run_command("target/release/iupacpal", &config);
+                    let ctiming = run_command(CPP_BINARY_PATH, &config);
+                    let rtiming = run_command(RUST_BINARY_PATH, &config);
 
                     if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
                         let mut writer = writer.lock().unwrap();
@@ -201,8 +176,8 @@ fn main() -> Result<()> {
                                 config.min_len.to_string(),
                                 config.max_gap.to_string(),
                                 config.mismatches.to_string(),
-                                ctiming.to_string(),
-                                rtiming.to_string(),
+                                ctiming.as_secs_f64().to_string(),
+                                rtiming.as_secs_f64().to_string(),
                             ])
                             .unwrap();
                     }
@@ -217,8 +192,8 @@ fn main() -> Result<()> {
                 }
                 for _ in 0..n_tests {
                     write_random_fasta(size_fasta as usize)?;
-                    let ctiming = run_command("IUPACpal/IUPACpal", &config);
-                    let rtiming = run_command("target/release/iupacpal", &config);
+                    let ctiming = run_command(CPP_BINARY_PATH, &config);
+                    let rtiming = run_command(RUST_BINARY_PATH, &config);
 
                     match (ctiming, rtiming) {
                         (Ok(ctiming), Ok(rtiming)) => {
@@ -227,8 +202,8 @@ fn main() -> Result<()> {
                                 config.min_len.to_string(),
                                 config.max_gap.to_string(),
                                 config.mismatches.to_string(),
-                                ctiming.to_string(),
-                                rtiming.to_string(),
+                                ctiming.as_secs_f64().to_string(),
+                                rtiming.as_secs_f64().to_string(),
                             ])?;
 
                             if let Err(msg) = test_equality() {
@@ -252,7 +227,7 @@ fn main() -> Result<()> {
                 }
             }
 
-            println!("OK: tests with size {}", size_fasta);
+            println!("OK: tests with size {}.", size_fasta);
         }
     }
 

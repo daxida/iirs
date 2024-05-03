@@ -1,52 +1,23 @@
-extern crate iupacpal;
 extern crate anyhow;
+extern crate iupacpal;
 
+mod helper;
+use helper::run_command;
+
+use anyhow::Result;
 use iupacpal::config;
-use anyhow::{anyhow, Result};
 
-use std::process::Command;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
-fn run_command(cmd_beginning: &str, config: &config::Config) -> Result<Duration> {
-    let start = Instant::now();
-
-    let command = format!(
-        "{} -f {} -s {} -m {} -M {} -g {} -x {}",
-        cmd_beginning,
-        config.input_file,
-        config.seq_name,
-        config.min_len,
-        config.max_len,
-        config.max_gap,
-        config.mismatches
-    );
-
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg(&command)
-        .output()
-        .expect("Failed to run command");
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-
-    if stderr.contains("panic") {
-        println!("Stderr: {}", stderr);
-    }
-
-    if stdout.contains("Error") {
-        return Err(anyhow!("Error: {}", stdout));
-    }
-
-    Ok(start.elapsed())
-}
+const RUST_BINARY_PATH: &str = "target/release/iupacpal";
+const RUST_OUTPUT_PATH: &str = "IUPACpalrs.out";
 
 fn main() -> Result<()> {
     let start = Instant::now();
 
     // Modify these two
     let data = "alys";
-    let times = 10;
+    let times = 2;
 
     let config = match data {
         "alys" => config::Config {
@@ -56,7 +27,7 @@ fn main() -> Result<()> {
             max_len: 100,
             max_gap: 20,
             mismatches: 0,
-            output_file: "IUPACpalrs.out".to_string(),
+            output_file: String::from(RUST_OUTPUT_PATH),
             output_format: "classic".to_string(),
         },
         "rand" => config::Config {
@@ -66,20 +37,22 @@ fn main() -> Result<()> {
             max_len: 100,
             max_gap: 5,
             mismatches: 1,
-            output_file: "IUPACpalrs.out".to_string(),
+            output_file: String::from(RUST_OUTPUT_PATH),
             output_format: "classic".to_string(),
         },
         _ => todo!(),
     };
 
     for idx in 0..times {
-        let dur = run_command("target/release/iupacpal", &config)?;
+        let dur = run_command(RUST_BINARY_PATH, &config)?;
         println!("{}: took {}ms", idx, dur.as_millis());
     }
 
     println!(
-        "\n-- Took {}ms on average.",
-        start.elapsed().as_millis() / times
+        "\nResults of bench against {}\n>> Took {}ms on average ({} runs).",
+        data,
+        start.elapsed().as_millis() / times,
+        times
     );
 
     Ok(())

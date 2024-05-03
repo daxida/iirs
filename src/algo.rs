@@ -37,6 +37,7 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
 // - For the BANANA case, the given (i, j) will be:
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
+#[allow(clippy::too_many_arguments)]
 fn real_lce_mismatches(
     s: &[u8],
     i: usize,
@@ -95,6 +96,7 @@ fn real_lce_mismatches(
 //   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
 // - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
 //   will be printed sorted afterwards in "format".
+#[allow(clippy::too_many_arguments)]
 pub fn add_palindromes(
     s: &[u8],
     inv_sa: &[usize],
