@@ -22,3 +22,6 @@ rand.fasta
 
 # heatmaps
 bench/results.csv
+
+# IUPACpal binary
+bench/IUPACpal

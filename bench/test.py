@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 from statistics import mean
 from time import time
 
-CPP_BINARY_PATH = "IUPACpal/IUPACpal"
+CPP_BINARY_PATH = "bench/IUPACpal"
 RUST_BINARY_PATH = "target/release/iupacpal"
 CPP_OUTPUT_PATH = "IUPACpal.out"
 RUST_OUTPUT_PATH = "IUPACpalrs.out"

@@ -21,7 +21,7 @@ use std::io::Write;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-const CPP_BINARY_PATH: &str = "IUPACpal/IUPACpal";
+const CPP_BINARY_PATH: &str = "bench/IUPACpal";
 const RUST_BINARY_PATH: &str = "target/release/iupacpal";
 const CPP_OUTPUT_PATH: &str = "IUPACpal.out";
 const RUST_OUTPUT_PATH: &str = "IUPACpalrs.out";
