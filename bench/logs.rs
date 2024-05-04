@@ -36,8 +36,44 @@ const SYMBOLS: [char; 17] = [
 ];
 // const SYMBOLS: [char; 5] = ['a', 'c', 'g', 't', 'n'];
 
+struct TestSuite {
+    n_test: usize,
+    size_fasta: Vec<usize>,
+    min_len: Vec<usize>,
+    max_gap: Vec<usize>,
+    mismatches: Vec<usize>,
+}
+
+impl TestSuite {
+    // Return a cartesian product of Configs.
+    fn to_configs_iter(&self) -> impl Iterator<Item = Config> + '_ {
+        let TestSuite {
+            min_len,
+            max_gap,
+            mismatches,
+            ..
+        } = self;
+
+        iproduct!(
+            min_len.iter().cloned(),
+            max_gap.iter().cloned(),
+            mismatches.iter().cloned()
+        )
+        .map(move |(min_len, max_gap, mismatches)| Config {
+            input_file: "rand.fasta".to_string(),
+            seq_name: "seq0".to_string(),
+            min_len,
+            max_len: 100,
+            max_gap,
+            mismatches,
+            output_file: "DUMMY".to_string(),
+            output_format: "classic".to_string(),
+        })
+    }
+}
+
 #[derive(Parser, Debug)]
-pub struct BenchConfig {
+pub struct Runner {
     /// Print more information about timings.
     #[arg(long, default_value_t = false)]
     pub verbose: bool,
@@ -49,7 +85,37 @@ pub struct BenchConfig {
     /// Start a random bench.
     /// The first arg is the size_fasta, then the number of tests.
     #[clap(long, num_args = 2)]
-    pub random_bench: Vec<i32>,
+    pub random_bench: Vec<usize>,
+}
+
+impl Runner {
+    fn get_test_suite(&self) -> TestSuite {
+        if self.random_bench.len() == 2 {
+            self.random_test_suite()
+        } else {
+            self.manual_test_suite()
+        }
+    }
+
+    fn manual_test_suite(&self) -> TestSuite {
+        TestSuite {
+            n_test: 1,
+            size_fasta: vec![1000],
+            min_len: vec![2, 4, 6, 8, 10, 12, 14, 16],
+            max_gap: vec![0, 1, 2, 3, 4, 5],
+            mismatches: vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
+        }
+    }
+
+    fn random_test_suite(&self) -> TestSuite {
+        TestSuite {
+            n_test: self.random_bench[1],
+            size_fasta: vec![self.random_bench[0]],
+            min_len: vec![10],
+            max_gap: vec![100],
+            mismatches: vec![2],
+        }
+    }
 }
 
 fn generate_random_fasta(size_fasta: usize) -> String {
@@ -75,7 +141,7 @@ fn normalize_output(raw_output: &str) -> Vec<&str> {
 }
 
 #[allow(dead_code)]
-fn test_equality(bench_config: &BenchConfig) -> Result<()> {
+fn test_equality(runner: &Runner) -> Result<()> {
     let expected = fs::read_to_string(CPP_OUTPUT_PATH).unwrap();
     let received = fs::read_to_string(RUST_OUTPUT_PATH).unwrap();
 
@@ -104,7 +170,7 @@ fn test_equality(bench_config: &BenchConfig) -> Result<()> {
         }
     }
 
-    if bench_config.verbose {
+    if runner.verbose {
         println!(
             "{}OK{}: Compared {} Palindromes",
             GREEN,
@@ -122,68 +188,13 @@ fn average(timings: &[Duration]) -> f64 {
     total_seconds / timings.len() as f64
 }
 
-fn generate_configs(steps: &[Vec<usize>]) -> impl Iterator<Item = Config> + '_ {
-    iproduct!(&steps[1], &steps[2], &steps[3]).map(move |(&min_len, &max_gap, &mismatches)| {
-        Config {
-            input_file: "rand.fasta".to_string(),
-            seq_name: "seq0".to_string(),
-            min_len,
-            max_len: 100,
-            max_gap,
-            mismatches,
-            output_file: "DUMMY".to_string(),
-            output_format: "classic".to_string(),
-        }
-    })
-}
-
 fn main() -> Result<()> {
     let start = Instant::now();
 
-    let bench_config = BenchConfig::parse();
+    let runner = Runner::parse();
+    let test_suite = runner.get_test_suite();
 
-    let (n_tests, steps) = if !bench_config.random_bench.is_empty() {
-        // Random test
-        let size_fasta = bench_config.random_bench[0];
-        let n_tests = bench_config.random_bench[1];
-        let steps: Vec<Vec<usize>> = vec![
-            // size_fasta
-            vec![size_fasta as usize],
-            // min_len
-            vec![10],
-            // max_gap
-            vec![100],
-            // mismatches
-            vec![2],
-        ];
-        (n_tests, steps)
-    } else {
-        // Manual test
-        let n_tests = 1;
-        let steps: Vec<Vec<usize>> = vec![
-            // size_fasta
-            vec![1000],
-            // min_len
-            vec![2, 4, 6, 8, 10, 12, 14, 16],
-            // max_gap
-            vec![0, 1, 2, 3, 4, 5],
-            // mismatches
-            vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
-        ];
-        // let steps: Vec<Vec<usize>> = vec![
-        //     // size_fasta
-        //     vec![1000, 10000, 100000],
-        //     // min_len
-        //     vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
-        //     // max_gap
-        //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
-        //     // mismatches
-        //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
-        // ];
-        (n_tests, steps)
-    };
-
-    let mut writer = if bench_config.write {
+    let mut writer = if runner.write {
         Some(WriterBuilder::new().from_writer(File::create("bench/results.csv")?))
     } else {
         None
@@ -208,10 +219,11 @@ fn main() -> Result<()> {
         };
         let writer_arc = Arc::new(Mutex::new(writer));
 
-        for &size_fasta in &steps[0] {
-            write_random_fasta(size_fasta as usize)?;
+        for size_fasta in &test_suite.size_fasta {
+            write_random_fasta(*size_fasta)?;
 
-            generate_configs(&steps)
+            test_suite
+                .to_configs_iter()
                 .collect::<Vec<_>>()
                 .into_par_iter()
                 .for_each(|config| {
@@ -234,18 +246,18 @@ fn main() -> Result<()> {
                 });
         }
     } else {
-        for &size_fasta in &steps[0] {
+        for size_fasta in &test_suite.size_fasta {
             let mut ctimings: Vec<Duration> = Vec::new();
             let mut rtimings: Vec<Duration> = Vec::new();
 
-            for config in generate_configs(&steps) {
+            for config in test_suite.to_configs_iter() {
                 // The config doesn't make sense: skip
-                if let Err(_) = config.verify_bounds(size_fasta) {
+                if let Err(_) = config.verify_bounds(*size_fasta) {
                     // println!("{}", &err);
                     continue;
                 }
-                for _ in 0..n_tests {
-                    write_random_fasta(size_fasta as usize)?;
+                for _ in 0..test_suite.n_test {
+                    write_random_fasta(*size_fasta)?;
                     let ctiming = run_command(CPP_BINARY_PATH, &config);
                     let rtiming = run_command(RUST_BINARY_PATH, &config);
 
@@ -265,7 +277,7 @@ fn main() -> Result<()> {
                             ctimings.push(ctiming);
                             rtimings.push(rtiming);
 
-                            if let Err(msg) = test_equality(&bench_config) {
+                            if let Err(msg) = test_equality(&runner) {
                                 println!("{:?}", &config);
                                 return Err(msg);
                             }
@@ -286,10 +298,10 @@ fn main() -> Result<()> {
                 }
             }
 
-            if bench_config.verbose {
+            if runner.verbose {
                 println!(
                     "Results for {} random tests of size {}.",
-                    n_tests, size_fasta
+                    test_suite.n_test, size_fasta
                 );
                 println!("cpp  average: {:.4}", average(&ctimings));
                 println!("rust average: {:.4}", average(&rtimings));
