@@ -38,7 +38,7 @@ const SYMBOLS: [char; 17] = [
 
 struct TestSuite {
     n_test: usize,
-    size_fasta: Vec<usize>,
+    size_seq: Vec<usize>,
     min_len: Vec<usize>,
     max_gap: Vec<usize>,
     mismatches: Vec<usize>,
@@ -48,17 +48,17 @@ impl TestSuite {
     fn manual() -> Self {
         TestSuite {
             n_test: 1,
-            size_fasta: vec![1000],
+            size_seq: vec![1000],
             min_len: vec![2, 4, 6, 8, 10, 12, 14, 16],
             max_gap: vec![0, 1, 2, 3, 4, 5],
             mismatches: vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
         }
     }
 
-    fn random(size_fasta: usize, n_test: usize) -> Self {
+    fn random(size_seq: usize, n_test: usize) -> Self {
         TestSuite {
             n_test,
-            size_fasta: vec![size_fasta],
+            size_seq: vec![size_seq],
             min_len: vec![10],
             max_gap: vec![100],
             mismatches: vec![2],
@@ -103,7 +103,7 @@ pub struct Runner {
     pub write: bool,
 
     /// Start a random bench.
-    /// The first arg is the size_fasta, then the number of tests.
+    /// The first arg is the size of the sequence, then the number of tests.
     #[clap(long, num_args = 2)]
     pub random_bench: Vec<usize>,
 }
@@ -111,23 +111,23 @@ pub struct Runner {
 impl Runner {
     fn get_test_suite(&self) -> TestSuite {
         match self.random_bench.as_slice() {
-            [size_fasta, n_test] => TestSuite::random(*size_fasta, *n_test),
+            [size_seq, n_test] => TestSuite::random(*size_seq, *n_test),
             _ => TestSuite::manual(),
         }
     }
 }
 
-fn generate_random_fasta(size_fasta: usize) -> String {
+fn generate_random_fasta(size_seq: usize) -> String {
     let mut rng = rand::thread_rng();
-    let random_sequence: String = (0..size_fasta)
+    let random_sequence: String = (0..size_seq)
         .map(|_| *SYMBOLS.choose(&mut rng).unwrap())
         .collect();
 
     format!(">seq0\n{}", random_sequence)
 }
 
-fn write_random_fasta(size_fasta: usize) -> Result<()> {
-    let fasta = generate_random_fasta(size_fasta);
+fn write_random_fasta(size_seq: usize) -> Result<()> {
+    let fasta = generate_random_fasta(size_seq);
     let mut file = File::create("rand.fasta").unwrap();
     file.write_all(fasta.as_bytes())?;
 
@@ -200,7 +200,7 @@ fn main() -> Result<()> {
     };
     if let Some(ref mut writer) = writer {
         writer.write_record([
-            "size_fasta",
+            "size_seq",
             "min_len",
             "max_gap",
             "mismatches",
@@ -218,8 +218,8 @@ fn main() -> Result<()> {
         };
         let writer_arc = Arc::new(Mutex::new(writer));
 
-        for size_fasta in &test_suite.size_fasta {
-            write_random_fasta(*size_fasta)?;
+        for size_seq in &test_suite.size_seq {
+            write_random_fasta(*size_seq)?;
 
             test_suite
                 .to_configs_iter()
@@ -233,7 +233,7 @@ fn main() -> Result<()> {
                         let mut writer = writer_arc.lock().unwrap();
                         writer
                             .write_record(&[
-                                size_fasta.to_string(),
+                                size_seq.to_string(),
                                 config.min_len.to_string(),
                                 config.max_gap.to_string(),
                                 config.mismatches.to_string(),
@@ -245,18 +245,18 @@ fn main() -> Result<()> {
                 });
         }
     } else {
-        for size_fasta in &test_suite.size_fasta {
+        for size_seq in &test_suite.size_seq {
             let mut ctimings: Vec<Duration> = Vec::new();
             let mut rtimings: Vec<Duration> = Vec::new();
 
             for config in test_suite.to_configs_iter() {
                 // The config doesn't make sense: skip
-                if let Err(_) = config.verify_bounds(*size_fasta) {
+                if let Err(_) = config.verify_bounds(*size_seq) {
                     // println!("{}", &err);
                     continue;
                 }
                 for _ in 0..test_suite.n_test {
-                    write_random_fasta(*size_fasta)?;
+                    write_random_fasta(*size_seq)?;
                     let ctiming = run_command(CPP_BINARY_PATH, &config);
                     let rtiming = run_command(RUST_BINARY_PATH, &config);
 
@@ -264,7 +264,7 @@ fn main() -> Result<()> {
                         (Ok(ctiming), Ok(rtiming)) => {
                             if let Some(ref mut writer) = writer {
                                 writer.write_record(&[
-                                    size_fasta.to_string(),
+                                    size_seq.to_string(),
                                     config.min_len.to_string(),
                                     config.max_gap.to_string(),
                                     config.mismatches.to_string(),
@@ -300,7 +300,7 @@ fn main() -> Result<()> {
             if runner.verbose {
                 println!(
                     "Results for {} random tests of size {}.",
-                    test_suite.n_test, size_fasta
+                    test_suite.n_test, size_seq
                 );
                 println!("cpp  average: {:.4}", average(&ctimings));
                 println!("rust average: {:.4}", average(&rtimings));
