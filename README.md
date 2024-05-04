@@ -50,7 +50,7 @@ TODO
 - `cargo test` for unit tests.
 - [Justfile](https://github.com/casey/just) for individual tests against sequences. Some use the Linux profiler [perf](https://en.wikipedia.org/wiki/Perf_(Linux)).
 - `bench.rs` benches against a single file. To use together with `just bench` after modifying the parameters in `bench.rs`.
-- `logs.rs` benches against the cpp binary. You will need a [IUPACpal](https://github.com/steven31415/IUPACpal) binary (that will be searched in the bench folder, but can be changed in `logs.rs` and `test.py`). 
+- `logs.rs` benches against the cpp binary. You will need a [IUPACpal](https://github.com/steven31415/IUPACpal) binary (and they only support Linux). The binary is expected to be in the bench folder, but that can be changed in `logs.rs` and `validate.py`. 
 - For instance, create the heatmaps with `just printlogs`. You can also modify the `steps` in which the binaries are compared. A heatmap will be created per `size_fasta`. **NOTE**: There is a `requirements.txt` that needs to be previously installed, with libraries like plotly to be able to print the heatmaps.
 
 ## Links

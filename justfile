@@ -58,25 +58,30 @@ ptestrand:
   sudo perf record -g target/release-with-debug/iupacpal -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
   sudo perf report
 
+BENCH_RUN := "cargo run --quiet --manifest-path 'bench/Cargo.toml' --release"
+
+# write results.csv
+compare:
+  cargo build --quiet --release 
+  {{ BENCH_RUN }} --bin logs -- --write
+
 # test that the results of the rust / cpp binaries are the same
-pytest-correct:
-  python3 bench/test.py --size 1_000 --ntests 20
-  python3 bench/test.py --size 5_000 --ntests 10
-  python3 bench/test.py --size 20_000 --ntests 5
+compare-correct:
+  cargo build --quiet --release
+  {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 1000 20
+  {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 5000 10
+  {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 20000 5
 
-# test the performance in both binaries
-pytest-performance:
-  python3 bench/test.py --size 1_000_000 --ntests 1
-
-logs:
-  cargo build --release
-  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
+# test how the results of the rust / cpp binaries perform
+compare-performance:
+  cargo build --quiet --release
+  {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 1000000 1
 
 printlogs:
   cargo build --release
-  cargo run --manifest-path "bench/Cargo.toml" --release --bin logs
+  {{ BENCH_RUN }} --bin logs -- --write
   python3 bench/heatmaps.py
 
 bench:
   cargo build --release
-  cargo run --manifest-path "bench/Cargo.toml" --release --bin bench
+  {{ BENCH_RUN }} --bin bench

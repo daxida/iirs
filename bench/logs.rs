@@ -1,4 +1,5 @@
 extern crate anyhow;
+extern crate clap;
 extern crate csv;
 extern crate itertools;
 extern crate iupacpal;
@@ -9,6 +10,7 @@ mod helper;
 use helper::run_command;
 
 use anyhow::{anyhow, Result};
+use clap::Parser;
 use csv::WriterBuilder;
 use itertools::iproduct;
 use iupacpal::config::Config;
@@ -19,7 +21,7 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 const CPP_BINARY_PATH: &str = "bench/IUPACpal";
 const RUST_BINARY_PATH: &str = "target/release/iupacpal";
@@ -33,6 +35,22 @@ const SYMBOLS: [char; 17] = [
     'a', 'c', 'g', 't', 'u', 'r', 'y', 's', 'w', 'k', 'm', 'b', 'd', 'h', 'v', '*', '-',
 ];
 // const SYMBOLS: [char; 5] = ['a', 'c', 'g', 't', 'n'];
+
+#[derive(Parser, Debug)]
+pub struct BenchConfig {
+    /// Print more information about timings.
+    #[arg(long, default_value_t = false)]
+    pub verbose: bool,
+
+    /// Whether to write the results in a csv or not.
+    #[arg(long, default_value_t = false)]
+    pub write: bool,
+
+    /// Start a random bench.
+    /// The first arg is the size_fasta, then the number of tests.
+    #[clap(long, num_args = 2)]
+    pub random_bench: Vec<i32>,
+}
 
 fn generate_random_fasta(size_fasta: usize) -> String {
     let mut rng = rand::thread_rng();
@@ -57,7 +75,7 @@ fn normalize_output(raw_output: &str) -> Vec<&str> {
 }
 
 #[allow(dead_code)]
-fn test_equality() -> Result<()> {
+fn test_equality(bench_config: &BenchConfig) -> Result<()> {
     let expected = fs::read_to_string(CPP_OUTPUT_PATH).unwrap();
     let received = fs::read_to_string(RUST_OUTPUT_PATH).unwrap();
 
@@ -86,20 +104,23 @@ fn test_equality() -> Result<()> {
         }
     }
 
-    // println!(
-    //     "{}OK{}: Compared {} Palindromes",
-    //     GREEN,
-    //     RESET,
-    //     expected_lines.len() - 1
-    // );
+    if bench_config.verbose {
+        println!(
+            "{}OK{}: Compared {} Palindromes",
+            GREEN,
+            RESET,
+            expected.split("\n\n").collect::<Vec<_>>().len() - 1
+        );
+    }
 
     Ok(())
 }
 
-// fn average(timings: &[f64]) -> f64 {
-//     let total: f64 = timings.iter().sum();
-//     total / timings.len() as f64
-// }
+fn average(timings: &[Duration]) -> f64 {
+    let total_millis: u128 = timings.iter().map(|&d| d.as_millis()).sum();
+    let total_seconds = total_millis as f64 / 1000.0;
+    total_seconds / timings.len() as f64
+}
 
 fn generate_configs(steps: &[Vec<usize>]) -> impl Iterator<Item = Config> + '_ {
     iproduct!(&steps[1], &steps[2], &steps[3]).map(move |(&min_len, &max_gap, &mismatches)| {
@@ -119,43 +140,73 @@ fn generate_configs(steps: &[Vec<usize>]) -> impl Iterator<Item = Config> + '_ {
 fn main() -> Result<()> {
     let start = Instant::now();
 
-    let steps: Vec<Vec<usize>> = vec![
-        // size_fasta
-        vec![1000],
-        // min_len
-        vec![2, 4, 6, 8, 10, 12, 14, 16],
-        // max_gap
-        vec![0, 1, 2, 3, 4, 5],
-        // mismatches
-        vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
-    ];
-    let n_tests = 1;
-    // let steps: Vec<Vec<usize>> = vec![
-    //     // size_fasta
-    //     vec![1000, 10000, 100000],
-    //     // min_len
-    //     vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
-    //     // max_gap
-    //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
-    //     // mismatches
-    //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
-    // ];
+    let bench_config = BenchConfig::parse();
 
-    let mut writer = WriterBuilder::new().from_writer(File::create("bench/results.csv")?);
+    let (n_tests, steps) = if !bench_config.random_bench.is_empty() {
+        // Random test
+        let size_fasta = bench_config.random_bench[0];
+        let n_tests = bench_config.random_bench[1];
+        let steps: Vec<Vec<usize>> = vec![
+            // size_fasta
+            vec![size_fasta as usize],
+            // min_len
+            vec![10],
+            // max_gap
+            vec![100],
+            // mismatches
+            vec![2],
+        ];
+        (n_tests, steps)
+    } else {
+        // Manual test
+        let n_tests = 1;
+        let steps: Vec<Vec<usize>> = vec![
+            // size_fasta
+            vec![1000],
+            // min_len
+            vec![2, 4, 6, 8, 10, 12, 14, 16],
+            // max_gap
+            vec![0, 1, 2, 3, 4, 5],
+            // mismatches
+            vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
+        ];
+        // let steps: Vec<Vec<usize>> = vec![
+        //     // size_fasta
+        //     vec![1000, 10000, 100000],
+        //     // min_len
+        //     vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        //     // max_gap
+        //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        //     // mismatches
+        //     vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20],
+        // ];
+        (n_tests, steps)
+    };
 
-    writer.write_record([
-        "size_fasta",
-        "min_len",
-        "max_gap",
-        "mismatches",
-        "cpp_timing",
-        "rust_timing",
-    ])?;
+    let mut writer = if bench_config.write {
+        Some(WriterBuilder::new().from_writer(File::create("bench/results.csv")?))
+    } else {
+        None
+    };
+    if let Some(ref mut writer) = writer {
+        writer.write_record([
+            "size_fasta",
+            "min_len",
+            "max_gap",
+            "mismatches",
+            "cpp_timing",
+            "rust_timing",
+        ])?;
+    }
 
     let parallel = false;
 
     if parallel {
-        let writer = Arc::new(Mutex::new(writer));
+        let Some(writer) = writer else {
+            // Can't use parallel mode to test for validity (race conditions)
+            panic!("Parallel mode requires write mode to be true!")
+        };
+        let writer_arc = Arc::new(Mutex::new(writer));
 
         for &size_fasta in &steps[0] {
             write_random_fasta(size_fasta as usize)?;
@@ -168,8 +219,7 @@ fn main() -> Result<()> {
                     let rtiming = run_command(RUST_BINARY_PATH, &config);
 
                     if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
-                        let mut writer = writer.lock().unwrap();
-
+                        let mut writer = writer_arc.lock().unwrap();
                         writer
                             .write_record(&[
                                 size_fasta.to_string(),
@@ -185,9 +235,13 @@ fn main() -> Result<()> {
         }
     } else {
         for &size_fasta in &steps[0] {
+            let mut ctimings: Vec<Duration> = Vec::new();
+            let mut rtimings: Vec<Duration> = Vec::new();
+
             for config in generate_configs(&steps) {
                 // The config doesn't make sense: skip
-                if config.verify_bounds(size_fasta).is_err() {
+                if let Err(_) = config.verify_bounds(size_fasta) {
+                    // println!("{}", &err);
                     continue;
                 }
                 for _ in 0..n_tests {
@@ -197,16 +251,21 @@ fn main() -> Result<()> {
 
                     match (ctiming, rtiming) {
                         (Ok(ctiming), Ok(rtiming)) => {
-                            writer.write_record(&[
-                                size_fasta.to_string(),
-                                config.min_len.to_string(),
-                                config.max_gap.to_string(),
-                                config.mismatches.to_string(),
-                                ctiming.as_secs_f64().to_string(),
-                                rtiming.as_secs_f64().to_string(),
-                            ])?;
+                            if let Some(ref mut writer) = writer {
+                                writer.write_record(&[
+                                    size_fasta.to_string(),
+                                    config.min_len.to_string(),
+                                    config.max_gap.to_string(),
+                                    config.mismatches.to_string(),
+                                    ctiming.as_secs_f64().to_string(),
+                                    rtiming.as_secs_f64().to_string(),
+                                ])?;
+                            }
 
-                            if let Err(msg) = test_equality() {
+                            ctimings.push(ctiming);
+                            rtimings.push(rtiming);
+
+                            if let Err(msg) = test_equality(&bench_config) {
                                 println!("{:?}", &config);
                                 return Err(msg);
                             }
@@ -227,7 +286,14 @@ fn main() -> Result<()> {
                 }
             }
 
-            println!("OK: tests with size {}.", size_fasta);
+            if bench_config.verbose {
+                println!(
+                    "Results for {} random tests of size {}.",
+                    n_tests, size_fasta
+                );
+                println!("cpp  average: {:.4}", average(&ctimings));
+                println!("rust average: {:.4}", average(&rtimings));
+            }
         }
     }
 
