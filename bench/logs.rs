@@ -4,7 +4,6 @@ extern crate csv;
 extern crate itertools;
 extern crate iupacpal;
 extern crate rand;
-extern crate rayon;
 
 mod helper;
 use helper::run_command;
@@ -15,12 +14,10 @@ use csv::WriterBuilder;
 use itertools::iproduct;
 use iupacpal::config::Config;
 use rand::prelude::SliceRandom;
-use rayon::prelude::*;
 
 use std::fs;
 use std::fs::File;
 use std::io::Write;
-use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 const CPP_BINARY_PATH: &str = "bench/IUPACpal";
@@ -134,12 +131,10 @@ fn write_random_fasta(size_seq: usize) -> Result<()> {
     Ok(())
 }
 
-#[allow(dead_code)]
 fn normalize_output(raw_output: &str) -> Vec<&str> {
     raw_output.trim().lines().collect()
 }
 
-#[allow(dead_code)]
 fn test_equality(runner: &Runner) -> Result<()> {
     let expected = fs::read_to_string(CPP_OUTPUT_PATH).unwrap();
     let received = fs::read_to_string(RUST_OUTPUT_PATH).unwrap();
@@ -209,102 +204,65 @@ fn main() -> Result<()> {
         ])?;
     }
 
-    let parallel = false;
+    for size_seq in &test_suite.size_seq {
+        let mut ctimings: Vec<Duration> = Vec::new();
+        let mut rtimings: Vec<Duration> = Vec::new();
 
-    if parallel {
-        let Some(writer) = writer else {
-            // Can't use parallel mode to test for validity (race conditions)
-            panic!("Parallel mode requires write mode to be true!")
-        };
-        let writer_arc = Arc::new(Mutex::new(writer));
+        for config in test_suite.to_configs_iter() {
+            // The config doesn't make sense: skip
+            if let Err(_) = config.verify_bounds(*size_seq) {
+                // println!("{}", &err);
+                continue;
+            }
+            for _ in 0..test_suite.n_test {
+                write_random_fasta(*size_seq)?;
+                let ctiming = run_command(CPP_BINARY_PATH, &config);
+                let rtiming = run_command(RUST_BINARY_PATH, &config);
 
-        for size_seq in &test_suite.size_seq {
-            write_random_fasta(*size_seq)?;
-
-            test_suite
-                .to_configs_iter()
-                .collect::<Vec<_>>()
-                .into_par_iter()
-                .for_each(|config| {
-                    let ctiming = run_command(CPP_BINARY_PATH, &config);
-                    let rtiming = run_command(RUST_BINARY_PATH, &config);
-
-                    if let (Ok(ctiming), Ok(rtiming)) = (ctiming, rtiming) {
-                        let mut writer = writer_arc.lock().unwrap();
-                        writer
-                            .write_record(&[
+                match (ctiming, rtiming) {
+                    (Ok(ctiming), Ok(rtiming)) => {
+                        if let Some(ref mut writer) = writer {
+                            writer.write_record(&[
                                 size_seq.to_string(),
                                 config.min_len.to_string(),
                                 config.max_gap.to_string(),
                                 config.mismatches.to_string(),
                                 ctiming.as_secs_f64().to_string(),
                                 rtiming.as_secs_f64().to_string(),
-                            ])
-                            .unwrap();
+                            ])?;
+                        }
+
+                        ctimings.push(ctiming);
+                        rtimings.push(rtiming);
+
+                        if let Err(msg) = test_equality(&runner) {
+                            println!("{:?}", &config);
+                            return Err(msg);
+                        }
                     }
-                });
+                    (Err(c_err), Ok(_)) => {
+                        println!("Cpp failed but rs succeeded: {:?}", c_err);
+                        return Err(c_err);
+                    }
+                    (Ok(_), Err(r_err)) => {
+                        println!("Rs failed but cpp succeeded: {:?}", r_err);
+                        return Err(r_err);
+                    }
+                    (Err(_), Err(_)) => {
+                        // Both commands failed (wrong inputs)
+                        panic!()
+                    }
+                }
+            }
         }
-    } else {
-        for size_seq in &test_suite.size_seq {
-            let mut ctimings: Vec<Duration> = Vec::new();
-            let mut rtimings: Vec<Duration> = Vec::new();
 
-            for config in test_suite.to_configs_iter() {
-                // The config doesn't make sense: skip
-                if let Err(_) = config.verify_bounds(*size_seq) {
-                    // println!("{}", &err);
-                    continue;
-                }
-                for _ in 0..test_suite.n_test {
-                    write_random_fasta(*size_seq)?;
-                    let ctiming = run_command(CPP_BINARY_PATH, &config);
-                    let rtiming = run_command(RUST_BINARY_PATH, &config);
-
-                    match (ctiming, rtiming) {
-                        (Ok(ctiming), Ok(rtiming)) => {
-                            if let Some(ref mut writer) = writer {
-                                writer.write_record(&[
-                                    size_seq.to_string(),
-                                    config.min_len.to_string(),
-                                    config.max_gap.to_string(),
-                                    config.mismatches.to_string(),
-                                    ctiming.as_secs_f64().to_string(),
-                                    rtiming.as_secs_f64().to_string(),
-                                ])?;
-                            }
-
-                            ctimings.push(ctiming);
-                            rtimings.push(rtiming);
-
-                            if let Err(msg) = test_equality(&runner) {
-                                println!("{:?}", &config);
-                                return Err(msg);
-                            }
-                        }
-                        (Err(c_err), Ok(_)) => {
-                            println!("Cpp failed but rs succeeded: {:?}", c_err);
-                            return Err(c_err);
-                        }
-                        (Ok(_), Err(r_err)) => {
-                            println!("Rs failed but cpp succeeded: {:?}", r_err);
-                            return Err(r_err);
-                        }
-                        (Err(_), Err(_)) => {
-                            // Both commands failed (wrong inputs)
-                            panic!()
-                        }
-                    }
-                }
-            }
-
-            if runner.verbose {
-                println!(
-                    "Results for {} random tests of size {}.",
-                    test_suite.n_test, size_seq
-                );
-                println!("cpp  average: {:.4}", average(&ctimings));
-                println!("rust average: {:.4}", average(&rtimings));
-            }
+        if runner.verbose {
+            println!(
+                "Results for {} random tests of size {}.",
+                test_suite.n_test, size_seq
+            );
+            println!("cpp  average: {:.4}", average(&ctimings));
+            println!("rust average: {:.4}", average(&rtimings));
         }
     }
 
