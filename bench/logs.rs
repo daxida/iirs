@@ -45,6 +45,26 @@ struct TestSuite {
 }
 
 impl TestSuite {
+    fn manual() -> Self {
+        TestSuite {
+            n_test: 1,
+            size_fasta: vec![1000],
+            min_len: vec![2, 4, 6, 8, 10, 12, 14, 16],
+            max_gap: vec![0, 1, 2, 3, 4, 5],
+            mismatches: vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
+        }
+    }
+
+    fn random(size_fasta: usize, n_test: usize) -> Self {
+        TestSuite {
+            n_test,
+            size_fasta: vec![size_fasta],
+            min_len: vec![10],
+            max_gap: vec![100],
+            mismatches: vec![2],
+        }
+    }
+
     // Return a cartesian product of Configs.
     fn to_configs_iter(&self) -> impl Iterator<Item = Config> + '_ {
         let TestSuite {
@@ -90,30 +110,9 @@ pub struct Runner {
 
 impl Runner {
     fn get_test_suite(&self) -> TestSuite {
-        if self.random_bench.len() == 2 {
-            self.random_test_suite()
-        } else {
-            self.manual_test_suite()
-        }
-    }
-
-    fn manual_test_suite(&self) -> TestSuite {
-        TestSuite {
-            n_test: 1,
-            size_fasta: vec![1000],
-            min_len: vec![2, 4, 6, 8, 10, 12, 14, 16],
-            max_gap: vec![0, 1, 2, 3, 4, 5],
-            mismatches: vec![0, 1, 2, 3, 4, 5, 6, 7, 8],
-        }
-    }
-
-    fn random_test_suite(&self) -> TestSuite {
-        TestSuite {
-            n_test: self.random_bench[1],
-            size_fasta: vec![self.random_bench[0]],
-            min_len: vec![10],
-            max_gap: vec![100],
-            mismatches: vec![2],
+        match self.random_bench.as_slice() {
+            [size_fasta, n_test] => TestSuite::random(*size_fasta, *n_test),
+            _ => TestSuite::manual(),
         }
     }
 }
