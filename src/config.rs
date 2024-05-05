@@ -109,7 +109,6 @@ impl Default for SearchParams {
 }
 
 impl Config {
-    #[allow(dead_code)] // ::new is actually used for testing...
     #[allow(clippy::too_many_arguments)]
     pub fn new(
         input_file: &str,
@@ -139,27 +138,7 @@ impl Config {
         Config::parse()
     }
 
-    /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
-    ///
-    /// Returns an error if there are no sequences.
-    ///
-    /// Mainly used for convenience in unit tests.
-    #[allow(dead_code)]
-    pub fn extract_first_string(path: &str) -> Result<String> {
-        utils::check_file_exist(path)?;
-        let mut reader = Reader::from_path(path)?;
-        let record = reader
-            .next()
-            .expect("No sequences found")
-            .expect("Error reading record");
-
-        Ok(std::str::from_utf8(record.seq())
-            .unwrap()
-            .to_lowercase()
-            .replace('\n', ""))
-    }
-
-    /// Attempts to extract the sequence from the (fasta) input file.
+    /// Attempts to extract the sequence with name 'seq_name' from the (fasta) input file.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
     pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
@@ -179,10 +158,10 @@ impl Config {
         }
 
         Err(anyhow!(
-            "Sequence {} not found. Found sequences in {} are:\n{}",
+            "Sequence '{}' not found.\nFound sequences in '{}' are:\n - {}",
             &self.seq_name,
             &self.input_file,
-            found_seqs.join("\n")
+            found_seqs.join("\n - ")
         ))
     }
 
