@@ -12,7 +12,7 @@ use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
 use itertools::iproduct;
-use iupacpal::config::{Config, Parameters};
+use iupacpal::config::{Config, SearchParams};
 use rand::prelude::SliceRandom;
 
 use std::fs;
@@ -79,7 +79,7 @@ impl TestSuite {
         .map(move |(min_len, max_gap, mismatches)| Config {
             input_file: "rand.fasta".to_string(),
             seq_name: "seq0".to_string(),
-            parameters: Parameters {
+            params: SearchParams {
                 min_len,
                 max_len: 100,
                 max_gap,
@@ -212,7 +212,7 @@ fn main() -> Result<()> {
 
         for config in test_suite.to_configs_iter() {
             // The config doesn't make sense: skip
-            if let Err(_) = config.parameters.verify_bounds(*size_seq) {
+            if let Err(_) = config.params.verify_bounds(*size_seq) {
                 // println!("{}", &err);
                 continue;
             }
@@ -226,9 +226,9 @@ fn main() -> Result<()> {
                         if let Some(ref mut writer) = writer {
                             writer.write_record(&[
                                 size_seq.to_string(),
-                                config.parameters.min_len.to_string(),
-                                config.parameters.max_gap.to_string(),
-                                config.parameters.mismatches.to_string(),
+                                config.params.min_len.to_string(),
+                                config.params.max_gap.to_string(),
+                                config.params.mismatches.to_string(),
                                 ctiming.as_secs_f64().to_string(),
                                 rtiming.as_secs_f64().to_string(),
                             ])?;

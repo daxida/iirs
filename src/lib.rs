@@ -8,7 +8,7 @@ mod rmq;
 mod utils;
 
 use anyhow::Result;
-use config::{Config, Parameters};
+use config::{Config, SearchParams};
 
 /// Find palindromes in a sequence based on the provided configuration.
 ///
@@ -17,10 +17,10 @@ use config::{Config, Parameters};
 /// # Examples
 ///
 /// ```rust
-/// use iupacpal::{config::Parameters, find_palindromes};
+/// use iupacpal::{config::SearchParams, find_palindromes};
 ///
 /// let seq = "acbbgt".as_bytes();
-/// let params = Parameters::new(3, 6, 2, 0);
+/// let params = SearchParams::new(3, 6, 2, 0);
 /// assert!(params.verify_bounds(seq.len()).is_ok());
 /// let palindromes = find_palindromes(&params, &seq);
 /// assert_eq!(palindromes.unwrap(), vec![(0, 5, 0)]);
@@ -36,7 +36,7 @@ use config::{Config, Parameters};
 /// assert_eq!(palindromes.unwrap(), vec![(0, 5, 0)]);
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+pub fn find_palindromes(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     // Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
     // This was already done through the CLI, but we need to do it again for the standalone version.
     let sanitized_seq = utils::sanitize_sequence(seq)?;
@@ -94,7 +94,7 @@ pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, u
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
-/// let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
+/// let palindromes = find_palindromes(&config.params, &seq).unwrap();
 /// let out_str = stringify_palindromes(&config, &palindromes, &seq).unwrap();
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\

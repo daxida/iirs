@@ -6,7 +6,7 @@ use seq_io::fasta::{Reader, Record};
 use crate::utils;
 
 #[derive(Parser, Debug)]
-pub struct Parameters {
+pub struct SearchParams {
     /// Minimum length.
     #[arg(short, default_value_t = 10)]
     pub min_len: usize,
@@ -35,7 +35,7 @@ pub struct Config {
     pub seq_name: String,
 
     #[clap(flatten)]
-    pub parameters: Parameters,
+    pub params: SearchParams,
 
     /// Output filename.
     #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
@@ -46,7 +46,7 @@ pub struct Config {
     pub output_format: String,
 }
 
-impl Parameters {
+impl SearchParams {
     pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
         Self {
             min_len,
@@ -56,6 +56,7 @@ impl Parameters {
         }
     }
 
+    /// Verify that the given search parameters make sense (f.e. min_len < max_len).
     pub fn verify_bounds(&self, n: usize) -> Result<()> {
         if self.min_len < 2 {
             return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
@@ -100,9 +101,10 @@ impl Parameters {
     }
 }
 
-impl Default for Parameters {
+impl Default for SearchParams {
     fn default() -> Self {
-        Parameters::new(10, 100, 100, 0)
+        // Same as the clap defaults.
+        SearchParams::new(10, 100, 100, 0)
     }
 }
 
@@ -122,7 +124,7 @@ impl Config {
         Self {
             input_file: input_file.to_string(),
             seq_name: seq_name.to_string(),
-            parameters: Parameters {
+            params: SearchParams {
                 min_len,
                 max_len,
                 max_gap,
@@ -185,7 +187,7 @@ impl Config {
     }
 
     pub fn verify(&self, n: usize) -> Result<()> {
-        if let Err(msg) = Parameters::verify_bounds(&self.parameters, n) {
+        if let Err(msg) = SearchParams::verify_bounds(&self.params, n) {
             let _ = Config::command().print_help();
             println!();
             return Err(msg);
@@ -200,10 +202,10 @@ impl Config {
 
         out.push_str(&format!("input_file:  {}\n", &self.input_file));
         out.push_str(&format!("seq_name:    {}\n", &self.seq_name));
-        out.push_str(&format!("min_len:     {}\n", &self.parameters.min_len));
-        out.push_str(&format!("max_len:     {}\n", &self.parameters.max_len));
-        out.push_str(&format!("max_gap:     {}\n", &self.parameters.max_gap));
-        out.push_str(&format!("mismatches:  {}\n", &self.parameters.mismatches));
+        out.push_str(&format!("min_len:     {}\n", &self.params.min_len));
+        out.push_str(&format!("max_len:     {}\n", &self.params.max_len));
+        out.push_str(&format!("max_gap:     {}\n", &self.params.max_gap));
+        out.push_str(&format!("mismatches:  {}\n", &self.params.mismatches));
         out.push_str(&format!("output_file: {}\n", &self.output_file));
         out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
 
@@ -216,7 +218,7 @@ impl Default for Config {
         Config {
             input_file: String::new(),
             seq_name: String::new(),
-            parameters: Parameters::default(),
+            params: SearchParams::default(),
             output_file: String::new(),
             // To not crash on stringify palindromes
             output_format: String::from("classic"),
@@ -230,7 +232,7 @@ mod tests {
 
     #[test]
     fn test_invalid_min_len_less_than_two() {
-        let config = Parameters::new(0, 100, 0, 0);
-        assert!(config.verify_bounds(10).is_err());
+        let params = SearchParams::new(0, 100, 0, 0);
+        assert!(params.verify_bounds(10).is_err());
     }
 }

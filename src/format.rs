@@ -23,10 +23,10 @@ pub fn out_palindrome_display_header(config: &Config, n: usize) -> String {
         n,
         1,
         n,
-        config.parameters.min_len,
-        config.parameters.max_len,
-        config.parameters.max_gap,
-        config.parameters.mismatches,
+        config.params.min_len,
+        config.params.max_len,
+        config.params.max_gap,
+        config.params.mismatches,
     )
 }
 
@@ -175,16 +175,16 @@ pub fn fmt_custom(palindromes: &Vec<(usize, usize, usize)>, seq: &[u8]) -> Strin
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::Parameters;
+    use crate::config::SearchParams;
     use crate::{constants::build_complement_array, find_palindromes, matrix};
 
     #[test]
     fn test_format_classic() {
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let parameters = Parameters::new(10, 100, 10, 1);
-        parameters.verify_bounds(seq.len()).unwrap();
-        let palindromes = find_palindromes(&parameters, &seq).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1);
+        params.verify_bounds(seq.len()).unwrap();
+        let palindromes = find_palindromes(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_classic(&palindromes, &seq, &matrix, &complement);
@@ -250,9 +250,9 @@ mod tests {
     fn test_format_csv() {
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let parameters = Parameters::new(10, 100, 10, 1);
-        parameters.verify_bounds(seq.len()).unwrap();
-        let palindromes = find_palindromes(&parameters, &seq).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1);
+        params.verify_bounds(seq.len()).unwrap();
+        let palindromes = find_palindromes(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_csv(&palindromes, &seq, &matrix, &complement);
@@ -282,9 +282,9 @@ mod tests {
     fn test_format_custom_csv_mini() {
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let parameters = Parameters::new(10, 100, 10, 1);
-        parameters.verify_bounds(seq.len()).unwrap();
-        let palindromes = find_palindromes(&parameters, &seq).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1);
+        params.verify_bounds(seq.len()).unwrap();
+        let palindromes = find_palindromes(&params, &seq).unwrap();
         let received = fmt_custom(&palindromes, &seq);
         let expected = r#"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk

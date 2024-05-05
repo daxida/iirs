@@ -1,5 +1,5 @@
 use crate::{
-    config::Parameters,
+    config::SearchParams,
     matrix::MatchMatrix,
     rmq::{Rmq, Sparse},
 };
@@ -89,6 +89,8 @@ fn real_lce_mismatches(
     mismatch_locs
 }
 
+// TODO: Clear this
+//
 // Finds all inverted repeats (palindromes) with given parameters and adds them to an output set
 //
 // NOTES:
@@ -102,7 +104,7 @@ pub fn add_palindromes(
     s: &[u8],
     inv_sa: &[usize],
     rmq: &Sparse,
-    params: &Parameters,
+    params: &SearchParams,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
     let mut palindromes = Vec::new();

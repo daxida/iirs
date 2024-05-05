@@ -23,7 +23,7 @@ fn main() -> Result<()> {
         "alys" => config::Config {
             input_file: "tests/test_data/alys.fna".to_string(),
             seq_name: "NZ_CP059564.1".to_string(),
-            parameters: config::Parameters {
+            params: config::SearchParams {
                 min_len: 3,
                 max_len: 100,
                 max_gap: 20,
@@ -35,7 +35,7 @@ fn main() -> Result<()> {
         "rand" => config::Config {
             input_file: "tests/test_data/rand10000000.fasta".to_string(),
             seq_name: "seq0".to_string(),
-            parameters: config::Parameters {
+            params: config::SearchParams {
                 min_len: 2,
                 max_len: 100,
                 max_gap: 5,

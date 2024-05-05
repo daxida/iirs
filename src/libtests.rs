@@ -1,4 +1,4 @@
-use super::config::{Config, Parameters};
+use super::config::{Config, SearchParams};
 use super::constants;
 use super::find_palindromes;
 use super::matrix;
@@ -10,7 +10,7 @@ fn correct_truncation_helper(config: &Config) {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.verify(n).unwrap();
-    let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
+    let palindromes = find_palindromes(&config.params, &seq).unwrap();
 
     let complement = constants::build_complement_array();
     let s_n = 2 * n + 2;
@@ -30,11 +30,9 @@ fn correct_truncation_helper(config: &Config) {
 
 #[test]
 fn test_correct_truncation_one() {
-    let output_file = String::from("tests/test_data/test1.fasta");
-    let parameters = Parameters::new(8, 100, 10, 6);
     let config = Config {
-        output_file,
-        parameters,
+        params: SearchParams::new(8, 100, 10, 6),
+        output_file: String::from("tests/test_data/test1.fasta"),
         ..Default::default()
     };
     correct_truncation_helper(&config)
@@ -42,11 +40,9 @@ fn test_correct_truncation_one() {
 
 #[test]
 fn test_correct_truncation_two() {
-    let output_file = String::from("tests/test_data/truncation_edge_case.fasta");
-    let parameters = Parameters::new(8, 100, 10, 6);
     let config = Config {
-        output_file,
-        parameters,
+        params: SearchParams::new(8, 100, 10, 6),
+        output_file: String::from("tests/test_data/truncation_edge_case.fasta"),
         ..Default::default()
     };
     correct_truncation_helper(&config)
@@ -54,11 +50,9 @@ fn test_correct_truncation_two() {
 
 #[test]
 fn test_correct_truncation_three() {
-    let output_file = String::from("tests/test_data/truncation_edge_case.fasta");
-    let parameters = Parameters::new(6, 100, 0, 5);
     let config = Config {
-        output_file,
-        parameters,
+        params: SearchParams::new(6, 100, 0, 5),
+        output_file: String::from("tests/test_data/truncation_edge_case.fasta"),
         ..Default::default()
     };
     correct_truncation_helper(&config)
