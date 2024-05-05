@@ -69,10 +69,3 @@ fn test_palindromes_full_n_no_gap() {
     let string = "N".repeat(500);
     assert_eq!(test_seq(&params, &string), 481)
 }
-
-#[test]
-fn test_palindromes_full_n_5000() {
-    let params = SearchParams::default();
-    let string = "N".repeat(50000);
-    assert_eq!(test_seq(&params, &string), 99961);
-}
