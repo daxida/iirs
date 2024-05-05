@@ -2,7 +2,7 @@ use crate::constants::IUPAC_SYMBOLS;
 use anyhow::{anyhow, Result};
 use std::fs;
 
-/// Just some clearer error handling (probably useless)
+/// Just some clearer error handling.
 pub fn check_file_exist(path: &str) -> Result<()> {
     let metadata = fs::metadata(path)
         .map_err(|_| anyhow!("'{}' does not exist or cannot access the path.", path))?;
@@ -14,7 +14,7 @@ pub fn check_file_exist(path: &str) -> Result<()> {
     }
 }
 
-/// Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
+/// Remove newlines, cast to lowercase and check that all the character are in IUPAC.
 pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
     let mut sanitized_seq = Vec::new();
 
@@ -33,6 +33,7 @@ pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
     Ok(sanitized_seq)
 }
 
+/// Verify that the given format does actually exist.
 pub fn verify_format(output_format: &str) -> Result<()> {
     const EXISTING_FORMATS: [&str; 3] = ["classic", "csv", "custom"];
 

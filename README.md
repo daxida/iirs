@@ -12,7 +12,7 @@ TODO - but mainly it works much like the original with an extra flag for the typ
 
 There are many examples in the justfile.
 
-This also works as a library: The `find_palindromes` function is exported (think of crates.io).
+This also works as a library: The `find_irs` function is exported (think of crates.io).
 
 ## How to install
 

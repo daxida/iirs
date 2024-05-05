@@ -3,15 +3,15 @@ use seq_io::fasta::{Reader, Record};
 
 use super::config::{Config, SearchParams};
 use super::constants;
-use super::find_palindromes;
+use super::find_irs;
 use super::matrix;
-use super::stringify_palindromes;
+use super::stringify_irs;
 use super::utils;
 
 /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
 ///
 /// Returns an error if there are no sequences.
-fn extract_first_string(config: &Config) -> Result<String> {
+fn extract_first_sequence(config: &Config) -> Result<String> {
     utils::check_file_exist(&config.output_file)?;
     let mut reader = Reader::from_path(&config.output_file)?;
     let record = reader
@@ -27,11 +27,11 @@ fn extract_first_string(config: &Config) -> Result<String> {
 
 // Test for an edge case with truncation (needs complement and matrix).
 fn correct_truncation_helper(config: &Config) {
-    let string = extract_first_string(config).unwrap();
+    let string = extract_first_sequence(config).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.verify(n).unwrap();
-    let palindromes = find_palindromes(&config.params, &seq).unwrap();
+    let irs = find_irs(&config.params, &seq).unwrap();
 
     let complement = constants::build_complement_array();
     let s_n = 2 * n + 2;
@@ -44,7 +44,7 @@ fn correct_truncation_helper(config: &Config) {
     s[2 * n + 1] = b'#';
     let matrix = matrix::MatchMatrix::new();
 
-    for (left, right, _) in palindromes {
+    for (left, right, _) in irs {
         assert!(matrix.match_u8(s[left], complement[s[right] as usize]),);
     }
 }
@@ -85,81 +85,81 @@ fn test_invalid_output_format_stringify() {
         output_format: String::from("inexistent"),
         ..Default::default()
     };
-    assert!(stringify_palindromes(&config, &Vec::new(), &Vec::new()).is_err());
+    assert!(stringify_irs(&config, &Vec::new(), &Vec::new()).is_err());
 }
 
 // Tests from local files
 //
 // Test generator
-fn find_palindromes_from_pathconfig(config: &Config) -> Vec<(usize, usize, usize)> {
-    let string = extract_first_string(config).unwrap();
+fn find_irs_from_first_sequence(config: &Config) -> Vec<(usize, usize, usize)> {
+    let string = extract_first_sequence(config).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     config.verify(seq.len()).unwrap();
-    find_palindromes(&config.params, &seq).unwrap()
+    find_irs(&config.params, &seq).unwrap()
 }
 
 #[test]
-fn test_palindromes_edge_gap() {
-    // The original IUPACpal won't find this palindrome
+fn test_irs_edge_gap() {
+    // The original IUPACpal won't find this IR
     let config = Config {
         params: SearchParams::new(14, 100, 3, 0),
         output_file: String::from("tests/test_data/edge_gap.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 1)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 1)
 }
 
 #[test]
-fn test_palindromes_alys() {
+fn test_irs_alys() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0),
 
         output_file: String::from("tests/test_data/alys.fna"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 739728)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 739728)
 }
 
 #[test]
-fn test_palindromes_8100_n() {
+fn test_irs_8100_n() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0),
 
         output_file: String::from("tests/test_data/8100N.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 16189)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189)
 }
 
 #[test]
-fn test_palindromes_8100_n_with_mismatches() {
+fn test_irs_8100_n_with_mismatches() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 2),
 
         output_file: String::from("tests/test_data/8100N.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 16189)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189)
 }
 
 #[test]
-fn test_palindromes_d00596() {
+fn test_irs_d00596() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0),
         output_file: String::from("tests/test_data/d00596.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 5251)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 5251)
 }
 
 #[test]
-fn test_palindromes_d00596_with_mismatches() {
+fn test_irs_d00596_with_mismatches() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 2),
         output_file: String::from("tests/test_data/d00596.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 31555)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 31555)
 }
 
 #[test]
@@ -169,7 +169,7 @@ fn test_rand_1000() {
         output_file: String::from("tests/test_data/rand1000.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 254)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 254)
 }
 
 #[test]
@@ -179,7 +179,7 @@ fn test_rand_10000() {
         output_file: String::from("tests/test_data/rand10000.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 2484)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 2484)
 }
 
 #[test]
@@ -189,7 +189,7 @@ fn test_rand_100000() {
         output_file: String::from("tests/test_data/rand100000.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 25440)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 25440)
 }
 
 #[test]
@@ -199,7 +199,7 @@ fn test_rand_1000000() {
         output_file: String::from("tests/test_data/rand1000000.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 253566)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 253566)
 }
 
 #[test]
@@ -209,5 +209,5 @@ fn test_test_1() {
         output_file: String::from("tests/test_data/test1.fasta"),
         ..Default::default()
     };
-    assert_eq!(find_palindromes_from_pathconfig(&config).len(), 84)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 84)
 }

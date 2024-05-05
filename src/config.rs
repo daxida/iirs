@@ -183,7 +183,7 @@ impl Default for Config {
             seq_name: String::new(),
             params: SearchParams::default(),
             output_file: String::new(),
-            // To not crash on stringify palindromes
+            // To not crash on stringify
             output_format: String::from("classic"),
         }
     }

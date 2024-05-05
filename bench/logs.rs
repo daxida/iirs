@@ -148,7 +148,7 @@ fn test_equality(runner: &Runner) -> Result<()> {
     let received_size = received_lines.len();
 
     if expected_size != received_size {
-        // Known bug in the cpp implementation where it doesn't detect the only palindrome.
+        // Known bug in the cpp implementation where it doesn't detect the only IR.
         if expected_size == 13 && received_size == 16 {
             return Ok(());
         }
