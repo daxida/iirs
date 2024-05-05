@@ -175,16 +175,16 @@ pub fn fmt_custom(palindromes: &Vec<(usize, usize, usize)>, seq: &[u8]) -> Strin
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::Parameters;
     use crate::{constants::build_complement_array, find_palindromes, matrix};
 
     #[test]
     fn test_format_classic() {
-        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
+        let parameters = Parameters::new(10, 100, 10, 1);
+        parameters.verify_bounds(seq.len()).unwrap();
+        let palindromes = find_palindromes(&parameters, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_classic(&palindromes, &seq, &matrix, &complement);
@@ -248,12 +248,11 @@ mod tests {
 
     #[test]
     fn test_format_csv() {
-        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
+        let parameters = Parameters::new(10, 100, 10, 1);
+        parameters.verify_bounds(seq.len()).unwrap();
+        let palindromes = find_palindromes(&parameters, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_csv(&palindromes, &seq, &matrix, &complement);
@@ -281,12 +280,11 @@ mod tests {
 
     #[test]
     fn test_format_custom_csv_mini() {
-        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
+        let parameters = Parameters::new(10, 100, 10, 1);
+        parameters.verify_bounds(seq.len()).unwrap();
+        let palindromes = find_palindromes(&parameters, &seq).unwrap();
         let received = fmt_custom(&palindromes, &seq);
         let expected = r#"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk

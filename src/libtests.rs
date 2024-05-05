@@ -1,11 +1,12 @@
-use super::config::Config;
+use super::config::{Config, Parameters};
 use super::constants;
 use super::find_palindromes;
 use super::matrix;
+use super::stringify_palindromes;
 
 // Test for an edge case with truncation (needs complement and matrix).
-fn correct_truncation_helper(config: &Config, path: &str) {
-    let string = Config::extract_first_string(String::from(path)).unwrap();
+fn correct_truncation_helper(config: &Config) {
+    let string = Config::extract_first_string(&config.output_file).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.verify(n).unwrap();
@@ -29,21 +30,45 @@ fn correct_truncation_helper(config: &Config, path: &str) {
 
 #[test]
 fn test_correct_truncation_one() {
-    let config = Config::dummy(8, 100, 10, 6);
-    let path = "tests/test_data/test1.fasta";
-    correct_truncation_helper(&config, path)
+    let output_file = String::from("tests/test_data/test1.fasta");
+    let parameters = Parameters::new(8, 100, 10, 6);
+    let config = Config {
+        output_file,
+        parameters,
+        ..Default::default()
+    };
+    correct_truncation_helper(&config)
 }
 
 #[test]
 fn test_correct_truncation_two() {
-    let config = Config::dummy(8, 100, 10, 6);
-    let path = "tests/test_data/truncation_edge_case.fasta";
-    correct_truncation_helper(&config, path)
+    let output_file = String::from("tests/test_data/truncation_edge_case.fasta");
+    let parameters = Parameters::new(8, 100, 10, 6);
+    let config = Config {
+        output_file,
+        parameters,
+        ..Default::default()
+    };
+    correct_truncation_helper(&config)
 }
 
 #[test]
 fn test_correct_truncation_three() {
-    let config = Config::dummy(6, 100, 0, 5);
-    let path = "tests/test_data/truncation_edge_case.fasta";
-    correct_truncation_helper(&config, path)
+    let output_file = String::from("tests/test_data/truncation_edge_case.fasta");
+    let parameters = Parameters::new(6, 100, 0, 5);
+    let config = Config {
+        output_file,
+        parameters,
+        ..Default::default()
+    };
+    correct_truncation_helper(&config)
+}
+
+#[test]
+fn test_invalid_output_format_stringify() {
+    let config = Config {
+        output_format: String::from("inexistent"),
+        ..Default::default()
+    };
+    assert!(stringify_palindromes(&config, &Vec::new(), &Vec::new()).is_err());
 }

@@ -100,6 +100,12 @@ impl Parameters {
     }
 }
 
+impl Default for Parameters {
+    fn default() -> Self {
+        Parameters::new(10, 100, 100, 0)
+    }
+}
+
 impl Config {
     #[allow(dead_code)] // ::new is actually used for testing...
     #[allow(clippy::too_many_arguments)]
@@ -129,28 +135,6 @@ impl Config {
 
     pub fn from_args() -> Self {
         Config::parse()
-    }
-
-    #[allow(dead_code)] // For unit tests
-    pub fn dummy(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
-        Self {
-            input_file: String::from("dummy"),
-            seq_name: String::from("dummy"),
-            parameters: Parameters {
-                min_len,
-                max_len,
-                max_gap,
-                mismatches,
-            },
-            output_file: String::from("dummy"),
-            // initialize to classic to pass early Config::verify
-            output_format: String::from("classic"),
-        }
-    }
-
-    #[allow(dead_code)] // For unit tests
-    pub fn dummy_default() -> Self {
-        Config::dummy(10, 100, 100, 0)
     }
 
     /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
@@ -224,6 +208,19 @@ impl Config {
         out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
 
         out
+    }
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            input_file: String::new(),
+            seq_name: String::new(),
+            parameters: Parameters::default(),
+            output_file: String::new(),
+            // To not crash on stringify palindromes
+            output_format: String::from("classic"),
+        }
     }
 }
 
