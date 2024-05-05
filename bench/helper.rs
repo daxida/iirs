@@ -1,8 +1,5 @@
-extern crate anyhow;
-extern crate iupacpal;
-
 use anyhow::{anyhow, Result};
-use iupacpal::config;
+use iirs::config;
 
 use std::process::Command;
 use std::time::{Duration, Instant};

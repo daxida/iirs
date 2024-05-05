@@ -18,7 +18,7 @@ use config::{Config, SearchParams};
 /// # Examples
 ///
 /// ```rust
-/// use iupacpal::{config::SearchParams, find_irs};
+/// use iirs::{config::SearchParams, find_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let params = SearchParams::new(3, 6, 2, 0);
@@ -95,8 +95,8 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 /// # Examples
 ///
 /// ```rust
-/// use iupacpal::config::Config;
-/// use iupacpal::{find_irs, stringify_irs};
+/// use iirs::config::Config;
+/// use iirs::{find_irs, stringify_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");

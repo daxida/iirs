@@ -38,7 +38,7 @@ pub struct Config {
     pub params: SearchParams,
 
     /// Output filename.
-    #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
+    #[arg(short, default_value_t = String::from("iirs.out"))]
     pub output_file: String,
 
     /// Output format (classic, csv or custom_csv).

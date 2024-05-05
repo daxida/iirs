@@ -1,10 +1,3 @@
-extern crate anyhow;
-extern crate clap;
-extern crate csv;
-extern crate itertools;
-extern crate iupacpal;
-extern crate rand;
-
 mod helper;
 use helper::run_command;
 
@@ -12,7 +5,7 @@ use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
 use itertools::iproduct;
-use iupacpal::config::{Config, SearchParams};
+use iirs::config::{Config, SearchParams};
 use rand::prelude::SliceRandom;
 
 use std::fs;
@@ -21,9 +14,9 @@ use std::io::Write;
 use std::time::{Duration, Instant};
 
 const CPP_BINARY_PATH: &str = "bench/IUPACpal";
-const RUST_BINARY_PATH: &str = "target/release/iupacpal";
+const RUST_BINARY_PATH: &str = "target/release/iirs";
 const CPP_OUTPUT_PATH: &str = "IUPACpal.out";
-const RUST_OUTPUT_PATH: &str = "IUPACpalrs.out";
+const RUST_OUTPUT_PATH: &str = "iirs.out";
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";

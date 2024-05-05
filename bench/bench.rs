@@ -1,16 +1,13 @@
-extern crate anyhow;
-extern crate iupacpal;
-
 mod helper;
 use helper::run_command;
 
 use anyhow::Result;
-use iupacpal::config;
+use iirs::config;
 
 use std::time::Instant;
 
-const RUST_BINARY_PATH: &str = "target/release/iupacpal";
-const RUST_OUTPUT_PATH: &str = "IUPACpalrs.out";
+const RUST_BINARY_PATH: &str = "target/release/iirs";
+const RUST_OUTPUT_PATH: &str = "iirs.out";
 
 fn main() -> Result<()> {
     let start = Instant::now();

@@ -1,7 +1,7 @@
 extern crate elapsed_time;
 
-use iupacpal::config::Config;
-use iupacpal::{find_irs, stringify_irs};
+use iirs::config::Config;
+use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;
 use std::fs::File;

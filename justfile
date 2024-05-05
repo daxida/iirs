@@ -25,10 +25,12 @@ testedge:
   cargo run --release -- \
     -f tests/test_data/truncation_edge_case.fasta -m 8 -M 100 -g 10 -x 6
 
+BINARY_RELEASE_WITH_DEBUG := "target/release-with-debug/iirs"
+
 # perf test for banana
 ptestb:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/release-with-debug/iupacpal -s banana -m 3 -g 5
+  sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -s banana -m 3 -g 5
   sudo perf report
 
 # test alys
@@ -39,7 +41,7 @@ testalys:
 # perf test for alys
 ptestalys:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/release-with-debug/iupacpal -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+  sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
 # test full N (stress test the algorithm and not the writing)
@@ -55,7 +57,7 @@ testrand:
 # perf test for rand10000000
 ptestrand:
   cargo build --profile=release-with-debug
-  sudo perf record -g target/release-with-debug/iupacpal -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
+  sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
   sudo perf report
 
 BENCH_RUN := "cargo run --quiet --manifest-path 'bench/Cargo.toml' --release"

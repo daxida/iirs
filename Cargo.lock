@@ -69,8 +69,8 @@ dependencies = [
  "anyhow",
  "clap",
  "csv",
+ "iirs",
  "itertools",
- "iupacpal",
  "rand",
 ]
 
@@ -205,6 +205,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
+name = "iirs"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "divsufsort",
+ "elapsed-time",
+ "seq_io",
+]
+
+[[package]]
 name = "itertools"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -218,17 +229,6 @@ name = "itoa"
 version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b1a46d1a171d865aa5f83f92695765caa047a9b4cbae2cbf37dbd613a793fd4c"
-
-[[package]]
-name = "iupacpal"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "divsufsort",
- "elapsed-time",
- "seq_io",
-]
 
 [[package]]
 name = "libc"
