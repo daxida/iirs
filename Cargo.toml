@@ -1,8 +1,15 @@
 [package]
 name = "iirs"
 default-run = "iirs"
-version = "0.1.0"
+version = "0.9.0"
 edition = "2021"
+licence = "GPL3"
+readme = "README.md"
+description = "Inverted repeats finder"
+keywords = [
+    "iupac",
+    "inverted-repeats",
+]
 
 [lib]
 name = "iirs"
