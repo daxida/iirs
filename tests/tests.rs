@@ -4,7 +4,7 @@ fn test_seq(config: &Config, string: &str) -> usize {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     let _ = config.verify(n).unwrap();
-    let palindromes = find_palindromes(&config, &seq).unwrap();
+    let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
     palindromes.len()
 }
 
@@ -86,7 +86,7 @@ fn find_palindromes_from_pathconfig(path: &str, config: &Config) -> Vec<(usize, 
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.verify(n).unwrap();
-    find_palindromes(&config, &seq).unwrap()
+    find_palindromes(&config.parameters, &seq).unwrap()
 }
 
 #[test]

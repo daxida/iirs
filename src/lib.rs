@@ -7,7 +7,7 @@ mod matrix;
 mod rmq;
 
 use anyhow::{anyhow, Result};
-use config::Config;
+use config::{Config, Parameters};
 use constants::IUPAC_SYMBOLS;
 
 /// Find palindromes in a sequence based on the provided configuration.
@@ -17,20 +17,21 @@ use constants::IUPAC_SYMBOLS;
 /// # Examples
 ///
 /// ```rust
-/// use iupacpal::{config::Config, find_palindromes};
+/// use iupacpal::{config::Parameters, find_palindromes};
 ///
 /// let seq = "acbbgt".as_bytes();
-/// let config = Config::dummy(3, 6, 2, 0);
-/// let palindromes = find_palindromes(&config, &seq);
+/// let params = Parameters::new(3, 6, 2, 0);
+/// assert!(params.verify_bounds(seq.len()).is_ok());
+/// let palindromes = find_palindromes(&params, &seq);
 /// assert_eq!(palindromes.unwrap(), vec![(0, 5, 0)]);
 ///
 /// // Returns an error if the given sequence contains invalid characters
 /// let seq = "jj".as_bytes();
-/// let palindromes = find_palindromes(&config, &seq);
+/// let palindromes = find_palindromes(&params, &seq);
 /// assert!(palindromes.is_err());
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
@@ -66,16 +67,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize
     let rmq = rmq::Sparse::new(&lcp);
 
     // Calculate palidromes
-    let mut palindromes = algo::add_palindromes(
-        &s,
-        &inv_sa,
-        &rmq,
-        config.min_len,
-        config.max_len,
-        config.mismatches,
-        config.max_gap,
-        &matrix,
-    );
+    let mut palindromes = algo::add_palindromes(&s, &inv_sa, &rmq, &params, &matrix);
 
     // Deal with the sorting strategy.
     // Alternatives, or even skipping sorting altogether, can improve the performance.
@@ -101,7 +93,7 @@ pub fn find_palindromes(config: &Config, seq: &[u8]) -> Result<Vec<(usize, usize
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
-/// let palindromes = find_palindromes(&config, &seq).unwrap();
+/// let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
 /// let out_str = strinfigy_palindromes(&config, &palindromes, &seq).unwrap();
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\

@@ -9,7 +9,7 @@ fn correct_truncation_helper(config: &Config, path: &str) {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.verify(n).unwrap();
-    let palindromes = find_palindromes(&config, &seq).unwrap();
+    let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
 
     let complement = constants::build_complement_array();
     let s_n = 2 * n + 2;

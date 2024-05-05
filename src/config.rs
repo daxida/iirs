@@ -7,15 +7,7 @@ use std::fs;
 use crate::constants::IUPAC_SYMBOLS;
 
 #[derive(Parser, Debug)]
-pub struct Config {
-    /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from("input.fasta"))]
-    pub input_file: String,
-
-    /// Input sequence name.
-    #[arg(short, default_value_t = String::from("seq0"))]
-    pub seq_name: String,
-
+pub struct Parameters {
     /// Minimum length.
     #[arg(short, default_value_t = 10)]
     pub min_len: usize,
@@ -31,6 +23,20 @@ pub struct Config {
     /// Maximum permissible mismatches.
     #[arg(short = 'x', default_value_t = 0)]
     pub mismatches: usize,
+}
+
+#[derive(Parser, Debug)]
+pub struct Config {
+    /// Input filename (FASTA).
+    #[arg(short = 'f', default_value_t = String::from("input.fasta"))]
+    pub input_file: String,
+
+    /// Input sequence name.
+    #[arg(short, default_value_t = String::from("seq0"))]
+    pub seq_name: String,
+
+    #[clap(flatten)]
+    pub parameters: Parameters,
 
     /// Output filename.
     #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
@@ -39,6 +45,60 @@ pub struct Config {
     /// Output format (classic, csv or custom_csv).
     #[arg(short = 'F', default_value_t = String::from("classic"))]
     pub output_format: String,
+}
+
+impl Parameters {
+    pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
+        Self {
+            min_len,
+            max_len,
+            max_gap,
+            mismatches,
+        }
+    }
+
+    pub fn verify_bounds(&self, n: usize) -> Result<()> {
+        if self.min_len < 2 {
+            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
+        }
+        if self.min_len >= n {
+            return Err(anyhow!(
+                "min_len={} must be less than sequence length={}.",
+                self.min_len,
+                n
+            ));
+        }
+        if self.max_gap >= n {
+            return Err(anyhow!(
+                "max_gap={} must be less than sequence length={}.",
+                self.max_gap,
+                n
+            ));
+        }
+        if self.min_len > self.max_len {
+            return Err(anyhow!(
+                "min_len={} must be less than max_len={}.",
+                self.min_len,
+                self.max_len
+            ));
+        }
+        if self.mismatches >= n {
+            return Err(anyhow!(
+                "mismatches={} must be less than sequence length={}.",
+                self.mismatches,
+                n
+            ));
+        }
+        if self.mismatches >= self.min_len {
+            return Err(anyhow!(
+                "mismatches={} must be less than min_len={}.",
+                self.mismatches,
+                self.min_len
+            ));
+        }
+
+        Ok(())
+    }
 }
 
 impl Config {
@@ -57,10 +117,12 @@ impl Config {
         Self {
             input_file: input_file.to_string(),
             seq_name: seq_name.to_string(),
-            min_len,
-            max_len,
-            max_gap,
-            mismatches,
+            parameters: Parameters {
+                min_len,
+                max_len,
+                max_gap,
+                mismatches,
+            },
             output_file: output_file.to_string(),
             output_format: output_format.to_string(),
         }
@@ -75,10 +137,12 @@ impl Config {
         Self {
             input_file: String::from("dummy"),
             seq_name: String::from("dummy"),
-            min_len,
-            max_len,
-            max_gap,
-            mismatches,
+            parameters: Parameters {
+                min_len,
+                max_len,
+                max_gap,
+                mismatches,
+            },
             output_file: String::from("dummy"),
             // initialize to classic to pass early Config::verify
             output_format: String::from("classic"),
@@ -152,8 +216,8 @@ impl Config {
     ///
     /// Returns an error if there are no sequences.
     ///
-    /// Mainly used for convenience in test suites.
-    #[allow(dead_code)] // For unit tests
+    /// Mainly used for convenience in unit tests.
+    #[allow(dead_code)]
     pub fn extract_first_string(input_file: String) -> Result<String> {
         Config::check_file_exist(&input_file)?;
         let mut reader = Reader::from_path(&input_file)?;
@@ -169,55 +233,12 @@ impl Config {
     }
 
     pub fn verify(&self, n: usize) -> Result<()> {
-        if let Err(msg) = Config::verify_bounds(self, n) {
+        if let Err(msg) = Parameters::verify_bounds(&self.parameters, n) {
             let _ = Config::command().print_help();
             println!();
             return Err(msg);
         }
         Config::verify_format(self)?;
-        Ok(())
-    }
-
-    pub fn verify_bounds(&self, n: usize) -> Result<()> {
-        if self.min_len < 2 {
-            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
-        }
-        if self.min_len >= n {
-            return Err(anyhow!(
-                "min_len={} must be less than sequence length={}.",
-                self.min_len,
-                n
-            ));
-        }
-        if self.max_gap >= n {
-            return Err(anyhow!(
-                "max_gap={} must be less than sequence length={}.",
-                self.max_gap,
-                n
-            ));
-        }
-        if self.min_len > self.max_len {
-            return Err(anyhow!(
-                "min_len={} must be less than max_len={}.",
-                self.min_len,
-                self.max_len
-            ));
-        }
-        if self.mismatches >= n {
-            return Err(anyhow!(
-                "mismatches={} must be less than sequence length={}.",
-                self.mismatches,
-                n
-            ));
-        }
-        if self.mismatches >= self.min_len {
-            return Err(anyhow!(
-                "mismatches={} must be less than min_len={}.",
-                self.mismatches,
-                self.min_len
-            ));
-        }
-
         Ok(())
     }
 
@@ -238,10 +259,10 @@ impl Config {
 
         out.push_str(&format!("input_file:  {}\n", &self.input_file));
         out.push_str(&format!("seq_name:    {}\n", &self.seq_name));
-        out.push_str(&format!("min_len:     {}\n", &self.min_len));
-        out.push_str(&format!("max_len:     {}\n", &self.max_len));
-        out.push_str(&format!("max_gap:     {}\n", &self.max_gap));
-        out.push_str(&format!("mismatches:  {}\n", &self.mismatches));
+        out.push_str(&format!("min_len:     {}\n", &self.parameters.min_len));
+        out.push_str(&format!("max_len:     {}\n", &self.parameters.max_len));
+        out.push_str(&format!("max_gap:     {}\n", &self.parameters.max_gap));
+        out.push_str(&format!("mismatches:  {}\n", &self.parameters.mismatches));
         out.push_str(&format!("output_file: {}\n", &self.output_file));
         out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
 
@@ -267,7 +288,7 @@ mod tests {
 
     #[test]
     fn test_invalid_min_len_less_than_two() {
-        let config = Config::dummy(0, 100, 0, 0);
+        let config = Parameters::new(0, 100, 0, 0);
         assert!(config.verify_bounds(10).is_err());
     }
 

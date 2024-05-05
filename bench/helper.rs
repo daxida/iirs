@@ -15,10 +15,10 @@ pub fn run_command(cmd_beginning: &str, config: &config::Config) -> Result<Durat
         cmd_beginning,
         config.input_file,
         config.seq_name,
-        config.min_len,
-        config.max_len,
-        config.max_gap,
-        config.mismatches
+        config.parameters.min_len,
+        config.parameters.max_len,
+        config.parameters.max_gap,
+        config.parameters.mismatches
     );
 
     let output = Command::new("sh")

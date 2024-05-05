@@ -1,4 +1,5 @@
 use crate::{
+    config::Parameters,
     matrix::MatchMatrix,
     rmq::{Rmq, Sparse},
 };
@@ -101,19 +102,16 @@ pub fn add_palindromes(
     s: &[u8],
     inv_sa: &[usize],
     rmq: &Sparse,
-    min_len: usize,
-    max_len: usize,
-    mismatches: usize,
-    max_gap: usize,
+    params: &Parameters,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
     let mut palindromes = Vec::new();
     let s_n = s.len();
     let behind = (s_n - 1) as f64;
-    let is_max_gap_odd = max_gap % 2 == 1;
-    let half_gap = max_gap / 2;
+    let is_max_gap_odd = params.max_gap % 2 == 1;
+    let half_gap = params.max_gap / 2;
 
-    for palindrome_center in min_len..(s_n - 1 - min_len) {
+    for palindrome_center in params.min_len..(s_n - 1 - params.min_len) {
         let c = palindrome_center as f64 / 2.0;
         // Note that the current palindrome is odd iif margin is equal to zero
         let margin = c.fract();
@@ -128,8 +126,16 @@ pub fn add_palindromes(
         let i = (1.0 + c - margin) as usize;
         let j = (behind - c - margin) as usize;
 
-        let mismatch_locs =
-            real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
+        let mismatch_locs = real_lce_mismatches(
+            s,
+            i,
+            j,
+            inv_sa,
+            rmq,
+            params.mismatches as i32,
+            initial_gap,
+            matrix,
+        );
 
         // Get a list of valid start and end mismatch locations
         // (that could mark the potential start or end of a palindrome)
@@ -158,7 +164,7 @@ pub fn add_palindromes(
             let mut mismatch_diff = end.1 - start.1 - 1;
 
             // While mismatch difference is too large, move start location to the right
-            while mismatch_diff > mismatches {
+            while mismatch_diff > params.mismatches {
                 start_it_ptr += 1;
                 start = valid_start_locs[start_it_ptr];
                 mismatch_diff = end.1 - start.1 - 1;
@@ -170,7 +176,7 @@ pub fn add_palindromes(
             }
 
             // While mismatch difference is within acceptable bound, move end location to the right
-            while mismatch_diff <= mismatches {
+            while mismatch_diff <= params.mismatches {
                 end_it_ptr += 1;
                 if end_it_ptr == valid_end_locs.len() {
                     break;
@@ -185,7 +191,7 @@ pub fn add_palindromes(
             let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
             let palindrome_length = end_mismatch - start_mismatch;
-            if palindrome_length < min_len {
+            if palindrome_length < params.min_len {
                 start_it_ptr += 1;
                 continue;
             }
@@ -193,14 +199,14 @@ pub fn add_palindromes(
             let left = (c + margin) as usize - end_mismatch;
             let right = (c - margin) as usize + end_mismatch;
             let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
-            debug_assert!(gap <= max_gap);
+            debug_assert!(gap <= params.max_gap);
 
-            let palindrome = if palindrome_length <= max_len {
+            let palindrome = if palindrome_length <= params.max_len {
                 // Palindrome is not too long, so add to output
                 (left, right, gap)
             } else {
                 // Palindrome is too long, so attempt truncation
-                let overshoot = palindrome_length - max_len;
+                let overshoot = palindrome_length - params.max_len;
 
                 let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
                 let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
