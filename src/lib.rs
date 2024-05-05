@@ -5,8 +5,9 @@ mod constants;
 mod format;
 mod matrix;
 mod rmq;
+mod utils;
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use config::{Config, Parameters};
 
 /// Find palindromes in a sequence based on the provided configuration.
@@ -38,7 +39,7 @@ use config::{Config, Parameters};
 pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     // Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
     // This was already done through the CLI, but we need to do it again for the standalone version.
-    let sanitized_seq = config::Config::sanitize_sequence(seq)?;
+    let sanitized_seq = utils::sanitize_sequence(seq)?;
 
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
@@ -89,25 +90,27 @@ pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, u
 /// # Examples
 ///
 /// ```rust
-/// use iupacpal::{config::Config, find_palindromes, strinfigy_palindromes};
+/// use iupacpal::{config::Config, find_palindromes, stringify_palindromes};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
 /// let palindromes = find_palindromes(&config.parameters, &seq).unwrap();
-/// let out_str = strinfigy_palindromes(&config, &palindromes, &seq).unwrap();
+/// let out_str = stringify_palindromes(&config, &palindromes, &seq).unwrap();
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
 ///     1,3,acb,6,4,tgb,111\n";
 ///
 /// assert_eq!(out_str, expected);
 /// ```
-pub fn strinfigy_palindromes(
+pub fn stringify_palindromes(
     config: &Config,
     palindromes: &Vec<(usize, usize, usize)>,
     seq: &[u8],
 ) -> Result<String> {
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
+
+    utils::verify_format(&config.output_format)?;
 
     match config.output_format.as_str() {
         "classic" => Ok(format!(
@@ -117,11 +120,8 @@ pub fn strinfigy_palindromes(
         )),
         "csv" => Ok(format::fmt_csv(palindromes, seq, &matrix, &complement)),
         "custom" => Ok(format::fmt_custom(palindromes, seq)),
-        // Already tested in Config::verify but not for a manual Config::new
-        other => Err(anyhow!(
-            "The given output format: '{}' doesn't exist.",
-            other
-        )),
+        // Already tested in utils::verify_format
+        _ => unreachable!(),
     }
 }
 

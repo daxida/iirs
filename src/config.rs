@@ -2,9 +2,8 @@ use anyhow::{anyhow, Result};
 use clap::CommandFactory;
 use clap::Parser;
 use seq_io::fasta::{Reader, Record};
-use std::fs;
 
-use crate::constants::IUPAC_SYMBOLS;
+use crate::utils;
 
 #[derive(Parser, Debug)]
 pub struct Parameters {
@@ -154,30 +153,38 @@ impl Config {
         Config::dummy(10, 100, 100, 0)
     }
 
-    // Just some clearer error handling (probably useless)
-    fn check_file_exist(path: &str) -> Result<()> {
-        let metadata = fs::metadata(path)
-            .map_err(|_| anyhow!("'{}' does not exist or cannot access the path.", path))?;
+    /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
+    ///
+    /// Returns an error if there are no sequences.
+    ///
+    /// Mainly used for convenience in unit tests.
+    #[allow(dead_code)]
+    pub fn extract_first_string(path: &str) -> Result<String> {
+        utils::check_file_exist(path)?;
+        let mut reader = Reader::from_path(path)?;
+        let record = reader
+            .next()
+            .expect("No sequences found")
+            .expect("Error reading record");
 
-        if metadata.is_file() {
-            Ok(())
-        } else {
-            Err(anyhow!("'{}' is not a file", path))
-        }
+        Ok(std::str::from_utf8(record.seq())
+            .unwrap()
+            .to_lowercase()
+            .replace('\n', ""))
     }
 
     /// Attempts to extract the sequence from the (fasta) input file.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
     pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
-        Config::check_file_exist(&self.input_file)?;
+        utils::check_file_exist(&self.input_file)?;
         let mut reader = Reader::from_path(&self.input_file)?;
         let mut found_seqs = Vec::new();
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
             if rec_id == self.seq_name {
-                let seq = Config::sanitize_sequence(record.seq())?;
+                let seq = utils::sanitize_sequence(record.seq())?;
                 Config::verify(self, seq.len())?;
                 return Ok(seq);
             }
@@ -193,63 +200,13 @@ impl Config {
         ))
     }
 
-    /// Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
-    pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
-        let mut sanitized_seq = Vec::new();
-
-        for &byte in seq.iter() {
-            if byte != b'\n' && byte != b'\r' {
-                if !IUPAC_SYMBOLS.contains(byte.to_ascii_lowercase() as char) {
-                    return Err(anyhow!(
-                        "sequence contains '{}' which is not an IUPAC symbol.",
-                        byte as char
-                    ));
-                }
-                sanitized_seq.push(byte.to_ascii_lowercase());
-            }
-        }
-
-        Ok(sanitized_seq)
-    }
-
-    /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
-    ///
-    /// Returns an error if there are no sequences.
-    ///
-    /// Mainly used for convenience in unit tests.
-    #[allow(dead_code)]
-    pub fn extract_first_string(input_file: String) -> Result<String> {
-        Config::check_file_exist(&input_file)?;
-        let mut reader = Reader::from_path(&input_file)?;
-        let record = reader
-            .next()
-            .expect("No sequences found")
-            .expect("Error reading record");
-
-        Ok(std::str::from_utf8(record.seq())
-            .unwrap()
-            .to_lowercase()
-            .replace('\n', ""))
-    }
-
     pub fn verify(&self, n: usize) -> Result<()> {
         if let Err(msg) = Parameters::verify_bounds(&self.parameters, n) {
             let _ = Config::command().print_help();
             println!();
             return Err(msg);
         }
-        Config::verify_format(self)?;
-        Ok(())
-    }
-
-    fn verify_format(&self) -> Result<()> {
-        let allowed_formats = ["classic", "csv", "custom"];
-        if !allowed_formats.contains(&self.output_format.as_str()) {
-            return Err(anyhow!(
-                "Invalid output format. Allowed formats are: {}.",
-                allowed_formats.join(", ")
-            ));
-        }
+        utils::verify_format(&self.output_format)?;
         Ok(())
     }
 
@@ -275,48 +232,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_valid_output_format() {
-        let config = Config::dummy_default();
-        assert!(config.verify_format().is_ok())
-    }
-
-    #[test]
-    fn test_invalid_output_format() {
-        let config = Config::new("f", "f", 0, 0, 0, 0, "f", "wrong");
-        assert!(config.verify_format().is_err())
-    }
-
-    #[test]
     fn test_invalid_min_len_less_than_two() {
         let config = Parameters::new(0, 100, 0, 0);
         assert!(config.verify_bounds(10).is_err());
-    }
-
-    #[test]
-    fn test_sanitize_sequence_ok() {
-        let seq = "acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert!(Config::sanitize_sequence(&seq).is_ok());
-    }
-
-    #[test]
-    fn test_sanitize_sequence_newlines_one() {
-        let seq = "acgturyswkmbdhvn*-\nacgturyswkmbdhvn*-".as_bytes().to_vec();
-        let sanitized = Config::sanitize_sequence(&seq).unwrap();
-        let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert_eq!(expected, sanitized);
-    }
-
-    #[test]
-    fn test_sanitize_sequence_newlines_two() {
-        let seq = "acgturyswkmbdhvn*-\racgturyswkmbdhvn*-".as_bytes().to_vec();
-        let sanitized = Config::sanitize_sequence(&seq).unwrap();
-        let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert_eq!(expected, sanitized);
-    }
-
-    #[test]
-    fn test_sanitize_sequence_not_in_iupac() {
-        let seq = "de".as_bytes().to_vec();
-        assert!(Config::sanitize_sequence(&seq).is_err());
     }
 }

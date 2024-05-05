@@ -1,7 +1,7 @@
 extern crate elapsed_time;
 
 use iupacpal::config::Config;
-use iupacpal::{find_palindromes, strinfigy_palindromes};
+use iupacpal::{find_palindromes, stringify_palindromes};
 
 use anyhow::Result;
 use std::fs::File;
@@ -13,7 +13,7 @@ fn main() -> Result<()> {
     let seq = config.safe_extract_sequence()?;
 
     let palindromes = find_palindromes(&config.parameters, &seq)?;
-    let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
+    let out_str = stringify_palindromes(&config, &palindromes, &seq)?;
 
     let mut file = File::create(&config.output_file)?;
     writeln!(&mut file, "{}", out_str)?;
