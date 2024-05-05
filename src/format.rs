@@ -6,7 +6,9 @@ fn int_size(x: usize) -> usize {
     (x.ilog10() + 1) as usize
 }
 
-pub fn out_palindrome_display_header(config: &Config, n: usize) -> String {
+/// Follows [IUPACpal](https://github.com/steven31415/IUPACpal) convention 
+/// of calling Inverted Repeats, palindromes
+pub fn out_display_header(config: &Config, n: usize) -> String {
     format!(
         "Palindromes of: {}\n\
         Sequence name: {}\n\
@@ -23,25 +25,25 @@ pub fn out_palindrome_display_header(config: &Config, n: usize) -> String {
         n,
         1,
         n,
-        config.min_len,
-        config.max_len,
-        config.max_gap,
-        config.mismatches,
+        config.params.min_len,
+        config.params.max_len,
+        config.params.max_gap,
+        config.params.mismatches,
     )
 }
 
 pub fn fmt_classic(
-    palindromes: &Vec<(usize, usize, usize)>,
+    irs: &Vec<(usize, usize, usize)>,
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
 ) -> String {
-    let mut palindromes_out = String::new();
+    let mut out_str = String::new();
 
     let pad = "         ";
     let pad_length = pad.len(); // 9
 
-    for (left, right, gap) in palindromes {
+    for (left, right, gap) in irs {
         let outer_left = left + 1;
         let outer_right = right + 1;
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
@@ -83,24 +85,24 @@ pub fn fmt_classic(
             ir = inner_right,
         );
 
-        palindromes_out.push_str(&entry);
+        out_str.push_str(&entry);
     }
 
-    palindromes_out
+    out_str
 }
 
 pub fn fmt_csv(
-    palindromes: &Vec<(usize, usize, usize)>,
+    irs: &Vec<(usize, usize, usize)>,
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
 ) -> String {
-    let mut palindromes_out = String::new();
+    let mut out_str = String::new();
 
     let heading = "start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n";
-    palindromes_out.push_str(heading);
+    out_str.push_str(heading);
 
-    for (left, right, gap) in palindromes {
+    for (left, right, gap) in irs {
         let outer_left = left + 1;
         let outer_right = right + 1;
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
@@ -125,7 +127,7 @@ pub fn fmt_csv(
             })
             .collect::<String>();
 
-        palindromes_out.push_str(&format!(
+        out_str.push_str(&format!(
             "{},{},{},{},{},{},{}\n",
             outer_left,
             inner_left,
@@ -137,16 +139,16 @@ pub fn fmt_csv(
         ));
     }
 
-    palindromes_out
+    out_str
 }
 
-pub fn fmt_custom(palindromes: &Vec<(usize, usize, usize)>, seq: &[u8]) -> String {
-    let mut palindromes_out = String::new();
+pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8]) -> String {
+    let mut out_str = String::new();
 
     let heading = "ir_start,motif,gap_motif,reverse_complement\n";
-    palindromes_out.push_str(heading);
+    out_str.push_str(heading);
 
-    for (left, right, gap) in palindromes {
+    for (left, right, gap) in irs {
         let outer_left = left + 1;
         let outer_right = right + 1;
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
@@ -163,31 +165,31 @@ pub fn fmt_custom(palindromes: &Vec<(usize, usize, usize)>, seq: &[u8]) -> Strin
             .map(|i| seq[i] as char)
             .collect::<String>();
 
-        palindromes_out.push_str(&format!(
+        out_str.push_str(&format!(
             "{},{},{},{}\n",
             outer_left, nucleotide, gap_nucleotide, reverse_complement
         ));
     }
 
-    palindromes_out
+    out_str
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{constants::build_complement_array, find_palindromes, matrix};
+    use crate::config::SearchParams;
+    use crate::{constants::build_complement_array, find_irs, matrix};
 
     #[test]
     fn test_format_classic() {
-        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1);
+        params.verify_bounds(seq.len()).unwrap();
+        let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
-        let received = fmt_classic(&palindromes, &seq, &matrix, &complement);
+        let received = fmt_classic(&irs, &seq, &matrix, &complement);
         let expected = r#"2        gucsggtgtwkmmm       15
          ||| ||||||||||
 30       nngah*nn-nddbk       17
@@ -248,15 +250,14 @@ mod tests {
 
     #[test]
     fn test_format_csv() {
-        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1);
+        params.verify_bounds(seq.len()).unwrap();
+        let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
-        let received = fmt_csv(&palindromes, &seq, &matrix, &complement);
+        let received = fmt_csv(&irs, &seq, &matrix, &complement);
         let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
 3,15,ucsggtgtwkmmm,30,18,nngah*nn-nddb,1110111111111
@@ -281,13 +282,12 @@ mod tests {
 
     #[test]
     fn test_format_custom_csv_mini() {
-        let config = Config::dummy(10, 100, 10, 1);
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let n = seq.len();
-        let _ = config.verify(n).unwrap();
-        let palindromes = find_palindromes(&config, &seq).unwrap();
-        let received = fmt_custom(&palindromes, &seq);
+        let params = SearchParams::new(10, 100, 10, 1);
+        params.verify_bounds(seq.len()).unwrap();
+        let irs = find_irs(&params, &seq).unwrap();
+        let received = fmt_custom(&irs, &seq);
         let expected = r#"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
 3,ucsggtgtwkmmm,kk,nngah*nn-nddb

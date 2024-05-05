@@ -1,8 +1,5 @@
-extern crate anyhow;
-extern crate iupacpal;
-
 use anyhow::{anyhow, Result};
-use iupacpal::config;
+use iirs::config;
 
 use std::process::Command;
 use std::time::{Duration, Instant};
@@ -15,10 +12,10 @@ pub fn run_command(cmd_beginning: &str, config: &config::Config) -> Result<Durat
         cmd_beginning,
         config.input_file,
         config.seq_name,
-        config.min_len,
-        config.max_len,
-        config.max_gap,
-        config.mismatches
+        config.params.min_len,
+        config.params.max_len,
+        config.params.max_gap,
+        config.params.mismatches
     );
 
     let output = Command::new("sh")

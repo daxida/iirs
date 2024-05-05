@@ -1,10 +1,3 @@
-extern crate anyhow;
-extern crate clap;
-extern crate csv;
-extern crate itertools;
-extern crate iupacpal;
-extern crate rand;
-
 mod helper;
 use helper::run_command;
 
@@ -12,7 +5,7 @@ use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
 use itertools::iproduct;
-use iupacpal::config::Config;
+use iirs::config::{Config, SearchParams};
 use rand::prelude::SliceRandom;
 
 use std::fs;
@@ -21,9 +14,9 @@ use std::io::Write;
 use std::time::{Duration, Instant};
 
 const CPP_BINARY_PATH: &str = "bench/IUPACpal";
-const RUST_BINARY_PATH: &str = "target/release/iupacpal";
+const RUST_BINARY_PATH: &str = "target/release/iirs";
 const CPP_OUTPUT_PATH: &str = "IUPACpal.out";
-const RUST_OUTPUT_PATH: &str = "IUPACpalrs.out";
+const RUST_OUTPUT_PATH: &str = "iirs.out";
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
@@ -79,10 +72,12 @@ impl TestSuite {
         .map(move |(min_len, max_gap, mismatches)| Config {
             input_file: "rand.fasta".to_string(),
             seq_name: "seq0".to_string(),
-            min_len,
-            max_len: 100,
-            max_gap,
-            mismatches,
+            params: SearchParams {
+                min_len,
+                max_len: 100,
+                max_gap,
+                mismatches,
+            },
             output_file: "DUMMY".to_string(),
             output_format: "classic".to_string(),
         })
@@ -146,7 +141,7 @@ fn test_equality(runner: &Runner) -> Result<()> {
     let received_size = received_lines.len();
 
     if expected_size != received_size {
-        // Known bug in the cpp implementation where it doesn't detect the only palindrome.
+        // Known bug in the cpp implementation where it doesn't detect the only IR.
         if expected_size == 13 && received_size == 16 {
             return Ok(());
         }
@@ -210,7 +205,7 @@ fn main() -> Result<()> {
 
         for config in test_suite.to_configs_iter() {
             // The config doesn't make sense: skip
-            if let Err(_) = config.verify_bounds(*size_seq) {
+            if let Err(_) = config.params.verify_bounds(*size_seq) {
                 // println!("{}", &err);
                 continue;
             }
@@ -224,9 +219,9 @@ fn main() -> Result<()> {
                         if let Some(ref mut writer) = writer {
                             writer.write_record(&[
                                 size_seq.to_string(),
-                                config.min_len.to_string(),
-                                config.max_gap.to_string(),
-                                config.mismatches.to_string(),
+                                config.params.min_len.to_string(),
+                                config.params.max_gap.to_string(),
+                                config.params.mismatches.to_string(),
                                 ctiming.as_secs_f64().to_string(),
                                 rtiming.as_secs_f64().to_string(),
                             ])?;

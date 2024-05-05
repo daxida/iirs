@@ -1,8 +1,10 @@
-# iupacpal
+# iirs
 
-iupacpal is an exact tool for efficient identification of inverted repeats in IUPAC-encoded DNA sequences as substrings of a large text, allowing also for potential mismatches and gaps.
+IIRS is an [Iupac](https://en.wikipedia.org/wiki/International_Union_of_Pure_and_Applied_Chemistry) Inverted RepeatS finder written in rust (rs).
 
-This is a rust port of [IUPACpal](https://github.com/steven31415/IUPACpal), result of their work on this [paper](https://www.researchgate.net/publication/349110200_IUPACpal_efficient_identification_of_inverted_repeats_in_IUPAC-encoded_DNA_sequences).
+That is, an exact tool for efficient identification of Inverted Repeats (IRs) in IUPAC-encoded DNA sequences as substrings of a large text, allowing also for potential mismatches and gaps.
+
+This is a port of [IUPACpal](https://github.com/steven31415/IUPACpal), result of their work on this [paper](https://www.researchgate.net/publication/349110200_IUPACpal_efficient_identification_of_inverted_repeats_in_IUPAC-encoded_DNA_sequences).
 
 Compared to the original this version is faster, platform-independent and modular, facilitating the creation of customized format outputs. It does not require `cmake`, `libdivsufsort` nor `sdsl`.
 
@@ -12,27 +14,27 @@ TODO - but mainly it works much like the original with an extra flag for the typ
 
 There are many examples in the justfile.
 
-This also works as a library: The `find_palindromes` function is exported (think of crates.io).
+This also works as a library: The `find_irs` function is exported (think of crates.io).
 
 ## How to install
 
 ### (Option 1) Download executable
 
-Download the latest binary from [releases](https://github.com/daxida/iupacpal/releases) and extract it somewhere on your `$PATH`.
+Download the latest binary from [releases](https://github.com/daxida/iirs/releases) and extract it somewhere on your `$PATH`.
 
 ### (Option 2) Build executable
 
 ```
-$ git clone https://github.com/daxida/iupacpal
-$ cd iupacpal
+$ git clone https://github.com/daxida/iirs
+$ cd iirs
 $ cargo build --release
-$ // The binary will be located at `target/release/iupacpal`
+$ // The binary will be located at `target/release/iirs`
 ```
 
 ### (Option 3) Build from source:
 
 ```
-$ git clone https://github.com/daxida/iupacpal
+$ git clone https://github.com/daxida/iirs
 $ cargo install --path=.
 ```
 

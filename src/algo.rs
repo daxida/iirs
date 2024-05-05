@@ -1,4 +1,5 @@
 use crate::{
+    config::SearchParams,
     matrix::MatchMatrix,
     rmq::{Rmq, Sparse},
 };
@@ -88,34 +89,33 @@ fn real_lce_mismatches(
     mismatch_locs
 }
 
-// Finds all inverted repeats (palindromes) with given parameters and adds them to an output set
+// TODO: Clear this
+//
+// Finds all inverted repeats (IRs) with given parameters and adds them to an output set
 //
 // NOTES:
 // - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
 //   It was marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
-//   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
+//   >> AT NO POINT IS A DUPLICATE pushed into "irs".
 // - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
 //   will be printed sorted afterwards in "format".
 #[allow(clippy::too_many_arguments)]
-pub fn add_palindromes(
+pub fn add_irs(
     s: &[u8],
     inv_sa: &[usize],
     rmq: &Sparse,
-    min_len: usize,
-    max_len: usize,
-    mismatches: usize,
-    max_gap: usize,
+    params: &SearchParams,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
-    let mut palindromes = Vec::new();
+    let mut irs = Vec::new();
     let s_n = s.len();
     let behind = (s_n - 1) as f64;
-    let is_max_gap_odd = max_gap % 2 == 1;
-    let half_gap = max_gap / 2;
+    let is_max_gap_odd = params.max_gap % 2 == 1;
+    let half_gap = params.max_gap / 2;
 
-    for palindrome_center in min_len..(s_n - 1 - min_len) {
-        let c = palindrome_center as f64 / 2.0;
-        // Note that the current palindrome is odd iif margin is equal to zero
+    for ir_center in params.min_len..(s_n - 1 - params.min_len) {
+        let c = ir_center as f64 / 2.0;
+        // Note that the current IR is odd iif margin is equal to zero
         let margin = c.fract();
 
         // We add 1 compared to the original implementation to guarantee >= 0
@@ -128,11 +128,19 @@ pub fn add_palindromes(
         let i = (1.0 + c - margin) as usize;
         let j = (behind - c - margin) as usize;
 
-        let mismatch_locs =
-            real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
+        let mismatch_locs = real_lce_mismatches(
+            s,
+            i,
+            j,
+            inv_sa,
+            rmq,
+            params.mismatches as i32,
+            initial_gap,
+            matrix,
+        );
 
         // Get a list of valid start and end mismatch locations
-        // (that could mark the potential start or end of a palindrome)
+        // (that could mark the potential start or end of an IR)
         let mut valid_start_locs = Vec::new();
         let mut valid_end_locs = Vec::new();
         let sz = mismatch_locs.len();
@@ -158,7 +166,7 @@ pub fn add_palindromes(
             let mut mismatch_diff = end.1 - start.1 - 1;
 
             // While mismatch difference is too large, move start location to the right
-            while mismatch_diff > mismatches {
+            while mismatch_diff > params.mismatches {
                 start_it_ptr += 1;
                 start = valid_start_locs[start_it_ptr];
                 mismatch_diff = end.1 - start.1 - 1;
@@ -170,7 +178,7 @@ pub fn add_palindromes(
             }
 
             // While mismatch difference is within acceptable bound, move end location to the right
-            while mismatch_diff <= mismatches {
+            while mismatch_diff <= params.mismatches {
                 end_it_ptr += 1;
                 if end_it_ptr == valid_end_locs.len() {
                     break;
@@ -184,8 +192,8 @@ pub fn add_palindromes(
 
             let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
-            let palindrome_length = end_mismatch - start_mismatch;
-            if palindrome_length < min_len {
+            let ir_length = end_mismatch - start_mismatch;
+            if ir_length < params.min_len {
                 start_it_ptr += 1;
                 continue;
             }
@@ -193,14 +201,14 @@ pub fn add_palindromes(
             let left = (c + margin) as usize - end_mismatch;
             let right = (c - margin) as usize + end_mismatch;
             let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
-            debug_assert!(gap <= max_gap);
+            debug_assert!(gap <= params.max_gap);
 
-            let palindrome = if palindrome_length <= max_len {
-                // Palindrome is not too long, so add to output
+            let ir = if ir_length <= params.max_len {
+                // IR is not too long, so add to output
                 (left, right, gap)
             } else {
-                // Palindrome is too long, so attempt truncation
-                let overshoot = palindrome_length - max_len;
+                // IR is too long, so attempt truncation
+                let overshoot = ir_length - params.max_len;
 
                 let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
                 let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
@@ -210,20 +218,20 @@ pub fn add_palindromes(
                     end_mismatch - prev - 1
                 };
 
-                // Check if truncation results in the potential palindrome ending in a mismatch
+                // Check if truncation results in the potential IR ending in a mismatch
                 if overshoot != mismatch_gap {
-                    // Potential palindrome does not end in a mismatch, so add to output
+                    // Potential IR does not end in a mismatch, so add to output
                     (left + overshoot, right - overshoot, gap)
                 } else {
-                    // Potential palindrome does end in a mismatch, so truncate a character
+                    // Potential IR does end in a mismatch, so truncate a character
                     (left + overshoot + 1, right - overshoot - 1, gap)
                 }
             };
-            palindromes.push(palindrome);
+            irs.push(ir);
 
             start_it_ptr += 1;
         }
     }
 
-    palindromes
+    irs
 }

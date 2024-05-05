@@ -1,7 +1,7 @@
 extern crate elapsed_time;
 
-use iupacpal::config::Config;
-use iupacpal::{find_palindromes, strinfigy_palindromes};
+use iirs::config::Config;
+use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;
 use std::fs::File;
@@ -12,15 +12,15 @@ fn main() -> Result<()> {
     let config = Config::from_args();
     let seq = config.safe_extract_sequence()?;
 
-    let palindromes = find_palindromes(&config, &seq)?;
-    let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
+    let irs = find_irs(&config.params, &seq)?;
+    let out_str = stringify_irs(&config, &irs, &seq)?;
 
     let mut file = File::create(&config.output_file)?;
     writeln!(&mut file, "{}", out_str)?;
 
-    println!("\n{}", config.display());
+    println!("\n{}", config);
     println!("Search complete!");
-    println!("Found n={} palindromes", palindromes.len());
+    println!("Found n={} inverted repeats", irs.len());
 
     Ok(())
 }
