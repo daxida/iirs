@@ -174,22 +174,6 @@ impl Config {
         utils::verify_format(&self.output_format)?;
         Ok(())
     }
-
-    // make this an instance of display?
-    pub fn display(&self) -> String {
-        let mut out = String::new();
-
-        out.push_str(&format!("input_file:  {}\n", &self.input_file));
-        out.push_str(&format!("seq_name:    {}\n", &self.seq_name));
-        out.push_str(&format!("min_len:     {}\n", &self.params.min_len));
-        out.push_str(&format!("max_len:     {}\n", &self.params.max_len));
-        out.push_str(&format!("max_gap:     {}\n", &self.params.max_gap));
-        out.push_str(&format!("mismatches:  {}\n", &self.params.mismatches));
-        out.push_str(&format!("output_file: {}\n", &self.output_file));
-        out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
-
-        out
-    }
 }
 
 impl Default for Config {
@@ -202,6 +186,20 @@ impl Default for Config {
             // To not crash on stringify palindromes
             output_format: String::from("classic"),
         }
+    }
+}
+
+impl std::fmt::Display for Config {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "input_file:  {}\n", self.input_file)?;
+        write!(f, "seq_name:    {}\n", self.seq_name)?;
+        write!(f, "min_len:     {}\n", self.params.min_len)?;
+        write!(f, "max_len:     {}\n", self.params.max_len)?;
+        write!(f, "max_gap:     {}\n", self.params.max_gap)?;
+        write!(f, "mismatches:  {}\n", self.params.mismatches)?;
+        write!(f, "output_file: {}\n", self.output_file)?;
+        write!(f, "output_fmt:  {}\n", self.output_format)?;
+        Ok(())
     }
 }
 

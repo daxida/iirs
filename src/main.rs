@@ -18,7 +18,7 @@ fn main() -> Result<()> {
     let mut file = File::create(&config.output_file)?;
     writeln!(&mut file, "{}", out_str)?;
 
-    println!("\n{}", config.display());
+    println!("\n{}", config);
     println!("Search complete!");
     println!("Found n={} palindromes", palindromes.len());
 
