@@ -177,7 +177,7 @@ impl Config {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
             if rec_id == self.seq_name {
-                let seq = Config::sanitize_sequence(self, record.seq())?;
+                let seq = Config::sanitize_sequence(record.seq())?;
                 Config::verify(self, seq.len())?;
                 return Ok(seq);
             }
@@ -194,7 +194,7 @@ impl Config {
     }
 
     /// Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
-    fn sanitize_sequence(&self, seq: &[u8]) -> Result<Vec<u8>> {
+    pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
         let mut sanitized_seq = Vec::new();
 
         for &byte in seq.iter() {
@@ -295,13 +295,13 @@ mod tests {
     #[test]
     fn test_sanitize_sequence_ok() {
         let seq = "acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert!(Config::dummy_default().sanitize_sequence(&seq).is_ok());
+        assert!(Config::sanitize_sequence(&seq).is_ok());
     }
 
     #[test]
     fn test_sanitize_sequence_newlines_one() {
         let seq = "acgturyswkmbdhvn*-\nacgturyswkmbdhvn*-".as_bytes().to_vec();
-        let sanitized = Config::dummy_default().sanitize_sequence(&seq).unwrap();
+        let sanitized = Config::sanitize_sequence(&seq).unwrap();
         let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
         assert_eq!(expected, sanitized);
     }
@@ -309,7 +309,7 @@ mod tests {
     #[test]
     fn test_sanitize_sequence_newlines_two() {
         let seq = "acgturyswkmbdhvn*-\racgturyswkmbdhvn*-".as_bytes().to_vec();
-        let sanitized = Config::dummy_default().sanitize_sequence(&seq).unwrap();
+        let sanitized = Config::sanitize_sequence(&seq).unwrap();
         let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
         assert_eq!(expected, sanitized);
     }
@@ -317,6 +317,6 @@ mod tests {
     #[test]
     fn test_sanitize_sequence_not_in_iupac() {
         let seq = "de".as_bytes().to_vec();
-        assert!(Config::dummy_default().sanitize_sequence(&seq).is_err());
+        assert!(Config::sanitize_sequence(&seq).is_err());
     }
 }

@@ -8,7 +8,6 @@ mod rmq;
 
 use anyhow::{anyhow, Result};
 use config::{Config, Parameters};
-use constants::IUPAC_SYMBOLS;
 
 /// Find palindromes in a sequence based on the provided configuration.
 ///
@@ -29,28 +28,29 @@ use constants::IUPAC_SYMBOLS;
 /// let seq = "jj".as_bytes();
 /// let palindromes = find_palindromes(&params, &seq);
 /// assert!(palindromes.is_err());
+///
+/// // It is not case-sensitive and ignores newlines.
+/// let seq = "ACB\n\rBGT".as_bytes();
+/// let palindromes = find_palindromes(&params, &seq);
+/// assert_eq!(palindromes.unwrap(), vec![(0, 5, 0)]);
 /// ```
 #[elapsed_time::elapsed]
 pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+    // Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
+    // This was already done through the CLI, but we need to do it again for the standalone version.
+    let sanitized_seq = config::Config::sanitize_sequence(seq)?;
+
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
     // Construct s = seq + '$' + complement(reverse(seq)) + '#'
-    let n = seq.len();
+    let n = sanitized_seq.len();
     let s_n = 2 * n + 2;
     let mut s = vec![0u8; s_n];
     for i in 0..n {
-        // Note that this was already checked if we were using the CLI. We recheck it
-        // because it's cheap and makes sense in the standalone version of this function
-        if !IUPAC_SYMBOLS.contains(seq[i] as char) {
-            return Err(anyhow!(
-                "sequence contains '{}' which is not an IUPAC symbol.",
-                seq[i] as char
-            ));
-        }
-        s[i] = seq[i];
-        s[n + 1 + i] = complement[seq[n - 1 - i] as usize] as u8;
+        s[i] = sanitized_seq[i];
+        s[n + 1 + i] = complement[sanitized_seq[n - 1 - i] as usize] as u8;
     }
     s[n] = b'$';
     s[2 * n + 1] = b'#';
@@ -67,7 +67,7 @@ pub fn find_palindromes(params: &Parameters, seq: &[u8]) -> Result<Vec<(usize, u
     let rmq = rmq::Sparse::new(&lcp);
 
     // Calculate palidromes
-    let mut palindromes = algo::add_palindromes(&s, &inv_sa, &rmq, &params, &matrix);
+    let mut palindromes = algo::add_palindromes(&s, &inv_sa, &rmq, params, &matrix);
 
     // Deal with the sorting strategy.
     // Alternatives, or even skipping sorting altogether, can improve the performance.
