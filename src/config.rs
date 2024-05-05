@@ -191,14 +191,14 @@ impl Default for Config {
 
 impl std::fmt::Display for Config {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "input_file:  {}\n", self.input_file)?;
-        write!(f, "seq_name:    {}\n", self.seq_name)?;
-        write!(f, "min_len:     {}\n", self.params.min_len)?;
-        write!(f, "max_len:     {}\n", self.params.max_len)?;
-        write!(f, "max_gap:     {}\n", self.params.max_gap)?;
-        write!(f, "mismatches:  {}\n", self.params.mismatches)?;
-        write!(f, "output_file: {}\n", self.output_file)?;
-        write!(f, "output_fmt:  {}\n", self.output_format)?;
+        writeln!(f, "input_file:  {}", self.input_file)?;
+        writeln!(f, "seq_name:    {}", self.seq_name)?;
+        writeln!(f, "min_len:     {}", self.params.min_len)?;
+        writeln!(f, "max_len:     {}", self.params.max_len)?;
+        writeln!(f, "max_gap:     {}", self.params.max_gap)?;
+        writeln!(f, "mismatches:  {}", self.params.mismatches)?;
+        writeln!(f, "output_file: {}", self.output_file)?;
+        writeln!(f, "output_fmt:  {}", self.output_format)?;
         Ok(())
     }
 }
