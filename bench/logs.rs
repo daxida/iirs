@@ -4,8 +4,8 @@ use helper::run_command;
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
-use itertools::iproduct;
 use iirs::config::{Config, SearchParams};
+use itertools::iproduct;
 use rand::prelude::SliceRandom;
 
 use std::fs;
@@ -205,7 +205,7 @@ fn main() -> Result<()> {
 
         for config in test_suite.to_configs_iter() {
             // The config doesn't make sense: skip
-            if let Err(_) = config.params.verify_bounds(*size_seq) {
+            if let Err(_) = config.params.check_bounds(*size_seq) {
                 // println!("{}", &err);
                 continue;
             }

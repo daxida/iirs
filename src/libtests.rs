@@ -30,7 +30,7 @@ fn correct_truncation_helper(config: &Config) {
     let string = extract_first_sequence(config).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
-    config.verify(n).unwrap();
+    config.params.check_bounds(n).unwrap();
     let irs = find_irs(&config.params, &seq).unwrap();
 
     let complement = constants::build_complement_array();
@@ -52,7 +52,7 @@ fn correct_truncation_helper(config: &Config) {
 #[test]
 fn test_correct_truncation_one() {
     let config = Config {
-        params: SearchParams::new(8, 100, 10, 6),
+        params: SearchParams::new(8, 100, 10, 6).unwrap(),
         input_file: String::from("tests/test_data/test1.fasta"),
         ..Default::default()
     };
@@ -62,7 +62,7 @@ fn test_correct_truncation_one() {
 #[test]
 fn test_correct_truncation_two() {
     let config = Config {
-        params: SearchParams::new(8, 100, 10, 6),
+        params: SearchParams::new(8, 100, 10, 6).unwrap(),
         input_file: String::from("tests/test_data/truncation_edge_case.fasta"),
         ..Default::default()
     };
@@ -72,7 +72,7 @@ fn test_correct_truncation_two() {
 #[test]
 fn test_correct_truncation_three() {
     let config = Config {
-        params: SearchParams::new(6, 100, 0, 5),
+        params: SearchParams::new(6, 100, 0, 5).unwrap(),
         input_file: String::from("tests/test_data/truncation_edge_case.fasta"),
         ..Default::default()
     };
@@ -94,7 +94,7 @@ fn test_invalid_output_format_stringify() {
 fn find_irs_from_first_sequence(config: &Config) -> Vec<(usize, usize, usize)> {
     let string = extract_first_sequence(config).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-    config.verify(seq.len()).unwrap();
+    config.params.check_bounds(seq.len()).unwrap(); // BUT THE OUTPUT FORMAT MIGHT BE WRONG?
     find_irs(&config.params, &seq).unwrap()
 }
 
@@ -102,7 +102,7 @@ fn find_irs_from_first_sequence(config: &Config) -> Vec<(usize, usize, usize)> {
 fn test_irs_edge_gap() {
     // The original IUPACpal won't find this IR
     let config = Config {
-        params: SearchParams::new(14, 100, 3, 0),
+        params: SearchParams::new(14, 100, 3, 0).unwrap(),
         input_file: String::from("tests/test_data/edge_gap.fasta"),
         ..Default::default()
     };
@@ -112,7 +112,7 @@ fn test_irs_edge_gap() {
 #[test]
 fn test_irs_alys() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/alys.fna"),
         ..Default::default()
     };
@@ -122,7 +122,7 @@ fn test_irs_alys() {
 #[test]
 fn test_irs_8100_n() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/8100N.fasta"),
         ..Default::default()
     };
@@ -132,7 +132,7 @@ fn test_irs_8100_n() {
 #[test]
 fn test_irs_8100_n_with_mismatches() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 2),
+        params: SearchParams::new(3, 100, 20, 2).unwrap(),
         input_file: String::from("tests/test_data/8100N.fasta"),
         ..Default::default()
     };
@@ -142,7 +142,7 @@ fn test_irs_8100_n_with_mismatches() {
 #[test]
 fn test_irs_d00596() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/d00596.fasta"),
         ..Default::default()
     };
@@ -152,7 +152,7 @@ fn test_irs_d00596() {
 #[test]
 fn test_irs_d00596_with_mismatches() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 2),
+        params: SearchParams::new(3, 100, 20, 2).unwrap(),
         input_file: String::from("tests/test_data/d00596.fasta"),
         ..Default::default()
     };
@@ -162,7 +162,7 @@ fn test_irs_d00596_with_mismatches() {
 #[test]
 fn test_rand_1000() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/rand1000.fasta"),
         ..Default::default()
     };
@@ -172,7 +172,7 @@ fn test_rand_1000() {
 #[test]
 fn test_rand_10000() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/rand10000.fasta"),
         ..Default::default()
     };
@@ -182,7 +182,7 @@ fn test_rand_10000() {
 #[test]
 fn test_rand_100000() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/rand100000.fasta"),
         ..Default::default()
     };
@@ -192,7 +192,7 @@ fn test_rand_100000() {
 #[test]
 fn test_rand_1000000() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/rand1000000.fasta"),
         ..Default::default()
     };
@@ -202,7 +202,7 @@ fn test_rand_1000000() {
 #[test]
 fn test_test_1() {
     let config = Config {
-        params: SearchParams::new(3, 100, 20, 0),
+        params: SearchParams::new(3, 100, 20, 0).unwrap(),
         input_file: String::from("tests/test_data/test1.fasta"),
         ..Default::default()
     };

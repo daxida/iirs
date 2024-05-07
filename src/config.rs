@@ -1,5 +1,4 @@
 use anyhow::{anyhow, Result};
-use clap::CommandFactory;
 use clap::Parser;
 use seq_io::fasta::{Reader, Record};
 
@@ -16,7 +15,15 @@ const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
 const DEFAULT_OUTPUT_FORMAT: &str = "classic";
 
 #[derive(Parser, Debug)]
-pub struct SearchParams {
+pub struct CLI {
+    /// Input filename (FASTA).
+    #[arg(short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
+    pub input_file: String,
+
+    /// Input sequence name.
+    #[arg(short, default_value_t = String::from(DEFAULT_SEQ_NAME))]
+    pub seq_name: String,
+
     /// Minimum length.
     #[arg(short, default_value_t = DEFAULT_MIN_LEN)]
     pub min_len: usize,
@@ -32,20 +39,6 @@ pub struct SearchParams {
     /// Maximum permissible mismatches.
     #[arg(short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     pub mismatches: usize,
-}
-
-#[derive(Parser, Debug)]
-pub struct Config {
-    /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
-    pub input_file: String,
-
-    /// Input sequence name.
-    #[arg(short, default_value_t = String::from(DEFAULT_SEQ_NAME))]
-    pub seq_name: String,
-
-    #[clap(flatten)]
-    pub params: SearchParams,
 
     /// Output filename.
     #[arg(short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
@@ -56,21 +49,66 @@ pub struct Config {
     pub output_format: String,
 }
 
+impl CLI {
+    pub fn parse_args() -> Self {
+        CLI::parse()
+    }
+
+    pub fn try_from_args(&self) -> Result<(Config, Vec<u8>)> {
+        let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
+
+        let config = Config {
+            input_file: self.input_file.clone(),
+            seq_name: self.seq_name.clone(),
+            params,
+            output_file: self.output_file.clone(),
+            output_format: self.output_format.clone(),
+        };
+
+        let seq = Config::safe_extract_sequence(&self.input_file, &self.seq_name)?;
+        config.params.check_bounds(seq.len())?;
+
+        Ok((config, seq))
+    }
+}
+
+#[derive(Debug)]
+pub struct SearchParams {
+    pub min_len: usize,
+    pub max_len: usize,
+    pub max_gap: usize,
+    pub mismatches: usize,
+}
+
 impl SearchParams {
-    pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
-        Self {
+    pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Result<Self> {
+        if min_len < 2 {
+            return Err(anyhow!("min_len={} must not be less than 2.", min_len));
+        }
+        if min_len > max_len {
+            return Err(anyhow!(
+                "min_len={} must be less than max_len={}.",
+                min_len,
+                max_len
+            ));
+        }
+        if mismatches >= min_len {
+            return Err(anyhow!(
+                "mismatches={} must be less than min_len={}.",
+                mismatches,
+                min_len
+            ));
+        }
+
+        Ok(Self {
             min_len,
             max_len,
             max_gap,
             mismatches,
-        }
+        })
     }
 
-    /// Verify that the given search parameters make sense (f.e. min_len < max_len).
-    pub fn verify_bounds(&self, n: usize) -> Result<()> {
-        if self.min_len < 2 {
-            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
-        }
+    pub fn check_bounds(&self, n: usize) -> Result<()> {
         if self.min_len >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
@@ -85,25 +123,12 @@ impl SearchParams {
                 n
             ));
         }
-        if self.min_len > self.max_len {
-            return Err(anyhow!(
-                "min_len={} must be less than max_len={}.",
-                self.min_len,
-                self.max_len
-            ));
-        }
+
         if self.mismatches >= n {
             return Err(anyhow!(
                 "mismatches={} must be less than sequence length={}.",
                 self.mismatches,
                 n
-            ));
-        }
-        if self.mismatches >= self.min_len {
-            return Err(anyhow!(
-                "mismatches={} must be less than min_len={}.",
-                self.mismatches,
-                self.min_len
             ));
         }
 
@@ -119,7 +144,17 @@ impl Default for SearchParams {
             DEFAULT_MAX_GAP,
             DEFAULT_MISMATCHES,
         )
+        .unwrap()
     }
+}
+
+#[derive(Debug)]
+pub struct Config {
+    pub input_file: String,
+    pub seq_name: String,
+    pub params: SearchParams,
+    pub output_file: String,
+    pub output_format: String,
 }
 
 impl Config {
@@ -148,23 +183,18 @@ impl Config {
         }
     }
 
-    pub fn from_args() -> Self {
-        Config::parse()
-    }
-
     /// Attempts to extract the sequence with name 'seq_name' from the (fasta) input file.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
-    pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
-        utils::check_file_exist(&self.input_file)?;
-        let mut reader = Reader::from_path(&self.input_file)?;
+    pub fn safe_extract_sequence(input_file: &str, seq_name: &str) -> Result<Vec<u8>> {
+        utils::check_file_exist(input_file)?;
+        let mut reader = Reader::from_path(input_file)?;
         let mut found_seqs = Vec::new();
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
-            if rec_id == self.seq_name {
+            if rec_id == seq_name {
                 let seq = utils::sanitize_sequence(record.seq())?;
-                Config::verify(self, seq.len())?;
                 return Ok(seq);
             }
 
@@ -173,20 +203,10 @@ impl Config {
 
         Err(anyhow!(
             "Sequence '{}' not found.\nFound sequences in '{}' are:\n - {}",
-            &self.seq_name,
-            &self.input_file,
+            seq_name,
+            input_file,
             found_seqs.join("\n - ")
         ))
-    }
-
-    pub fn verify(&self, n: usize) -> Result<()> {
-        if let Err(msg) = SearchParams::verify_bounds(&self.params, n) {
-            let _ = Config::command().print_help();
-            println!();
-            return Err(msg);
-        }
-        utils::verify_format(&self.output_format)?;
-        Ok(())
     }
 }
 
@@ -222,7 +242,6 @@ mod tests {
 
     #[test]
     fn test_invalid_min_len_less_than_two() {
-        let params = SearchParams::new(0, 100, 0, 0);
-        assert!(params.verify_bounds(10).is_err());
+        assert!(SearchParams::new(0, 100, 0, 0).is_err());
     }
 }

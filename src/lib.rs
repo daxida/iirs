@@ -21,8 +21,8 @@ use config::{Config, SearchParams};
 /// use iirs::{config::SearchParams, find_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
-/// let params = SearchParams::new(3, 6, 2, 0);
-/// assert!(params.verify_bounds(seq.len()).is_ok());
+/// let params = SearchParams::new(3, 6, 2, 0).unwrap();
+/// assert!(params.check_bounds(seq.len()).is_ok());
 /// let irs = find_irs(&params, &seq);
 /// // The only IR in the sequence is "acbbg"
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
