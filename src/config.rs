@@ -5,44 +5,54 @@ use seq_io::fasta::{Reader, Record};
 
 use crate::utils;
 
+const DEFAULT_MIN_LEN: usize = 10;
+const DEFAULT_MAX_LEN: usize = 100;
+const DEFAULT_MAX_GAP: usize = 100;
+const DEFAULT_MISMATCHES: usize = 0;
+
+const DEFAULT_INPUT_FILE: &str = "input.fasta";
+const DEFAULT_SEQ_NAME: &str = "seq0";
+const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
+const DEFAULT_OUTPUT_FORMAT: &str = "classic";
+
 #[derive(Parser, Debug)]
 pub struct SearchParams {
     /// Minimum length.
-    #[arg(short, default_value_t = 10)]
+    #[arg(short, default_value_t = DEFAULT_MIN_LEN)]
     pub min_len: usize,
 
     /// Maximum length.
-    #[arg(short = 'M', default_value_t = 100)]
+    #[arg(short = 'M', default_value_t = DEFAULT_MAX_LEN)]
     pub max_len: usize,
 
     /// Maximum permissible gap.
-    #[arg(short = 'g', default_value_t = 100)]
+    #[arg(short = 'g', default_value_t = DEFAULT_MAX_GAP)]
     pub max_gap: usize,
 
     /// Maximum permissible mismatches.
-    #[arg(short = 'x', default_value_t = 0)]
+    #[arg(short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     pub mismatches: usize,
 }
 
 #[derive(Parser, Debug)]
 pub struct Config {
     /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from("input.fasta"))]
+    #[arg(short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
     pub input_file: String,
 
     /// Input sequence name.
-    #[arg(short, default_value_t = String::from("seq0"))]
+    #[arg(short, default_value_t = String::from(DEFAULT_SEQ_NAME))]
     pub seq_name: String,
 
     #[clap(flatten)]
     pub params: SearchParams,
 
     /// Output filename.
-    #[arg(short, default_value_t = String::from("iirs.out"))]
+    #[arg(short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
     pub output_file: String,
 
     /// Output format (classic, csv or custom_csv).
-    #[arg(short = 'F', default_value_t = String::from("classic"))]
+    #[arg(short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
     pub output_format: String,
 }
 
@@ -103,8 +113,12 @@ impl SearchParams {
 
 impl Default for SearchParams {
     fn default() -> Self {
-        // Same as the clap defaults.
-        SearchParams::new(10, 100, 100, 0)
+        SearchParams::new(
+            DEFAULT_MIN_LEN,
+            DEFAULT_MAX_LEN,
+            DEFAULT_MAX_GAP,
+            DEFAULT_MISMATCHES,
+        )
     }
 }
 
@@ -121,16 +135,16 @@ impl Config {
         output_format: &str,
     ) -> Self {
         Self {
-            input_file: input_file.to_string(),
-            seq_name: seq_name.to_string(),
+            input_file: String::from(input_file),
+            seq_name: String::from(seq_name),
             params: SearchParams {
                 min_len,
                 max_len,
                 max_gap,
                 mismatches,
             },
-            output_file: output_file.to_string(),
-            output_format: output_format.to_string(),
+            output_file: String::from(output_file),
+            output_format: String::from(output_format),
         }
     }
 
@@ -179,12 +193,11 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            input_file: String::new(),
-            seq_name: String::new(),
+            input_file: String::from(DEFAULT_INPUT_FILE),
+            seq_name: String::from(DEFAULT_SEQ_NAME),
             params: SearchParams::default(),
-            output_file: String::new(),
-            // To not crash on stringify
-            output_format: String::from("classic"),
+            output_file: String::from(DEFAULT_OUTPUT_FILE),
+            output_format: String::from(DEFAULT_OUTPUT_FORMAT),
         }
     }
 }

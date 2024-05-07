@@ -13,10 +13,12 @@ use std::fs::File;
 use std::io::Write;
 use std::time::{Duration, Instant};
 
+const RANDOM_FILE_PATH: &str = "rand.fasta";
+
 const CPP_BINARY_PATH: &str = "bench/IUPACpal";
 const RUST_BINARY_PATH: &str = "target/release/iirs";
 const CPP_OUTPUT_PATH: &str = "IUPACpal.out";
-const RUST_OUTPUT_PATH: &str = "iirs.out";
+const RUST_OUTPUT_PATH: &str = "iirs.out"; // This is the default anyway
 
 const GREEN: &str = "\x1B[32m";
 const RESET: &str = "\x1B[0m";
@@ -70,16 +72,14 @@ impl TestSuite {
             mismatches.iter().cloned()
         )
         .map(move |(min_len, max_gap, mismatches)| Config {
-            input_file: "rand.fasta".to_string(),
-            seq_name: "seq0".to_string(),
+            input_file: String::from(RANDOM_FILE_PATH),
             params: SearchParams {
                 min_len,
                 max_len: 100,
                 max_gap,
                 mismatches,
             },
-            output_file: "DUMMY".to_string(),
-            output_format: "classic".to_string(),
+            ..Default::default()
         })
     }
 }
@@ -120,7 +120,7 @@ fn generate_random_fasta(size_seq: usize) -> String {
 
 fn write_random_fasta(size_seq: usize) -> Result<()> {
     let fasta = generate_random_fasta(size_seq);
-    let mut file = File::create("rand.fasta").unwrap();
+    let mut file = File::create(RANDOM_FILE_PATH).unwrap();
     file.write_all(fasta.as_bytes())?;
 
     Ok(())
