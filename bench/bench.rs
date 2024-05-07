@@ -2,7 +2,7 @@ mod helper;
 use helper::run_command;
 
 use anyhow::Result;
-use iirs::config::{Config, SearchParams};
+use iirs::{Config, SearchParams};
 
 use std::time::Instant;
 
@@ -18,28 +18,28 @@ fn main() -> Result<()> {
 
     let config = match data {
         "alys" => Config {
-            input_file: "tests/test_data/alys.fna".to_string(),
-            seq_name: "NZ_CP059564.1".to_string(),
+            input_file: "tests/test_data/alys.fna",
+            seq_name: "NZ_CP059564.1",
             params: SearchParams {
                 min_len: 3,
                 max_len: 100,
                 max_gap: 20,
                 mismatches: 0,
             },
-            output_file: String::from(RUST_OUTPUT_PATH),
-            output_format: "classic".to_string(),
+            output_file: RUST_OUTPUT_PATH,
+            output_format: "classic",
         },
         "rand" => Config {
-            input_file: "tests/test_data/rand1000000.fasta".to_string(),
-            seq_name: "seq0".to_string(),
+            input_file: "tests/test_data/rand1000000.fasta",
+            seq_name: "seq0",
             params: SearchParams {
                 min_len: 2,
                 max_len: 100,
                 max_gap: 5,
                 mismatches: 1,
             },
-            output_file: String::from(RUST_OUTPUT_PATH),
-            output_format: "classic".to_string(),
+            output_file: RUST_OUTPUT_PATH,
+            output_format: "classic",
         },
         _ => todo!(),
     };

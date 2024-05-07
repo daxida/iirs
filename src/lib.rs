@@ -1,4 +1,8 @@
-pub mod config;
+mod cli;
+pub use cli::Cli;
+
+mod config;
+pub use config::{Config, SearchParams};
 
 mod algo;
 mod constants;
@@ -8,9 +12,8 @@ mod rmq;
 mod utils;
 
 use anyhow::Result;
-use config::{Config, SearchParams};
 
-/// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence 
+/// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence
 /// based on the provided parameters.
 ///
 /// Each IR is returned a tuple of three integers (usize): start position, end position, and gap size.
@@ -18,11 +21,11 @@ use config::{Config, SearchParams};
 /// # Examples
 ///
 /// ```rust
-/// use iirs::{config::SearchParams, find_irs};
+/// use iirs::{SearchParams, find_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
-/// let params = SearchParams::new(3, 6, 2, 0);
-/// assert!(params.verify_bounds(seq.len()).is_ok());
+/// let params = SearchParams::new(3, 6, 2, 0).unwrap();
+/// assert!(params.check_bounds(seq.len()).is_ok());
 /// let irs = find_irs(&params, &seq);
 /// // The only IR in the sequence is "acbbg"
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
@@ -85,21 +88,21 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     Ok(irs)
 }
 
-/// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) 
+/// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs)
 /// according to the configuration output format.
 ///
 /// Returns an error if given an invalid output format.
-/// 
+///
 /// You can run `--help` in the CLI to see which output formats are available.
 ///
 /// # Examples
 ///
 /// ```rust
-/// use iirs::config::Config;
+/// use iirs::Config;
 /// use iirs::{find_irs, stringify_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
-/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
+/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv").unwrap();
 /// let irs = find_irs(&config.params, &seq).unwrap();
 /// let out_str = stringify_irs(&config, &irs, &seq).unwrap();
 /// let expected = "\
@@ -116,9 +119,9 @@ pub fn stringify_irs(
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
-    utils::verify_format(&config.output_format)?;
+    utils::verify_format(config.output_format)?;
 
-    match config.output_format.as_str() {
+    match config.output_format {
         "classic" => Ok(format!(
             "{}{}",
             format::out_display_header(config, seq.len()),

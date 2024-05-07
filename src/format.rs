@@ -6,7 +6,7 @@ fn int_size(x: usize) -> usize {
     (x.ilog10() + 1) as usize
 }
 
-/// Follows [IUPACpal](https://github.com/steven31415/IUPACpal) convention 
+/// Follows [IUPACpal](https://github.com/steven31415/IUPACpal) convention
 /// of calling Inverted Repeats, palindromes
 pub fn out_display_header(config: &Config, n: usize) -> String {
     format!(
@@ -184,8 +184,8 @@ mod tests {
     fn test_format_classic() {
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let params = SearchParams::new(10, 100, 10, 1);
-        params.verify_bounds(seq.len()).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1).unwrap();
+        params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
@@ -252,8 +252,8 @@ mod tests {
     fn test_format_csv() {
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let params = SearchParams::new(10, 100, 10, 1);
-        params.verify_bounds(seq.len()).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1).unwrap();
+        params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
@@ -284,8 +284,8 @@ mod tests {
     fn test_format_custom_csv_mini() {
         let string = "AGUCSGGTGTWKMMMKKBDDN-NN*HAGNNAGuGTA";
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
-        let params = SearchParams::new(10, 100, 10, 1);
-        params.verify_bounds(seq.len()).unwrap();
+        let params = SearchParams::new(10, 100, 10, 1).unwrap();
+        params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
         let received = fmt_custom(&irs, &seq);
         let expected = r#"ir_start,motif,gap_motif,reverse_complement

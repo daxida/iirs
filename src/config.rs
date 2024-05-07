@@ -1,76 +1,46 @@
 use anyhow::{anyhow, Result};
-use clap::CommandFactory;
-use clap::Parser;
 use seq_io::fasta::{Reader, Record};
 
+use crate::constants::*;
 use crate::utils;
 
-const DEFAULT_MIN_LEN: usize = 10;
-const DEFAULT_MAX_LEN: usize = 100;
-const DEFAULT_MAX_GAP: usize = 100;
-const DEFAULT_MISMATCHES: usize = 0;
-
-const DEFAULT_INPUT_FILE: &str = "input.fasta";
-const DEFAULT_SEQ_NAME: &str = "seq0";
-const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
-const DEFAULT_OUTPUT_FORMAT: &str = "classic";
-
-#[derive(Parser, Debug)]
+#[derive(Debug)]
 pub struct SearchParams {
-    /// Minimum length.
-    #[arg(short, default_value_t = DEFAULT_MIN_LEN)]
     pub min_len: usize,
-
-    /// Maximum length.
-    #[arg(short = 'M', default_value_t = DEFAULT_MAX_LEN)]
     pub max_len: usize,
-
-    /// Maximum permissible gap.
-    #[arg(short = 'g', default_value_t = DEFAULT_MAX_GAP)]
     pub max_gap: usize,
-
-    /// Maximum permissible mismatches.
-    #[arg(short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     pub mismatches: usize,
 }
 
-#[derive(Parser, Debug)]
-pub struct Config {
-    /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
-    pub input_file: String,
-
-    /// Input sequence name.
-    #[arg(short, default_value_t = String::from(DEFAULT_SEQ_NAME))]
-    pub seq_name: String,
-
-    #[clap(flatten)]
-    pub params: SearchParams,
-
-    /// Output filename.
-    #[arg(short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
-    pub output_file: String,
-
-    /// Output format (classic, csv or custom_csv).
-    #[arg(short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
-    pub output_format: String,
-}
-
 impl SearchParams {
-    pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
-        Self {
+    pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Result<Self> {
+        if min_len < 2 {
+            return Err(anyhow!("min_len={} must not be less than 2.", min_len));
+        }
+        if min_len > max_len {
+            return Err(anyhow!(
+                "min_len={} must be less than max_len={}.",
+                min_len,
+                max_len
+            ));
+        }
+        if mismatches >= min_len {
+            return Err(anyhow!(
+                "mismatches={} must be less than min_len={}.",
+                mismatches,
+                min_len
+            ));
+        }
+
+        Ok(Self {
             min_len,
             max_len,
             max_gap,
             mismatches,
-        }
+        })
     }
 
-    /// Verify that the given search parameters make sense (f.e. min_len < max_len).
-    pub fn verify_bounds(&self, n: usize) -> Result<()> {
-        if self.min_len < 2 {
-            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
-        }
+    pub fn check_bounds(&self, n: usize) -> Result<()> {
         if self.min_len >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
@@ -85,25 +55,12 @@ impl SearchParams {
                 n
             ));
         }
-        if self.min_len > self.max_len {
-            return Err(anyhow!(
-                "min_len={} must be less than max_len={}.",
-                self.min_len,
-                self.max_len
-            ));
-        }
+
         if self.mismatches >= n {
             return Err(anyhow!(
                 "mismatches={} must be less than sequence length={}.",
                 self.mismatches,
                 n
-            ));
-        }
-        if self.mismatches >= self.min_len {
-            return Err(anyhow!(
-                "mismatches={} must be less than min_len={}.",
-                self.mismatches,
-                self.min_len
             ));
         }
 
@@ -119,52 +76,53 @@ impl Default for SearchParams {
             DEFAULT_MAX_GAP,
             DEFAULT_MISMATCHES,
         )
+        .unwrap()
     }
 }
 
-impl Config {
+#[derive(Debug)]
+pub struct Config<'a> {
+    pub input_file: &'a str,
+    pub seq_name: &'a str,
+    pub params: SearchParams,
+    pub output_file: &'a str,
+    pub output_format: &'a str,
+}
+
+impl<'a> Config<'a> {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        input_file: &str,
-        seq_name: &str,
+        input_file: &'a str,
+        seq_name: &'a str,
         min_len: usize,
         max_len: usize,
         max_gap: usize,
         mismatches: usize,
-        output_file: &str,
-        output_format: &str,
-    ) -> Self {
-        Self {
-            input_file: String::from(input_file),
-            seq_name: String::from(seq_name),
-            params: SearchParams {
-                min_len,
-                max_len,
-                max_gap,
-                mismatches,
-            },
-            output_file: String::from(output_file),
-            output_format: String::from(output_format),
-        }
-    }
-
-    pub fn from_args() -> Self {
-        Config::parse()
+        output_file: &'a str,
+        output_format: &'a str,
+    ) -> Result<Self> {
+        let params = SearchParams::new(min_len, max_len, max_gap, mismatches)?;
+        Ok(Self {
+            input_file,
+            seq_name,
+            params,
+            output_file,
+            output_format,
+        })
     }
 
     /// Attempts to extract the sequence with name 'seq_name' from the (fasta) input file.
     ///
     /// If the sequence is not found, returns an Error with the list of found sequences.
-    pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
-        utils::check_file_exist(&self.input_file)?;
-        let mut reader = Reader::from_path(&self.input_file)?;
+    pub fn safe_extract_sequence(input_file: &str, seq_name: &str) -> Result<Vec<u8>> {
+        utils::check_file_exist(input_file)?;
+        let mut reader = Reader::from_path(input_file)?;
         let mut found_seqs = Vec::new();
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
-            if rec_id == self.seq_name {
+            if rec_id == seq_name {
                 let seq = utils::sanitize_sequence(record.seq())?;
-                Config::verify(self, seq.len())?;
                 return Ok(seq);
             }
 
@@ -173,36 +131,26 @@ impl Config {
 
         Err(anyhow!(
             "Sequence '{}' not found.\nFound sequences in '{}' are:\n - {}",
-            &self.seq_name,
-            &self.input_file,
+            seq_name,
+            input_file,
             found_seqs.join("\n - ")
         ))
     }
-
-    pub fn verify(&self, n: usize) -> Result<()> {
-        if let Err(msg) = SearchParams::verify_bounds(&self.params, n) {
-            let _ = Config::command().print_help();
-            println!();
-            return Err(msg);
-        }
-        utils::verify_format(&self.output_format)?;
-        Ok(())
-    }
 }
 
-impl Default for Config {
+impl<'a> Default for Config<'a> {
     fn default() -> Self {
         Config {
-            input_file: String::from(DEFAULT_INPUT_FILE),
-            seq_name: String::from(DEFAULT_SEQ_NAME),
+            input_file: DEFAULT_INPUT_FILE,
+            seq_name: DEFAULT_SEQ_NAME,
             params: SearchParams::default(),
-            output_file: String::from(DEFAULT_OUTPUT_FILE),
-            output_format: String::from(DEFAULT_OUTPUT_FORMAT),
+            output_file: DEFAULT_OUTPUT_FILE,
+            output_format: DEFAULT_OUTPUT_FORMAT,
         }
     }
 }
 
-impl std::fmt::Display for Config {
+impl<'a> std::fmt::Display for Config<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "input_file:  {}", self.input_file)?;
         writeln!(f, "seq_name:    {}", self.seq_name)?;
@@ -222,7 +170,6 @@ mod tests {
 
     #[test]
     fn test_invalid_min_len_less_than_two() {
-        let params = SearchParams::new(0, 100, 0, 0);
-        assert!(params.verify_bounds(10).is_err());
+        assert!(SearchParams::new(0, 100, 0, 0).is_err());
     }
 }
