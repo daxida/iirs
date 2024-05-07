@@ -119,7 +119,7 @@ pub fn stringify_irs(
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
-    utils::verify_format(&config.output_format)?;
+    utils::verify_format(config.output_format)?;
 
     match config.output_format {
         "classic" => Ok(format!(
