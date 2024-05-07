@@ -2,7 +2,7 @@ mod helper;
 use helper::run_command;
 
 use anyhow::Result;
-use iirs::config::{Config, SearchParams};
+use iirs::{Config, SearchParams};
 
 use std::time::Instant;
 

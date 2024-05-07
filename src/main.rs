@@ -1,6 +1,6 @@
 extern crate elapsed_time;
 
-use iirs::config::Cli;
+use iirs::Cli;
 use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;

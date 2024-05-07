@@ -1,4 +1,8 @@
-pub mod config;
+mod cli;
+pub use cli::Cli;
+
+mod config;
+pub use config::{Config, SearchParams};
 
 mod algo;
 mod constants;
@@ -8,7 +12,6 @@ mod rmq;
 mod utils;
 
 use anyhow::Result;
-use config::{Config, SearchParams};
 
 /// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence
 /// based on the provided parameters.
@@ -18,7 +21,7 @@ use config::{Config, SearchParams};
 /// # Examples
 ///
 /// ```rust
-/// use iirs::{config::SearchParams, find_irs};
+/// use iirs::{SearchParams, find_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let params = SearchParams::new(3, 6, 2, 0).unwrap();
@@ -95,11 +98,11 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 /// # Examples
 ///
 /// ```rust
-/// use iirs::config::Config;
+/// use iirs::Config;
 /// use iirs::{find_irs, stringify_irs};
 ///
 /// let seq = "acbbgt".as_bytes();
-/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv");
+/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv").unwrap();
 /// let irs = find_irs(&config.params, &seq).unwrap();
 /// let out_str = stringify_irs(&config, &irs, &seq).unwrap();
 /// let expected = "\

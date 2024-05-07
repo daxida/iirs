@@ -4,7 +4,7 @@ use helper::run_command;
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use csv::WriterBuilder;
-use iirs::config::{Config, SearchParams};
+use iirs::{Config, SearchParams};
 use itertools::iproduct;
 use rand::prelude::SliceRandom;
 

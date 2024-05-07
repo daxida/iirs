@@ -1,4 +1,4 @@
-use iirs::{config::SearchParams, find_irs};
+use iirs::{find_irs, SearchParams};
 
 fn test_amount_irs(params: &SearchParams, string: &str) -> usize {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();

@@ -1,10 +1,10 @@
 use anyhow::{anyhow, Result};
-use iirs::config;
+use iirs::Config;
 
 use std::process::Command;
 use std::time::{Duration, Instant};
 
-pub fn run_command(cmd_beginning: &str, config: &config::Config) -> Result<Duration> {
+pub fn run_command(cmd_beginning: &str, config: &Config) -> Result<Duration> {
     let start = Instant::now();
 
     let command = format!(

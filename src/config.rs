@@ -1,76 +1,8 @@
 use anyhow::{anyhow, Result};
-use clap::Parser;
 use seq_io::fasta::{Reader, Record};
 
+use crate::constants::*;
 use crate::utils;
-
-const DEFAULT_MIN_LEN: usize = 10;
-const DEFAULT_MAX_LEN: usize = 100;
-const DEFAULT_MAX_GAP: usize = 100;
-const DEFAULT_MISMATCHES: usize = 0;
-
-const DEFAULT_INPUT_FILE: &str = "input.fasta";
-const DEFAULT_SEQ_NAME: &str = "seq0";
-const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
-const DEFAULT_OUTPUT_FORMAT: &str = "classic";
-
-#[derive(Parser, Debug)]
-pub struct Cli {
-    /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
-    input_file: String,
-
-    /// Input sequence name.
-    #[arg(short, default_value_t = String::from(DEFAULT_SEQ_NAME))]
-    seq_name: String,
-
-    /// Minimum length.
-    #[arg(short, default_value_t = DEFAULT_MIN_LEN)]
-    min_len: usize,
-
-    /// Maximum length.
-    #[arg(short = 'M', default_value_t = DEFAULT_MAX_LEN)]
-    max_len: usize,
-
-    /// Maximum permissible gap.
-    #[arg(short = 'g', default_value_t = DEFAULT_MAX_GAP)]
-    max_gap: usize,
-
-    /// Maximum permissible mismatches.
-    #[arg(short = 'x', default_value_t = DEFAULT_MISMATCHES)]
-    mismatches: usize,
-
-    /// Output filename.
-    #[arg(short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
-    output_file: String,
-
-    /// Output format (classic, csv or custom_csv).
-    #[arg(short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
-    output_format: String,
-}
-
-impl Cli {
-    pub fn parse_args() -> Self {
-        Cli::parse()
-    }
-
-    pub fn try_from_args(&self) -> Result<(Config, Vec<u8>)> {
-        let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
-
-        let config = Config {
-            input_file: &self.input_file,
-            seq_name: &self.seq_name,
-            params,
-            output_file: &self.output_file,
-            output_format: &self.output_format,
-        };
-
-        let seq = Config::safe_extract_sequence(&self.input_file, &self.seq_name)?;
-        config.params.check_bounds(seq.len())?;
-
-        Ok((config, seq))
-    }
-}
 
 #[derive(Debug)]
 pub struct SearchParams {
@@ -168,19 +100,15 @@ impl<'a> Config<'a> {
         mismatches: usize,
         output_file: &'a str,
         output_format: &'a str,
-    ) -> Self {
-        Self {
+    ) -> Result<Self> {
+        let params = SearchParams::new(min_len, max_len, max_gap, mismatches)?;
+        Ok(Self {
             input_file,
             seq_name,
-            params: SearchParams {
-                min_len,
-                max_len,
-                max_gap,
-                mismatches,
-            },
+            params,
             output_file,
             output_format,
-        }
+        })
     }
 
     /// Attempts to extract the sequence with name 'seq_name' from the (fasta) input file.
