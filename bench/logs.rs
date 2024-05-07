@@ -72,7 +72,7 @@ impl TestSuite {
             mismatches.iter().cloned()
         )
         .map(move |(min_len, max_gap, mismatches)| Config {
-            input_file: String::from(RANDOM_FILE_PATH),
+            input_file: RANDOM_FILE_PATH,
             params: SearchParams {
                 min_len,
                 max_len: 100,

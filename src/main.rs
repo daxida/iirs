@@ -1,6 +1,6 @@
 extern crate elapsed_time;
 
-use iirs::config::CLI;
+use iirs::config::Cli;
 use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;
@@ -9,7 +9,7 @@ use std::io::Write;
 
 #[elapsed_time::elapsed]
 fn main() -> Result<()> {
-    let args = CLI::parse_args();
+    let args = Cli::parse_args();
     let (config, seq) = args.try_from_args()?;
 
     let irs = find_irs(&config.params, &seq)?;

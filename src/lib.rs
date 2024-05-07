@@ -10,7 +10,7 @@ mod utils;
 use anyhow::Result;
 use config::{Config, SearchParams};
 
-/// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence 
+/// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence
 /// based on the provided parameters.
 ///
 /// Each IR is returned a tuple of three integers (usize): start position, end position, and gap size.
@@ -85,11 +85,11 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     Ok(irs)
 }
 
-/// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) 
+/// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs)
 /// according to the configuration output format.
 ///
 /// Returns an error if given an invalid output format.
-/// 
+///
 /// You can run `--help` in the CLI to see which output formats are available.
 ///
 /// # Examples
@@ -118,7 +118,7 @@ pub fn stringify_irs(
 
     utils::verify_format(&config.output_format)?;
 
-    match config.output_format.as_str() {
+    match config.output_format {
         "classic" => Ok(format!(
             "{}{}",
             format::out_display_header(config, seq.len()),

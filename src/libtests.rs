@@ -53,7 +53,7 @@ fn correct_truncation_helper(config: &Config) {
 fn test_correct_truncation_one() {
     let config = Config {
         params: SearchParams::new(8, 100, 10, 6).unwrap(),
-        input_file: String::from("tests/test_data/test1.fasta"),
+        input_file: "tests/test_data/test1.fasta",
         ..Default::default()
     };
     correct_truncation_helper(&config)
@@ -63,7 +63,7 @@ fn test_correct_truncation_one() {
 fn test_correct_truncation_two() {
     let config = Config {
         params: SearchParams::new(8, 100, 10, 6).unwrap(),
-        input_file: String::from("tests/test_data/truncation_edge_case.fasta"),
+        input_file: "tests/test_data/truncation_edge_case.fasta",
         ..Default::default()
     };
     correct_truncation_helper(&config)
@@ -73,7 +73,7 @@ fn test_correct_truncation_two() {
 fn test_correct_truncation_three() {
     let config = Config {
         params: SearchParams::new(6, 100, 0, 5).unwrap(),
-        input_file: String::from("tests/test_data/truncation_edge_case.fasta"),
+        input_file: "tests/test_data/truncation_edge_case.fasta",
         ..Default::default()
     };
     correct_truncation_helper(&config)
@@ -82,7 +82,7 @@ fn test_correct_truncation_three() {
 #[test]
 fn test_invalid_output_format_stringify() {
     let config = Config {
-        output_format: String::from("inexistent"),
+        output_format: "inexistent",
         ..Default::default()
     };
     assert!(stringify_irs(&config, &Vec::new(), &Vec::new()).is_err());
@@ -103,7 +103,7 @@ fn test_irs_edge_gap() {
     // The original IUPACpal won't find this IR
     let config = Config {
         params: SearchParams::new(14, 100, 3, 0).unwrap(),
-        input_file: String::from("tests/test_data/edge_gap.fasta"),
+        input_file: "tests/test_data/edge_gap.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 1)
@@ -113,7 +113,7 @@ fn test_irs_edge_gap() {
 fn test_irs_alys() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/alys.fna"),
+        input_file: "tests/test_data/alys.fna",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 739728)
@@ -123,7 +123,7 @@ fn test_irs_alys() {
 fn test_irs_8100_n() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/8100N.fasta"),
+        input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 16189)
@@ -133,7 +133,7 @@ fn test_irs_8100_n() {
 fn test_irs_8100_n_with_mismatches() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 2).unwrap(),
-        input_file: String::from("tests/test_data/8100N.fasta"),
+        input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 16189)
@@ -143,7 +143,7 @@ fn test_irs_8100_n_with_mismatches() {
 fn test_irs_d00596() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/d00596.fasta"),
+        input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 5251)
@@ -153,7 +153,7 @@ fn test_irs_d00596() {
 fn test_irs_d00596_with_mismatches() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 2).unwrap(),
-        input_file: String::from("tests/test_data/d00596.fasta"),
+        input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 31555)
@@ -163,7 +163,7 @@ fn test_irs_d00596_with_mismatches() {
 fn test_rand_1000() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/rand1000.fasta"),
+        input_file: "tests/test_data/rand1000.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 254)
@@ -173,7 +173,7 @@ fn test_rand_1000() {
 fn test_rand_10000() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/rand10000.fasta"),
+        input_file: "tests/test_data/rand10000.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 2484)
@@ -183,7 +183,7 @@ fn test_rand_10000() {
 fn test_rand_100000() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/rand100000.fasta"),
+        input_file: "tests/test_data/rand100000.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 25440)
@@ -193,7 +193,7 @@ fn test_rand_100000() {
 fn test_rand_1000000() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/rand1000000.fasta"),
+        input_file: "tests/test_data/rand1000000.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 253566)
@@ -203,7 +203,7 @@ fn test_rand_1000000() {
 fn test_test_1() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: String::from("tests/test_data/test1.fasta"),
+        input_file: "tests/test_data/test1.fasta",
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 84)
