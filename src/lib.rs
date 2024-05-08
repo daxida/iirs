@@ -89,46 +89,70 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 }
 
 /// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs)
-/// according to the configuration output format.
+/// based on the specified output format in the configuration.
 ///
-/// Returns an error if given an invalid output format.
+/// An error is returned for an invalid output format.
+/// Valid formats are: classic (same as IUPACpal), csv and custom.
 ///
-/// You can run `--help` in the CLI to see which output formats are available.
+/// If the specified format is valid, the function returns a tuple of Strings: (header, stringified_irs).
 ///
 /// # Examples
 ///
 /// ```rust
-/// use iirs::Config;
+/// use iirs::{SearchParams, Config};
 /// use iirs::{find_irs, stringify_irs};
 ///
+/// // Simple example for the csv output format.
 /// let seq = "acbbgt".as_bytes();
-/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "csv").unwrap();
+/// let config = Config {
+///     params: SearchParams::new(3, 6, 2, 0).unwrap(),
+///     output_format: "csv",
+///     // The remaining fields are not relevant here.
+///     ..Default::default()
+/// };
 /// let irs = find_irs(&config.params, &seq).unwrap();
-/// let out_str = stringify_irs(&config, &irs, &seq).unwrap();
+/// let (header, irs_str) = stringify_irs(&config, &irs, &seq).unwrap();
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
 ///     1,3,acb,6,4,tgb,111\n";
+/// assert_eq!(format!("{}\n{}", &header, &irs_str), expected);
 ///
-/// assert_eq!(out_str, expected);
+/// // For the classic method, all the fields are used in the header.
+/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "classic").unwrap();
+/// let (header, irs_str) = stringify_irs(&config, &irs, &seq).unwrap();
+/// let expected = "\
+///     Palindromes of: in.fasta\n\
+///     Sequence name: seq0\n\
+///     Sequence length is: 6\n\
+///     Start at position: 1\n\
+///     End at position: 6\n\
+///     Minimum length of Palindromes is: 3\n\
+///     Maximum length of Palindromes is: 6\n\
+///     Maximum gap between elements is: 2\n\
+///     Number of mismatches allowed in Palindrome: 0\n\n\n\n\
+///     Palindromes:";
+/// assert_eq!(header, expected);
 /// ```
 pub fn stringify_irs(
     config: &Config,
     irs: &Vec<(usize, usize, usize)>,
     seq: &[u8],
-) -> Result<String> {
+) -> Result<(String, String)> {
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
     utils::verify_format(config.output_format)?;
 
     match config.output_format {
-        "classic" => Ok(format!(
-            "{}{}",
-            format::out_display_header(config, seq.len()),
-            format::fmt_classic(irs, seq, &matrix, &complement)
+        "classic" => Ok((
+            format::fmt_classic_header(config, seq.len()),
+            format::fmt_classic(irs, seq, &matrix, &complement),
         )),
-        "csv" => Ok(format::fmt_csv(irs, seq, &matrix, &complement)),
-        "custom" => Ok(format::fmt_custom(irs, seq)),
+        "csv" => Ok((
+            format::fmt_csv_header(),
+            format::fmt_csv(irs, seq, &matrix, &complement),
+        )),
+        "custom" => Ok((format::fmt_custom_header(), format::fmt_custom(irs, seq))),
         // Already tested in utils::verify_format
         _ => unreachable!(),
     }

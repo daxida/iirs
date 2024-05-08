@@ -10,6 +10,8 @@ pub const DEFAULT_SEQ_NAME: &str = "seq0";
 pub const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
 pub const DEFAULT_OUTPUT_FORMAT: &str = "classic";
 
+pub const EXISTING_FORMATS: [&str; 3] = ["classic", "csv", "custom"];
+
 pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
 pub const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";

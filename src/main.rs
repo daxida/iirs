@@ -13,10 +13,10 @@ fn main() -> Result<()> {
     let (config, seq) = args.try_from_args()?;
 
     let irs = find_irs(&config.params, &seq)?;
-    let out_str = stringify_irs(&config, &irs, &seq)?;
+    let (header, irs_str) = stringify_irs(&config, &irs, &seq)?;
 
     let mut file = File::create(config.output_file)?;
-    writeln!(&mut file, "{}", out_str)?;
+    writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
 
     println!("\n{}", config);
     println!("Search complete!");

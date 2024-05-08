@@ -208,3 +208,14 @@ fn test_test_1() {
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 84)
 }
+
+#[test]
+fn test_formats() {
+    for output_format in constants::EXISTING_FORMATS {
+        let config = Config {
+            output_format,
+            ..Default::default()
+        };
+        assert!(stringify_irs(&config, &vec![], &vec![]).is_ok())
+    }
+}

@@ -35,7 +35,7 @@ pub struct Cli {
     #[arg(short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
     output_file: String,
 
-    /// Output format (classic, csv or custom_csv).
+    /// Output format (classic, csv or custom).
     #[arg(short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
     output_format: String,
 }

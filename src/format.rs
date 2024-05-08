@@ -8,7 +8,7 @@ fn int_size(x: usize) -> usize {
 
 /// Follows [IUPACpal](https://github.com/steven31415/IUPACpal) convention
 /// of calling Inverted Repeats, palindromes
-pub fn out_display_header(config: &Config, n: usize) -> String {
+pub fn fmt_classic_header(config: &Config, n: usize) -> String {
     format!(
         "Palindromes of: {}\n\
         Sequence name: {}\n\
@@ -19,7 +19,7 @@ pub fn out_display_header(config: &Config, n: usize) -> String {
         Maximum length of Palindromes is: {}\n\
         Maximum gap between elements is: {}\n\
         Number of mismatches allowed in Palindrome: {}\n\n\n\n\
-        Palindromes:\n",
+        Palindromes:",
         &config.input_file,
         &config.seq_name,
         n,
@@ -91,6 +91,10 @@ pub fn fmt_classic(
     out_str
 }
 
+pub fn fmt_csv_header() -> String {
+    String::from("start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching")
+}
+
 pub fn fmt_csv(
     irs: &Vec<(usize, usize, usize)>,
     seq: &[u8],
@@ -98,9 +102,6 @@ pub fn fmt_csv(
     complement: &[u8; 128],
 ) -> String {
     let mut out_str = String::new();
-
-    let heading = "start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n";
-    out_str.push_str(heading);
 
     for (left, right, gap) in irs {
         let outer_left = left + 1;
@@ -142,11 +143,12 @@ pub fn fmt_csv(
     out_str
 }
 
+pub fn fmt_custom_header() -> String {
+    String::from("ir_start,motif,gap_motif,reverse_complement")
+}
+
 pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8]) -> String {
     let mut out_str = String::new();
-
-    let heading = "ir_start,motif,gap_motif,reverse_complement\n";
-    out_str.push_str(heading);
 
     for (left, right, gap) in irs {
         let outer_left = left + 1;
@@ -257,7 +259,11 @@ mod tests {
         let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
-        let received = fmt_csv(&irs, &seq, &matrix, &complement);
+        let received = format!(
+            "{}\n{}",
+            fmt_csv_header(),
+            fmt_csv(&irs, &seq, &matrix, &complement)
+        );
         let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
 3,15,ucsggtgtwkmmm,30,18,nngah*nn-nddb,1110111111111
@@ -287,7 +293,7 @@ mod tests {
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
-        let received = fmt_custom(&irs, &seq);
+        let received = format!("{}\n{}", fmt_custom_header(), fmt_custom(&irs, &seq));
         let expected = r#"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
 3,ucsggtgtwkmmm,kk,nngah*nn-nddb
