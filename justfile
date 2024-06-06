@@ -1,3 +1,8 @@
+clean:
+  rm -f *iirs.out
+  rm -f rand.fasta
+  rm -f IUPACpal.out
+  
 # test testseq in input.fasta
 test:
   cargo run --release -- \

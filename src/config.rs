@@ -4,7 +4,7 @@ use seq_io::fasta::{Reader, Record};
 use crate::constants::*;
 use crate::utils;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SearchParams {
     pub min_len: usize,
     pub max_len: usize,
@@ -111,30 +111,43 @@ impl<'a> Config<'a> {
         })
     }
 
-    /// Attempts to extract the sequence with name 'seq_name' from the (fasta) input file.
+    /// Attempts to extract every sequence with name in 'seq_names' from the (fasta) input file.
     ///
-    /// If the sequence is not found, returns an Error with the list of found sequences.
-    pub fn safe_extract_sequence(input_file: &str, seq_name: &str) -> Result<Vec<u8>> {
+    /// If at least one sequence is not found, returns an Error with the list of missing sequences,
+    /// together with a list of all the sequences present in the input file.
+    pub fn safe_extract_sequences(
+        input_file: &str,
+        seq_names: &[String],
+    ) -> Result<Vec<(Vec<u8>, String)>> {
         utils::check_file_exist(input_file)?;
+
         let mut reader = Reader::from_path(input_file)?;
-        let mut found_seqs = Vec::new();
+        let mut all_seqs_in_input_file = Vec::new();
+        let mut seqs_found = Vec::new();
+        let mut seqs_not_found_ids: Vec<String> = seq_names.to_vec();
+
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
-            if rec_id == seq_name {
+            if seq_names.contains(&rec_id) {
                 let seq = utils::sanitize_sequence(record.seq())?;
-                return Ok(seq);
+                seqs_found.push((seq, rec_id.clone()));
+                seqs_not_found_ids.retain(|id| id != &rec_id);
             }
 
-            found_seqs.push(rec_id);
+            all_seqs_in_input_file.push(rec_id);
         }
 
-        Err(anyhow!(
-            "Sequence '{}' not found.\nFound sequences in '{}' are:\n - {}",
-            seq_name,
-            input_file,
-            found_seqs.join("\n - ")
-        ))
+        if !seqs_not_found_ids.is_empty() {
+            return Err(anyhow!(
+                "Sequence(s) '{}' not found.\nFound sequences in '{}' are:\n - {}",
+                seqs_not_found_ids.join(", "),
+                input_file,
+                all_seqs_in_input_file.join("\n - ")
+            ));
+        }
+
+        Ok(seqs_found)
     }
 }
 
