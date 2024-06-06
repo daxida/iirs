@@ -43,6 +43,11 @@ testalys:
   cargo run --release -- \
     -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
 
+# test alys parallel
+testalysp:
+  cargo run --release --features "parallel" -- \
+    -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+
 # perf test for alys
 ptestalys:
   cargo build --profile=release-with-debug

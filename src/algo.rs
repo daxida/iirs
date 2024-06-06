@@ -99,7 +99,9 @@ fn real_lce_mismatches(
 //   >> AT NO POINT IS A DUPLICATE pushed into "irs".
 // - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
 //   will be printed sorted afterwards in "format".
+#[cfg(feature = "parallel")]
 use rayon::prelude::*;
+
 pub fn add_irs(
     s: &[u8],
     inv_sa: &[usize],
@@ -109,14 +111,21 @@ pub fn add_irs(
 ) -> Vec<(usize, usize, usize)> {
     let s_n = s.len();
     let n = s_n / 2 - 1;
-    (params.min_len..(s_n - 1 - params.min_len))
+
+    // Conditional compilation for parallel execution
+    #[cfg(feature = "parallel")]
+    let result: Vec<_> = (params.min_len..(s_n - 1 - params.min_len))
         .into_par_iter()
-        .flat_map(|c| {
-            add_irs_at_this_center(
-                s, n, inv_sa, rmq, params, matrix, c,
-            )
-        })
-        .collect()
+        .flat_map(|c| add_irs_at_this_center(s, n, inv_sa, rmq, params, matrix, c))
+        .collect();
+
+    // Conditional compilation for sequential execution
+    #[cfg(not(feature = "parallel"))]
+    let result: Vec<_> = (params.min_len..(s_n - 1 - params.min_len))
+        .flat_map(|c| add_irs_at_this_center(s, n, inv_sa, rmq, params, matrix, c))
+        .collect();
+
+    result
 }
 
 fn add_irs_at_this_center(
@@ -150,8 +159,16 @@ fn add_irs_at_this_center(
     let i = (1.0 + c - margin) as usize;
     let j = (behind - c - margin) as usize;
 
-    let mismatch_locs =
-        real_lce_mismatches(s, i, j, inv_sa, rmq, params.mismatches as i32, initial_gap, matrix);
+    let mismatch_locs = real_lce_mismatches(
+        s,
+        i,
+        j,
+        inv_sa,
+        rmq,
+        params.mismatches as i32,
+        initial_gap,
+        matrix,
+    );
 
     // Get a list of valid start and end mismatch locations
     // (that could mark the potential start or end of a palindrome)

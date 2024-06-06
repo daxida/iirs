@@ -24,7 +24,11 @@ divsufsort = "2.0.0"
 clap = { version = "4.4.12", features = ["derive"] }
 elapsed-time = "0.1.1"
 seq_io = "0.3.2"
-rayon = "1.8.1"
+rayon = { version = "1.8.1", optional = true }
+
+[features]
+default = []
+parallel = ["rayon"]
 
 # [profile.dev]
 # opt-level = 3

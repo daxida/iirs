@@ -50,10 +50,10 @@ impl Cli {
     }
 
     /// Return a vector of pairs `(Config, sequence)` from the CLI arguments.
-    /// 
-    /// A `check_bounds` argument determines if bound checking has to be performed for 
+    ///
+    /// A `check_bounds` argument determines if bound checking has to be performed for
     /// every sequence.
-    /// 
+    ///
     /// The `Config` is different for every sequence since it contains the sequence name and
     /// the output file, but the parameters do not change.
     pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, Vec<u8>)>> {
