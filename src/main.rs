@@ -19,9 +19,11 @@ fn main() -> Result<()> {
         let mut file = File::create(config.output_file)?;
         writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
 
-        println!("\n{}", config);
-        println!("Search complete for {}!", &config.seq_name);
-        println!("Found n={} inverted repeats\n", irs.len());
+        if !args.quiet {
+            println!("\n{}", config);
+            println!("Search complete for {}!", &config.seq_name);
+            println!("Found n={} inverted repeats\n", irs.len());
+        }
     }
 
     Ok(())

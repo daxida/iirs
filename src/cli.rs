@@ -38,6 +38,10 @@ pub struct Cli {
     /// Output format (classic, csv or custom).
     #[arg(short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
     output_format: String,
+
+    /// Quiet flag: Suppresses non-essential output when enabled.
+    #[arg(short, default_value_t = false)]
+    pub quiet: bool,
 }
 
 impl Cli {
