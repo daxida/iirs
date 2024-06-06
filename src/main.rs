@@ -10,7 +10,8 @@ use std::io::Write;
 #[elapsed_time::elapsed]
 fn main() -> Result<()> {
     let args = Cli::parse_args();
-    let config_seq_pairs = args.try_from_args()?;
+    let check_bounds = true;
+    let config_seq_pairs = args.try_from_args(check_bounds)?;
 
     for (config, seq) in config_seq_pairs {
         let irs = find_irs(&config.params, &seq)?;

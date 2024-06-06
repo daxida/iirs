@@ -49,8 +49,14 @@ impl Cli {
         Cli::parse()
     }
 
-    /// Return a vector of pairs (Config, sequence) from the CLI arguments.
-    pub fn try_from_args(&self) -> Result<Vec<(Config, Vec<u8>)>> {
+    /// Return a vector of pairs `(Config, sequence)` from the CLI arguments.
+    /// 
+    /// A `check_bounds` argument determines if bound checking has to be performed for 
+    /// every sequence.
+    /// 
+    /// The `Config` is different for every sequence since it contains the sequence name and
+    /// the output file, but the parameters do not change.
+    pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, Vec<u8>)>> {
         utils::verify_format(&self.output_format)?;
 
         let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
@@ -79,7 +85,9 @@ impl Cli {
                 output_format: &self.output_format,
             };
 
-            config.params.check_bounds(seq.len())?;
+            if check_bounds {
+                config.params.check_bounds(seq.len())?;
+            }
             results.push((config, seq))
         }
 
