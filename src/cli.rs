@@ -8,39 +8,39 @@ use crate::utils;
 #[derive(Parser, Debug)]
 pub struct Cli {
     /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
+    #[arg(long, short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
     input_file: String,
 
     /// Input sequence names.
-    #[arg(short, default_value = DEFAULT_SEQ_NAME, value_delimiter = ' ')]
+    #[arg(long, short, default_value = DEFAULT_SEQ_NAME, value_delimiter = ' ')]
     seq_names: Vec<String>,
 
     /// Minimum length.
-    #[arg(short, default_value_t = DEFAULT_MIN_LEN)]
+    #[arg(long, short, default_value_t = DEFAULT_MIN_LEN)]
     min_len: usize,
 
     /// Maximum length.
-    #[arg(short = 'M', default_value_t = DEFAULT_MAX_LEN)]
+    #[arg(long, short = 'M', default_value_t = DEFAULT_MAX_LEN)]
     max_len: usize,
 
     /// Maximum permissible gap.
-    #[arg(short = 'g', default_value_t = DEFAULT_MAX_GAP)]
+    #[arg(long, short = 'g', default_value_t = DEFAULT_MAX_GAP)]
     max_gap: usize,
 
     /// Maximum permissible mismatches.
-    #[arg(short = 'x', default_value_t = DEFAULT_MISMATCHES)]
+    #[arg(long, short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     mismatches: usize,
 
     /// Output filename.
-    #[arg(short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
+    #[arg(long, short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
     output_file: String,
 
     /// Output format (classic, csv or custom).
-    #[arg(short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
+    #[arg(long, short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
     output_format: String,
 
     /// Quiet flag: Suppresses non-essential output when enabled.
-    #[arg(short, default_value_t = false)]
+    #[arg(long, short, default_value_t = false)]
     pub quiet: bool,
 }
 
