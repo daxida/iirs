@@ -1,4 +1,5 @@
 use crate::{
+    config::SearchParams,
     matrix::MatchMatrix,
     rmq::{Rmq, Sparse},
 };
@@ -37,6 +38,7 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
 // - For the BANANA case, the given (i, j) will be:
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
+#[allow(clippy::too_many_arguments)]
 fn real_lce_mismatches(
     s: &[u8],
     i: usize,
@@ -87,48 +89,42 @@ fn real_lce_mismatches(
     mismatch_locs
 }
 
-// Finds all inverted repeats (palindromes) with given parameters and adds them to an output set
+// TODO: Clear this
+//
+// Finds all inverted repeats (IRs) with given parameters and adds them to an output set
 //
 // NOTES:
 // - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
 //   It was marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
-//   >> AT NO POINT IS A DUPLICATE pushed into "palindromes".
+//   >> AT NO POINT IS A DUPLICATE pushed into "irs".
 // - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
 //   will be printed sorted afterwards in "format".
 use rayon::prelude::*;
-#[allow(clippy::too_many_arguments)]
-pub fn add_palindromes(
+pub fn add_irs(
     s: &[u8],
     inv_sa: &[usize],
     rmq: &Sparse,
-    min_len: usize,
-    max_len: usize,
-    mismatches: usize,
-    max_gap: usize,
+    params: &SearchParams,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
     let s_n = s.len();
     let n = s_n / 2 - 1;
-    (min_len..(s_n - 1 - min_len))
+    (params.min_len..(s_n - 1 - params.min_len))
         .into_par_iter()
         .flat_map(|c| {
-            add_palindromes_at_this_center(
-                s, n, inv_sa, rmq, min_len, max_len, mismatches, max_gap, matrix, c,
+            add_irs_at_this_center(
+                s, n, inv_sa, rmq, params, matrix, c,
             )
         })
         .collect()
 }
 
-#[allow(clippy::too_many_arguments)]
-fn add_palindromes_at_this_center(
+fn add_irs_at_this_center(
     s: &[u8],
     n: usize,
     inv_sa: &[usize],
     rmq: &Sparse,
-    min_len: usize,
-    max_len: usize,
-    mismatches: usize,
-    max_gap: usize,
+    params: &SearchParams,
     matrix: &MatchMatrix,
     c: usize,
 ) -> Vec<(usize, usize, usize)> {
@@ -138,8 +134,8 @@ fn add_palindromes_at_this_center(
 
     // This could be computed outside of the loop
     let behind = (2 * n + 1) as f64;
-    let is_max_gap_odd = max_gap % 2 == 1;
-    let half_gap = max_gap / 2;
+    let is_max_gap_odd = params.max_gap % 2 == 1;
+    let half_gap = params.max_gap / 2;
 
     // Note that the current palindrome is odd iif margin is equal to zero
     let margin = c.fract();
@@ -155,7 +151,7 @@ fn add_palindromes_at_this_center(
     let j = (behind - c - margin) as usize;
 
     let mismatch_locs =
-        real_lce_mismatches(s, i, j, inv_sa, rmq, mismatches as i32, initial_gap, matrix);
+        real_lce_mismatches(s, i, j, inv_sa, rmq, params.mismatches as i32, initial_gap, matrix);
 
     // Get a list of valid start and end mismatch locations
     // (that could mark the potential start or end of a palindrome)
@@ -184,7 +180,7 @@ fn add_palindromes_at_this_center(
         let mut mismatch_diff = end.1 - start.1 - 1;
 
         // While mismatch difference is too large, move start location to the right
-        while mismatch_diff > mismatches {
+        while mismatch_diff > params.mismatches {
             start_it_ptr += 1;
             start = valid_start_locs[start_it_ptr];
             mismatch_diff = end.1 - start.1 - 1;
@@ -196,7 +192,7 @@ fn add_palindromes_at_this_center(
         }
 
         // While mismatch difference is within acceptable bound, move end location to the right
-        while mismatch_diff <= mismatches {
+        while mismatch_diff <= params.mismatches {
             end_it_ptr += 1;
             if end_it_ptr == valid_end_locs.len() {
                 break;
@@ -211,7 +207,7 @@ fn add_palindromes_at_this_center(
         let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
         let palindrome_length = end_mismatch - start_mismatch;
-        if palindrome_length < min_len {
+        if palindrome_length < params.min_len {
             start_it_ptr += 1;
             continue;
         }
@@ -219,14 +215,14 @@ fn add_palindromes_at_this_center(
         let left = (c + margin) as usize - end_mismatch;
         let right = (c - margin) as usize + end_mismatch;
         let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
-        debug_assert!(gap <= max_gap);
+        debug_assert!(gap <= params.max_gap);
 
-        let palindrome = if palindrome_length <= max_len {
+        let palindrome = if palindrome_length <= params.max_len {
             // Palindrome is not too long, so add to output
             (left, right, gap)
         } else {
             // Palindrome is too long, so attempt truncation
-            let overshoot = palindrome_length - max_len;
+            let overshoot = palindrome_length - params.max_len;
 
             let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
             let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;

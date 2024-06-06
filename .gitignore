@@ -12,6 +12,7 @@ perf*
 IUPACpal/IUPACpal.out
 IUPACpalrs.out
 IUPACpal.out
+iirs.out
 
 # Random data
 IUPACpal/rand.fasta
@@ -22,3 +23,6 @@ rand.fasta
 
 # heatmaps
 bench/results.csv
+
+# IUPACpal binary
+bench/IUPACpal
