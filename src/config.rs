@@ -111,14 +111,20 @@ impl<'a> Config<'a> {
         })
     }
 
-    /// Attempts to extract every sequence with name in 'seq_names' from the (fasta) input file.
+    /// Attempts to extract every sequence with name in `seq_names` from the input file.
+    /// 
+    /// If `seq_names` is only `ALL_SEQUENCES` then all the sequences are extracted.
+    /// For example: `iirs -s ALL_SEQUENCES -m 5`
     ///
-    /// If at least one sequence is not found, returns an Error with the list of missing sequences,
-    /// together with a list of all the sequences present in the input file.
+    /// Otherwise, if at least one sequence is not found, returns an Error with the list of missing 
+    /// sequences, together with a list of all the sequences present in the input file.
     pub fn safe_extract_sequences(
         input_file: &str,
         seq_names: &[String],
     ) -> Result<Vec<(Vec<u8>, String)>> {
+        // If `seq_names` is only `ALL_SEQUENCES` then all the sequences are extracted.
+        let do_all_sequences = seq_names.len() == 1 && seq_names[0] == "ALL_SEQUENCES";
+
         utils::check_file_exist(input_file)?;
 
         let mut reader = Reader::from_path(input_file)?;
@@ -129,7 +135,7 @@ impl<'a> Config<'a> {
         while let Some(record) = reader.next() {
             let record = record.expect("Error reading record");
             let rec_id = record.id()?.to_owned();
-            if seq_names.contains(&rec_id) {
+            if do_all_sequences || seq_names.contains(&rec_id) {
                 let seq = utils::sanitize_sequence(record.seq())?;
                 seqs_found.push((seq, rec_id.clone()));
                 seqs_not_found_ids.retain(|id| id != &rec_id);
@@ -138,7 +144,7 @@ impl<'a> Config<'a> {
             all_seqs_in_input_file.push(rec_id);
         }
 
-        if !seqs_not_found_ids.is_empty() {
+        if !seqs_not_found_ids.is_empty() && !do_all_sequences {
             return Err(anyhow!(
                 "Sequence(s) '{}' not found.\nFound sequences in '{}' are:\n - {}",
                 seqs_not_found_ids.join(", "),
