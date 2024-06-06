@@ -137,16 +137,16 @@ fn add_irs_at_this_center(
     matrix: &MatchMatrix,
     c: usize,
 ) -> Vec<(usize, usize, usize)> {
-    let mut palindromes_at_this_center = Vec::new();
+    let mut irs_at_this_center = Vec::new();
 
-    let c = (c as f64) / 2.0;
-
-    // This could be computed outside of the loop
+    // This could be computed outside of the loop.
+    // It is done inside to ease the parallel / sequential structure.
     let behind = (2 * n + 1) as f64;
     let is_max_gap_odd = params.max_gap % 2 == 1;
     let half_gap = params.max_gap / 2;
 
-    // Note that the current palindrome is odd iif margin is equal to zero
+    // Note that the current IR is odd iif margin is equal to zero
+    let c = (c as f64) / 2.0;
     let margin = c.fract();
 
     // We add 1 compared to the original implementation to guarantee >= 0
@@ -171,7 +171,7 @@ fn add_irs_at_this_center(
     );
 
     // Get a list of valid start and end mismatch locations
-    // (that could mark the potential start or end of a palindrome)
+    // (that could mark the potential start or end of an IR)
     let mut valid_start_locs = Vec::new();
     let mut valid_end_locs = Vec::new();
     let sz = mismatch_locs.len();
@@ -223,8 +223,8 @@ fn add_irs_at_this_center(
 
         let end_mismatch = (valid_end_locs[end_it_ptr - 1].0 - 1) as usize;
 
-        let palindrome_length = end_mismatch - start_mismatch;
-        if palindrome_length < params.min_len {
+        let ir_length = end_mismatch - start_mismatch;
+        if ir_length < params.min_len {
             start_it_ptr += 1;
             continue;
         }
@@ -234,12 +234,12 @@ fn add_irs_at_this_center(
         let gap = 2 * start_mismatch + 1 - (2.0 * margin) as usize;
         debug_assert!(gap <= params.max_gap);
 
-        let palindrome = if palindrome_length <= params.max_len {
-            // Palindrome is not too long, so add to output
+        let ir = if ir_length <= params.max_len {
+            // IR is not too long, so add to output
             (left, right, gap)
         } else {
-            // Palindrome is too long, so attempt truncation
-            let overshoot = palindrome_length - params.max_len;
+            // IR is too long, so attempt truncation
+            let overshoot = ir_length - params.max_len;
 
             let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
             let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
@@ -249,20 +249,20 @@ fn add_irs_at_this_center(
                 end_mismatch - prev - 1
             };
 
-            // Check if truncation results in the potential palindrome ending in a mismatch
+            // Check if truncation results in the potential IR ending in a mismatch
             if overshoot != mismatch_gap {
-                // Potential palindrome does not end in a mismatch, so add to output
+                // Potential IR does not end in a mismatch, so add to output
                 (left + overshoot, right - overshoot, gap)
             } else {
-                // Potential palindrome does end in a mismatch, so truncate a character
+                // Potential IR does end in a mismatch, so truncate a character
                 (left + overshoot + 1, right - overshoot - 1, gap)
             }
         };
 
-        palindromes_at_this_center.push(palindrome);
+        irs_at_this_center.push(ir);
 
         start_it_ptr += 1;
     }
 
-    palindromes_at_this_center
+    irs_at_this_center
 }
