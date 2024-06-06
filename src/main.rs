@@ -1,7 +1,7 @@
 extern crate elapsed_time;
 
-use iupacpal::config::Config;
-use iupacpal::{find_palindromes, strinfigy_palindromes};
+use iirs::Cli;
+use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;
 use std::fs::File;
@@ -9,18 +9,23 @@ use std::io::Write;
 
 #[elapsed_time::elapsed]
 fn main() -> Result<()> {
-    let config = Config::from_args();
-    let seq = config.safe_extract_sequence()?;
+    let args = Cli::parse_args();
+    let check_bounds = true;
+    let config_seq_pairs = args.try_from_args(check_bounds)?;
 
-    let palindromes = find_palindromes(&config, &seq)?;
-    let out_str = strinfigy_palindromes(&config, &palindromes, &seq)?;
+    for (config, seq) in config_seq_pairs {
+        let irs = find_irs(&config.params, &seq)?;
+        let (header, irs_str) = stringify_irs(&config, &irs, &seq)?;
 
-    let mut file = File::create(&config.output_file)?;
-    writeln!(&mut file, "{}", out_str)?;
+        let mut file = File::create(config.output_file)?;
+        writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
 
-    println!("\n{}", config.display());
-    println!("Search complete!");
-    println!("Found n={} palindromes", palindromes.len());
+        if !args.quiet {
+            println!("\n{}", config);
+            println!("Search complete for {}!", &config.seq_name);
+            println!("Found n={} inverted repeats\n", irs.len());
+        }
+    }
 
     Ok(())
 }
