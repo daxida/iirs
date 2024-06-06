@@ -71,15 +71,14 @@ impl TestSuite {
             max_gap.iter().cloned(),
             mismatches.iter().cloned()
         )
-        .map(move |(min_len, max_gap, mismatches)| Config {
-            input_file: RANDOM_FILE_PATH,
-            params: SearchParams {
-                min_len,
-                max_len: 100,
-                max_gap,
-                mismatches,
-            },
-            ..Default::default()
+        .filter_map(move |(min_len, max_gap, mismatches)| {
+            let params_result = SearchParams::new(min_len, 100, max_gap, mismatches);
+            // Discard invalid search params
+            params_result.ok().map(|params| Config {
+                input_file: RANDOM_FILE_PATH,
+                params,
+                ..Default::default()
+            })
         })
     }
 }

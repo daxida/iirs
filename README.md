@@ -1,22 +1,39 @@
 # iirs
 
-IIRS is an [Iupac](https://en.wikipedia.org/wiki/International_Union_of_Pure_and_Applied_Chemistry) Inverted RepeatS finder written in rust (rs).
+IIRS is an [Iupac](https://en.wikipedia.org/wiki/International_Union_of_Pure_and_Applied_Chemistry) Inverted RepeatS finder written in rust (rs), ported from [IUPACpal](https://github.com/steven31415/IUPACpal), result of this [paper](https://www.researchgate.net/publication/349110200_IUPACpal_efficient_identification_of_inverted_repeats_in_IUPAC-encoded_DNA_sequences).
 
 That is, an exact tool for efficient identification of Inverted Repeats (IRs) in IUPAC-encoded DNA sequences as substrings of a large text, allowing also for potential mismatches and gaps.
 
-This is a port of [IUPACpal](https://github.com/steven31415/IUPACpal), result of their work on this [paper](https://www.researchgate.net/publication/349110200_IUPACpal_efficient_identification_of_inverted_repeats_in_IUPAC-encoded_DNA_sequences).
+Compared to the original, this version is faster, platform-independent and modular, facilitating the creation of customized format outputs. It does not require `cmake`, `libdivsufsort` nor `sdsl`.
 
-Compared to the original this version is faster, platform-independent and modular, facilitating the creation of customized format outputs. It does not require `cmake`, `libdivsufsort` nor `sdsl`.
+## How to use the binary
 
-## How to use
+The command line shares much of the functionality of the original IUPACpal. Typing `iirs --help` will return:
 
-TODO - but mainly it works much like the original with an extra flag for the type of output format.
+```
+Usage: iirs [OPTIONS]
 
-There are many examples in the justfile.
+Options:
+  -f <INPUT_FILE>         Input filename (FASTA) [default: input.fasta]
+  -s <SEQ_NAMES>          Input sequence names [default: seq0]
+  -m <MIN_LEN>            Minimum length [default: 10]
+  -M <MAX_LEN>            Maximum length [default: 100]
+  -g <MAX_GAP>            Maximum permissible gap [default: 100]
+  -x <MISMATCHES>         Maximum permissible mismatches [default: 0]
+  -o <OUTPUT_FILE>        Output filename [default: iirs.out]
+  -F <OUTPUT_FORMAT>      Output format (classic, csv or custom) [default: classic]
+  -h, --help              Print help
+```
 
-This also works as a library: The `find_irs` function is exported (think of crates.io).
+With the notable differences being support for multiple sequence names and the output format.
 
-## How to install
+```
+iirs -f input.fasta -s 't1 t2' -g 5 -F csv
+```
+
+Many more practical examples can be found in the justfile.
+
+## How to install the binary
 
 ### (Option 1) Download executable
 

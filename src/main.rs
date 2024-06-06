@@ -10,17 +10,22 @@ use std::io::Write;
 #[elapsed_time::elapsed]
 fn main() -> Result<()> {
     let args = Cli::parse_args();
-    let (config, seq) = args.try_from_args()?;
+    let check_bounds = true;
+    let config_seq_pairs = args.try_from_args(check_bounds)?;
 
-    let irs = find_irs(&config.params, &seq)?;
-    let (header, irs_str) = stringify_irs(&config, &irs, &seq)?;
+    for (config, seq) in config_seq_pairs {
+        let irs = find_irs(&config.params, &seq)?;
+        let (header, irs_str) = stringify_irs(&config, &irs, &seq)?;
 
-    let mut file = File::create(config.output_file)?;
-    writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
+        let mut file = File::create(config.output_file)?;
+        writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
 
-    println!("\n{}", config);
-    println!("Search complete!");
-    println!("Found n={} inverted repeats", irs.len());
+        if !args.quiet {
+            println!("\n{}", config);
+            println!("Search complete for {}!", &config.seq_name);
+            println!("Found n={} inverted repeats\n", irs.len());
+        }
+    }
 
     Ok(())
 }
