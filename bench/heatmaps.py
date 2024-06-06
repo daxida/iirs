@@ -11,13 +11,13 @@ def main():
     file_path = os.path.join("bench", "results.csv")
 
     results = pd.read_csv(file_path)
-    sizes = results["size_fasta"].unique()
+    sizes = results["size_seq"].unique()
     for size in sizes:
         create_heatmap_at_size(results, size)
 
 
 def create_heatmap_at_size(results, size):
-    results = results[results["size_fasta"] == size]
+    results = results[results["size_seq"] == size]
 
     fig = make_subplots(rows=3, cols=2, subplot_titles=("Rust", "CPP"))
 

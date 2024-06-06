@@ -1,5 +1,17 @@
 use std::collections::BTreeSet;
 
+pub const DEFAULT_MIN_LEN: usize = 10;
+pub const DEFAULT_MAX_LEN: usize = 100;
+pub const DEFAULT_MAX_GAP: usize = 100;
+pub const DEFAULT_MISMATCHES: usize = 0;
+
+pub const DEFAULT_INPUT_FILE: &str = "input.fasta";
+pub const DEFAULT_SEQ_NAME: &str = "seq0";
+pub const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
+pub const DEFAULT_OUTPUT_FORMAT: &str = "classic";
+
+pub const EXISTING_FORMATS: [&str; 3] = ["classic", "csv", "custom"];
+
 pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
 pub const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";

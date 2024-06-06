@@ -50,7 +50,7 @@ mod tests {
     use super::*;
     use crate::constants::{build_complement_array, ALL_SYMBOLS};
 
-    fn display(matrix: &MatchMatrix, complement: &[u8; 128]) -> String {
+    fn display_matrix(matrix: &MatchMatrix, complement: &[u8; 128]) -> String {
         let header = format!(
             "Match Matrix:\n  {}\n",
             ALL_SYMBOLS
@@ -106,7 +106,7 @@ mod tests {
 
         let matrix = MatchMatrix::new();
         let complement = build_complement_array();
-        let output = display(&matrix, &complement);
+        let output = display_matrix(&matrix, &complement);
 
         assert_eq!(output.trim(), expected_output.trim());
     }

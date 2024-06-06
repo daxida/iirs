@@ -1,7 +1,7 @@
 extern crate elapsed_time;
 
-use iupacpal::config::Config;
-use iupacpal::{find_palindromes, strinfigy_palindromes};
+use iirs::Cli;
+use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;
 use std::fs::File;
@@ -9,50 +9,45 @@ use std::io::Write;
 
 #[elapsed_time::elapsed]
 fn main() -> Result<()> {
-    let config = Config::from_args();
+    let args = Cli::parse_args();
+    let check_bounds = false;
+    let config_seq_pairs = args.try_from_args(check_bounds)?;
+    let mut file = File::create("iirs.out")?;
 
-    if config.seq_name != "ALL" {
-        let seq = config.safe_extract_sequence()?;
-
-        let palindromes = find_palindromes(&config, &seq).unwrap();
-        let out_str = strinfigy_palindromes(&config, &palindromes, &seq, 0)?;
-    
-        let mut file = File::create(&config.output_file)?;
-        write!(&mut file, "{}", out_str)?;
-    
-        println!("\n{}", config.display());
-        println!("Search complete!");
-        println!("Found n={} palindromes", palindromes.len());
-    } else {
-        let records = config.safe_extract_all_records()?;
-
-        let mut file = File::create(&config.output_file)?;
-        
-        for (idx, rec) in records.iter().enumerate() {
-            let seq = &rec.sequence;
-            let offset = rec.position;
-            let n = seq.len();
-            if let Err(e) = config.verify_bounds(n) {
-                println!("Constraints violated for seq number {}", idx);
-                println!("{}", e);
-                continue;
-            }
-            let palindromes = find_palindromes(&config, seq).unwrap();
-            let mut out_str = strinfigy_palindromes(&config, &palindromes, seq, offset)?;
-            let mut lines = out_str.lines();
-
-            // Skip headers (hacky)
-            if idx > 0 {
-                lines.next(); 
-            }
-            
-            out_str = lines.collect::<Vec<_>>().join("\n");
-
-            writeln!(&mut file, "{}", out_str)?;
+    for (idx, (config, seq)) in config_seq_pairs.iter().enumerate() {
+        if let Err(e) = config.params.check_bounds(seq.len()) {
+            println!("Constraints violated for seq number {}", idx);
+            println!("{}", e);
+            continue;
         }
-    
-        println!("\n{}", config.display());
-        println!("Search complete!");
+
+        // Extract position from the record id:
+        // [location=10..86]
+        let mut offset = 0;
+        let keyword = "location=";
+        if let Some(start_idx) = config.seq_name.find(keyword) {
+            let start_idx = start_idx + keyword.len();
+
+            if let Some(end_idx) = config.seq_name[start_idx..].find("..") {
+                if let Ok(position_value) = config.seq_name[start_idx..start_idx + end_idx].trim().parse::<usize>() {
+                    offset = position_value;
+                }
+            }
+        }
+
+        let irs = find_irs(&config.params, &seq)?;
+        let (header, irs_str) = stringify_irs(&config, &irs, &seq, offset)?;
+
+        if idx == 0 {
+            writeln!(&mut file, "{}", &header)?;
+        }
+        write!(&mut file, "{}", &irs_str)?;
+
+        if !args.quiet {
+            println!("\n{}", config);
+            println!("Search complete for {}!", &config.seq_name);
+            println!("Found n={} inverted repeats\n", irs.len());
+        }
     }
 
     Ok(())

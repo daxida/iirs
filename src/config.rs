@@ -1,10 +1,8 @@
 use anyhow::{anyhow, Result};
-use clap::CommandFactory;
-use clap::Parser;
 use seq_io::fasta::{Reader, Record};
-use std::fs;
 
-use crate::constants::IUPAC_SYMBOLS;
+use crate::constants::*;
+use crate::utils;
 
 pub struct CustomRecord {
     pub sequence: Vec<u8>,
@@ -17,222 +15,43 @@ impl CustomRecord {
     }
 }
 
-#[derive(Parser, Debug)]
-pub struct Config {
-    /// Input filename (FASTA).
-    #[arg(short = 'f', default_value_t = String::from("input.fasta"))]
-    pub input_file: String,
-
-    /// Input sequence name.
-    #[arg(short, default_value_t = String::from("seq0"))]
-    pub seq_name: String,
-
-    /// Minimum length.
-    #[arg(short, default_value_t = 10)]
+#[derive(Debug, Clone)]
+pub struct SearchParams {
     pub min_len: usize,
-
-    /// Maximum length.
-    #[arg(short = 'M', default_value_t = 100)]
     pub max_len: usize,
-
-    /// Maximum permissible gap.
-    #[arg(short = 'g', default_value_t = 100)]
     pub max_gap: usize,
-
-    /// Maximum permissible mismatches.
-    #[arg(short = 'x', default_value_t = 0)]
     pub mismatches: usize,
-
-    /// Output filename.
-    #[arg(short, default_value_t = String::from("IUPACpalrs.out"))]
-    pub output_file: String,
-
-    /// Output format (classic, csv or custom_csv).
-    #[arg(short = 'F', default_value_t = String::from("classic"))]
-    pub output_format: String,
 }
 
-impl Config {
-    #[allow(dead_code)] // ::new is actually used for testing...
-    #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        input_file: &str,
-        seq_name: &str,
-        min_len: usize,
-        max_len: usize,
-        max_gap: usize,
-        mismatches: usize,
-        output_file: &str,
-        output_format: &str,
-    ) -> Self {
-        Self {
-            input_file: input_file.to_string(),
-            seq_name: seq_name.to_string(),
+impl SearchParams {
+    pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Result<Self> {
+        if min_len < 2 {
+            return Err(anyhow!("min_len={} must not be less than 2.", min_len));
+        }
+        if min_len > max_len {
+            return Err(anyhow!(
+                "min_len={} must be less than max_len={}.",
+                min_len,
+                max_len
+            ));
+        }
+        if mismatches >= min_len {
+            return Err(anyhow!(
+                "mismatches={} must be less than min_len={}.",
+                mismatches,
+                min_len
+            ));
+        }
+
+        Ok(Self {
             min_len,
             max_len,
             max_gap,
             mismatches,
-            output_file: output_file.to_string(),
-            output_format: output_format.to_string(),
-        }
+        })
     }
 
-    pub fn from_args() -> Self {
-        Config::parse()
-    }
-
-    #[allow(dead_code)] // For unit tests
-    pub fn dummy(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Self {
-        Self {
-            input_file: String::from("dummy"),
-            seq_name: String::from("dummy"),
-            min_len,
-            max_len,
-            max_gap,
-            mismatches,
-            output_file: String::from("dummy"),
-            // initialize to classic to pass early Config::verify
-            output_format: String::from("classic"),
-        }
-    }
-
-    #[allow(dead_code)] // For unit tests
-    pub fn dummy_default() -> Self {
-        Config::dummy(10, 100, 100, 0)
-    }
-
-    // Just some clearer error handling (probably useless)
-    fn check_file_exist(path: &str) -> Result<()> {
-        let metadata = fs::metadata(path)
-            .map_err(|_| anyhow!("'{}' does not exist or cannot access the path.", path))?;
-
-        if metadata.is_file() {
-            Ok(())
-        } else {
-            Err(anyhow!("'{}' is not a file", path))
-        }
-    }
-
-    /// Attempts to extract the sequence from the (fasta) input file.
-    ///
-    /// If the sequence is not found, returns an Error with the list of found sequences.
-    pub fn safe_extract_sequence(&self) -> Result<Vec<u8>> {
-        Config::check_file_exist(&self.input_file)?;
-
-        let mut reader = Reader::from_path(&self.input_file)?;
-        let mut found_seqs = Vec::new();
-        while let Some(record) = reader.next() {
-            let record = record.expect("Error reading record");
-            let rec_id = record.id()?.to_owned();
-            if rec_id == self.seq_name {
-                let seq = Config::sanitize_sequence(self, record.seq())?;
-                Config::verify(self, seq.len())?;
-                return Ok(seq);
-            }
-
-            found_seqs.push(rec_id);
-        }
-
-        Err(anyhow!(
-            "Sequence {} not found. Found sequences in {} are:\n{}",
-            &self.seq_name,
-            &self.input_file,
-            found_seqs.join("\n")
-        ))
-    }
-
-    pub fn safe_extract_all_records(&self) -> Result<Vec<CustomRecord>> {
-        assert!(self.seq_name == "ALL");
-
-        Config::check_file_exist(&self.input_file)?;
-
-        let mut reader = Reader::from_path(&self.input_file)?;
-        let mut records = Vec::new();
-        while let Some(record) = reader.next() {
-            let record = record.expect("Error reading record");
-            let string = std::str::from_utf8(record.seq())?
-                .to_lowercase()
-                .replace(['\n', '\r'], "")
-                .into_bytes();
-            // Config::verify(self, string.len())?;
-            // Assumes the position is in the record id
-            let record_id = std::str::from_utf8(record.head())?;
-
-            // Extract position from the record id:
-            // [location=10..86]
-            let mut position = 0;
-            let keyword = "location=";
-            if let Some(start_idx) = record_id.find(keyword) {
-                let start_idx = start_idx + keyword.len();
-
-                if let Some(end_idx) = record_id[start_idx..].find("..") {
-                    if let Ok(position_value) = record_id[start_idx..start_idx + end_idx].trim().parse::<usize>() {
-                        position = position_value;
-                    }
-                }
-            }
-
-            let record = CustomRecord::new(string, position);
-
-            records.push(record);
-        }
-
-        Ok(records)
-    }
-
-    /// Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
-    fn sanitize_sequence(&self, seq: &[u8]) -> Result<Vec<u8>> {
-        let mut sanitized_seq = Vec::new();
-
-        for &byte in seq.iter() {
-            if byte != b'\n' && byte != b'\r' {
-                if !IUPAC_SYMBOLS.contains(byte.to_ascii_lowercase() as char) {
-                    return Err(anyhow!(
-                        "sequence contains '{}' which is not an IUPAC symbol.",
-                        byte as char
-                    ));
-                }
-                sanitized_seq.push(byte.to_ascii_lowercase());
-            }
-        }
-
-        Ok(sanitized_seq)
-    }
-
-    /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
-    ///
-    /// Returns an error if there are no sequences.
-    ///
-    /// Mainly used for convenience in test suites.
-    #[allow(dead_code)] // For unit tests
-    pub fn extract_first_string(input_file: String) -> Result<String> {
-        Config::check_file_exist(&input_file)?;
-        let mut reader = Reader::from_path(&input_file)?;
-        let record = reader
-            .next()
-            .expect("No sequences found")
-            .expect("Error reading record");
-
-        Ok(std::str::from_utf8(record.seq())
-            .unwrap()
-            .to_lowercase()
-            .replace('\n', ""))
-    }
-
-    pub fn verify(&self, n: usize) -> Result<()> {
-        if let Err(msg) = Config::verify_bounds(self, n) {
-            let _ = Config::command().print_help();
-            println!();
-            return Err(msg);
-        }
-        Config::verify_format(self)?;
-        Ok(())
-    }
-
-    pub fn verify_bounds(&self, n: usize) -> Result<()> {
-        if self.min_len < 2 {
-            return Err(anyhow!("min_len={} must not be less than 2.", self.min_len));
-        }
+    pub fn check_bounds(&self, n: usize) -> Result<()> {
         if self.min_len >= n {
             return Err(anyhow!(
                 "min_len={} must be less than sequence length={}.",
@@ -247,13 +66,7 @@ impl Config {
                 n
             ));
         }
-        if self.min_len > self.max_len {
-            return Err(anyhow!(
-                "min_len={} must be less than max_len={}.",
-                self.min_len,
-                self.max_len
-            ));
-        }
+
         if self.mismatches >= n {
             return Err(anyhow!(
                 "mismatches={} must be less than sequence length={}.",
@@ -261,42 +74,123 @@ impl Config {
                 n
             ));
         }
-        if self.mismatches >= self.min_len {
-            return Err(anyhow!(
-                "mismatches={} must be less than min_len={}.",
-                self.mismatches,
-                self.min_len
-            ));
-        }
 
         Ok(())
     }
+}
 
-    fn verify_format(&self) -> Result<()> {
-        let allowed_formats = ["classic", "csv", "custom"];
-        if !allowed_formats.contains(&self.output_format.as_str()) {
-            return Err(anyhow!(
-                "Invalid output format. Allowed formats are: {}.",
-                allowed_formats.join(", ")
-            ));
-        }
-        Ok(())
+impl Default for SearchParams {
+    fn default() -> Self {
+        SearchParams::new(
+            DEFAULT_MIN_LEN,
+            DEFAULT_MAX_LEN,
+            DEFAULT_MAX_GAP,
+            DEFAULT_MISMATCHES,
+        )
+        .unwrap()
+    }
+}
+
+#[derive(Debug)]
+pub struct Config<'a> {
+    pub input_file: &'a str,
+    pub seq_name: &'a str,
+    pub params: SearchParams,
+    pub output_file: &'a str,
+    pub output_format: &'a str,
+}
+
+impl<'a> Config<'a> {
+    #[allow(clippy::too_many_arguments)]
+    pub fn new(
+        input_file: &'a str,
+        seq_name: &'a str,
+        min_len: usize,
+        max_len: usize,
+        max_gap: usize,
+        mismatches: usize,
+        output_file: &'a str,
+        output_format: &'a str,
+    ) -> Result<Self> {
+        let params = SearchParams::new(min_len, max_len, max_gap, mismatches)?;
+        Ok(Self {
+            input_file,
+            seq_name,
+            params,
+            output_file,
+            output_format,
+        })
     }
 
-    // make this an instance of display?
-    pub fn display(&self) -> String {
-        let mut out = String::new();
+    /// Attempts to extract every sequence with name in `seq_names` from the input file.
+    /// 
+    /// If `seq_names` is only `ALL_SEQUENCES` then all the sequences are extracted.
+    /// For example: `iirs -s ALL_SEQUENCES -m 5`
+    ///
+    /// Otherwise, if at least one sequence is not found, returns an Error with the list of missing 
+    /// sequences, together with a list of all the sequences present in the input file.
+    pub fn safe_extract_sequences(
+        input_file: &str,
+        seq_names: &[String],
+    ) -> Result<Vec<(Vec<u8>, String)>> {
+        // If `seq_names` is only `ALL_SEQUENCES` then all the sequences are extracted.
+        let do_all_sequences = seq_names.len() == 1 && seq_names[0] == "ALL_SEQUENCES";
 
-        out.push_str(&format!("input_file:  {}\n", &self.input_file));
-        out.push_str(&format!("seq_name:    {}\n", &self.seq_name));
-        out.push_str(&format!("min_len:     {}\n", &self.min_len));
-        out.push_str(&format!("max_len:     {}\n", &self.max_len));
-        out.push_str(&format!("max_gap:     {}\n", &self.max_gap));
-        out.push_str(&format!("mismatches:  {}\n", &self.mismatches));
-        out.push_str(&format!("output_file: {}\n", &self.output_file));
-        out.push_str(&format!("output_fmt:  {}\n", &self.output_format));
+        utils::check_file_exist(input_file)?;
 
-        out
+        let mut reader = Reader::from_path(input_file)?;
+        let mut all_seqs_in_input_file = Vec::new();
+        let mut seqs_found = Vec::new();
+        let mut seqs_not_found_ids: Vec<String> = seq_names.to_vec();
+
+        while let Some(record) = reader.next() {
+            let record = record.expect("Error reading record");
+            let rec_head = std::str::from_utf8(record.head())?.to_string();
+            if do_all_sequences || seq_names.contains(&rec_head) {
+                let seq = utils::sanitize_sequence(record.seq())?;
+                seqs_found.push((seq, rec_head.clone()));
+                seqs_not_found_ids.retain(|id| id != &rec_head);
+            }
+
+            all_seqs_in_input_file.push(rec_head);
+        }
+
+        if !seqs_not_found_ids.is_empty() && !do_all_sequences {
+            return Err(anyhow!(
+                "Sequence(s) '{}' not found.\nFound sequences in '{}' are:\n - {}",
+                seqs_not_found_ids.join(", "),
+                input_file,
+                all_seqs_in_input_file.join("\n - ")
+            ));
+        }
+
+        Ok(seqs_found)
+    }
+}
+
+impl<'a> Default for Config<'a> {
+    fn default() -> Self {
+        Config {
+            input_file: DEFAULT_INPUT_FILE,
+            seq_name: DEFAULT_SEQ_NAME,
+            params: SearchParams::default(),
+            output_file: DEFAULT_OUTPUT_FILE,
+            output_format: DEFAULT_OUTPUT_FORMAT,
+        }
+    }
+}
+
+impl<'a> std::fmt::Display for Config<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "input_file:  {}", self.input_file)?;
+        writeln!(f, "seq_name:    {}", self.seq_name)?;
+        writeln!(f, "min_len:     {}", self.params.min_len)?;
+        writeln!(f, "max_len:     {}", self.params.max_len)?;
+        writeln!(f, "max_gap:     {}", self.params.max_gap)?;
+        writeln!(f, "mismatches:  {}", self.params.mismatches)?;
+        writeln!(f, "output_file: {}", self.output_file)?;
+        writeln!(f, "output_fmt:  {}", self.output_format)?;
+        Ok(())
     }
 }
 
@@ -305,48 +199,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_valid_output_format() {
-        let config = Config::dummy_default();
-        assert!(config.verify_format().is_ok())
-    }
-
-    #[test]
-    fn test_invalid_output_format() {
-        let config = Config::new("f", "f", 0, 0, 0, 0, "f", "wrong");
-        assert!(config.verify_format().is_err())
-    }
-
-    #[test]
     fn test_invalid_min_len_less_than_two() {
-        let config = Config::dummy(0, 100, 0, 0);
-        assert!(config.verify_bounds(10).is_err());
-    }
-
-    #[test]
-    fn test_sanitize_sequence_ok() {
-        let seq = "acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert!(Config::dummy_default().sanitize_sequence(&seq).is_ok());
-    }
-
-    #[test]
-    fn test_sanitize_sequence_newlines_one() {
-        let seq = "acgturyswkmbdhvn*-\nacgturyswkmbdhvn*-".as_bytes().to_vec();
-        let sanitized = Config::dummy_default().sanitize_sequence(&seq).unwrap();
-        let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert_eq!(expected, sanitized);
-    }
-
-    #[test]
-    fn test_sanitize_sequence_newlines_two() {
-        let seq = "acgturyswkmbdhvn*-\racgturyswkmbdhvn*-".as_bytes().to_vec();
-        let sanitized = Config::dummy_default().sanitize_sequence(&seq).unwrap();
-        let expected = "acgturyswkmbdhvn*-acgturyswkmbdhvn*-".as_bytes().to_vec();
-        assert_eq!(expected, sanitized);
-    }
-
-    #[test]
-    fn test_sanitize_sequence_not_in_iupac() {
-        let seq = "de".as_bytes().to_vec();
-        assert!(Config::dummy_default().sanitize_sequence(&seq).is_err());
+        assert!(SearchParams::new(0, 100, 0, 0).is_err());
     }
 }
