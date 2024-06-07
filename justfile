@@ -1,94 +1,105 @@
 clean:
-  rm -f *iirs.out
+  rm -rf iirs.out
   rm -f rand.fasta
   rm -f IUPACpal.out
+  rm -f perf.data*
+  rm -rf tmp
   
-# test testseq in input.fasta
+# Simple tests over input.fasta
 test:
   cargo run --release -- \
     -s testseq -m 3 -g 5
 
-# test banana in input.fasta
-testb:
+testbanana:
   cargo run --release -- \
     -s banana -m 3 -g 5
-
-# test MCHU in input.fasta
-testm:
-  cargo run --release -- \
-    -s MCHU -m 3 -g 5 -F csv
-
-testt:
-  cargo run --release -- \
-    -s t2 -m 2 -g 5 -F csv
 
 teststar:
   cargo run --release -- \
     -s tstar -m 2 -g 5 -F csv
 
+# Test edge case
 testedge:
   cargo run --release -- \
     -f tests/test_data/truncation_edge_case.fasta -m 8 -M 100 -g 10 -x 6
 
+# Test ALL_SEQUENCES behaviour with --output-file
+testallseq:
+  mkdir tmp
+  cargo run --release -- \
+    -s ALL_SEQUENCES -m 3 -g 5 -o "tmp"
+
+MAIN_RUN := "cargo run --quiet --release"
+MAIN_RUN_PARALLEL := "cargo run --quiet --release --features parallel"
+MAIN_RUN_PARALLEL_TABULATION := "cargo run --quiet --release --features 'parallel tabulation'"
 BINARY_RELEASE_WITH_DEBUG := "target/release-with-debug/iirs"
 
-# perf test for banana
-ptestb:
+# Perf test for banana
+testbanana-perf:
   cargo build --profile=release-with-debug
   sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -s banana -m 3 -g 5
   sudo perf report
 
-# test alys
-testalys:
-  cargo run --release -- \
-    -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+# Test alys
+# `just testalys` will run the sequential version
+# `just testalys par` will run the parallel version
+# `just testalys partab` will run the parallel + tabulation version
+testalys arg="":
+  {{ if arg == "par" \
+    { MAIN_RUN_PARALLEL } \
+  else if arg == "partab" \
+    { MAIN_RUN_PARALLEL_TABULATION} \
+  else { MAIN_RUN } }} -- \
+    -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20 -q
 
-# perf test for alys
-ptestalys:
+# Perf test for alys (sequential)
+testalys-perf:
   cargo build --profile=release-with-debug
   sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
   sudo perf report
 
-# test full N (stress test the algorithm and not the writing)
+# Test full N (stress test the algorithm and not the writing)
 testn:
   cargo run --release -- \
     -f tests/test_data/200000N.fasta -m 2 -M 100 -g 20 -x 1
 
-# test for rand10000000 (1e7)
-testrand:
-  cargo run --release -- \
-    -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
+# Test for rand1000000 (1e6)
+testrand arg="":
+  {{ if arg == "par" { MAIN_RUN_PARALLEL } else { MAIN_RUN } }} -- \
+    -f tests/test_data/rand1000000.fasta -m 5 -M 100 -g 10 -x 2
 
-# perf test for rand10000000
-ptestrand:
+# Perf test for rand1000000
+testrand-perf:
   cargo build --profile=release-with-debug
-  sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -f tests/test_data/rand10000000.fasta -m 5 -M 100 -g 10 -x 2
+  sudo perf record -g {{ BINARY_RELEASE_WITH_DEBUG }} -f tests/test_data/rand1000000.fasta -m 5 -M 100 -g 10 -x 2
   sudo perf report
 
+MAIN_BUILD := "cargo build --quiet --release"
+MAIN_BUILD_PARALLEL := "cargo build --quiet --release --features parallel"
 BENCH_RUN := "cargo run --quiet --manifest-path 'bench/Cargo.toml' --release"
 
-# write results.csv
-compare:
-  cargo build --quiet --release 
+# Write results.csv
+compare arg="":
+  {{ if arg == "par" { MAIN_BUILD_PARALLEL } else { MAIN_BUILD } }} 
   {{ BENCH_RUN }} --bin logs -- --write
 
-# test that the results of the rust / cpp binaries are the same
-compare-correct:
-  cargo build --quiet --release
+# Test that the results of the rust / cpp binaries are the same
+compare-correct arg="":
+  {{ if arg == "par" { MAIN_BUILD_PARALLEL } else { MAIN_BUILD } }} 
   {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 1000 20
   {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 5000 10
   {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 20000 5
 
-# test how the results of the rust / cpp binaries perform
-compare-performance:
-  cargo build --quiet --release
+# Test how the results of the rust / cpp binaries perform
+compare-performance arg="":
+  {{ if arg == "par" { MAIN_BUILD_PARALLEL } else { MAIN_BUILD } }}
   {{ BENCH_RUN }} --bin logs -- --verbose --random-bench 1000000 1
 
 printlogs:
-  cargo build --release
+  {{ MAIN_BUILD }}
   {{ BENCH_RUN }} --bin logs -- --write
   python3 bench/heatmaps.py
 
-bench:
-  cargo build --release
+bench arg="":
+  {{ if arg == "par" { MAIN_BUILD_PARALLEL } else { MAIN_BUILD } }} 
   {{ BENCH_RUN }} --bin bench

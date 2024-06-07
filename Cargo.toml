@@ -23,7 +23,14 @@ anyhow = "1.0"
 divsufsort = "2.0.0"
 clap = { version = "4.4.12", features = ["derive"] }
 elapsed-time = "0.1.1"
+rmq-tabulation = { git = "https://github.com/daxida/rmq-tabulation", branch = "master" }
 seq_io = "0.3.2"
+rayon = { version = "1.8.1", optional = true }
+
+[features]
+default = []
+parallel = ["rayon"]
+tabulation = []
 
 # [profile.dev]
 # opt-level = 3

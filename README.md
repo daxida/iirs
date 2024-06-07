@@ -14,21 +14,24 @@ The command line shares much of the functionality of the original IUPACpal. Typi
 Usage: iirs [OPTIONS]
 
 Options:
-  -f <INPUT_FILE>         Input filename (FASTA) [default: input.fasta]
-  -s <SEQ_NAMES>          Input sequence names [default: seq0]
-  -m <MIN_LEN>            Minimum length [default: 10]
-  -M <MAX_LEN>            Maximum length [default: 100]
-  -g <MAX_GAP>            Maximum permissible gap [default: 100]
-  -x <MISMATCHES>         Maximum permissible mismatches [default: 0]
-  -o <OUTPUT_FILE>        Output filename [default: iirs.out]
-  -F <OUTPUT_FORMAT>      Output format (classic, csv or custom) [default: classic]
-  -h, --help              Print help
+  -f, --input-file <INPUT_FILE>        Input filename (FASTA) [default: input.fasta]
+  -s, --seq-names <SEQ_NAMES>          Input sequence names [default: seq0]
+  -m, --min-len <MIN_LEN>              Minimum length [default: 10]
+  -M, --max-len <MAX_LEN>              Maximum length [default: 100]
+  -g, --max-gap <MAX_GAP>              Maximum permissible gap [default: 100]
+  -x, --mismatches <MISMATCHES>        Maximum permissible mismatches [default: 0]
+  -o, --output-file <OUTPUT_FILE>      Output filename [default: iirs.out]
+  -F, --output-format <OUTPUT_FORMAT>  Output format (classic, csv or custom) [default: classic]
+  -q, --quiet                          Quiet flag: Suppresses non-essential output when enabled
+  -h, --help                           Print help
 ```
 
-With the notable differences being support for multiple sequence names and the output format.
+With the notable differences being support for multiple sequence names, the `ALL_SEQUENCES` argument for processing all the sequences in the input file, and the output format. Long versions of the flags are also available.
 
 ```
 iirs -f input.fasta -s 't1 t2' -g 5 -F csv
+iirs -f input.fasta --seq-names t1 --max-gap 5 --output-format csv
+iirs -f input.fasta -s ALL_SEQUENCES -g 5 -m 3 -F csv
 ```
 
 Many more practical examples can be found in the justfile.

@@ -4,17 +4,6 @@ use seq_io::fasta::{Reader, Record};
 use crate::constants::*;
 use crate::utils;
 
-pub struct CustomRecord {
-    pub sequence: Vec<u8>,
-    pub position: usize,
-}
-
-impl CustomRecord {
-    fn new(sequence: Vec<u8>, position: usize) -> Self {
-        Self { sequence, position }
-    }
-}
-
 #[derive(Debug, Clone)]
 pub struct SearchParams {
     pub min_len: usize,
@@ -123,11 +112,11 @@ impl<'a> Config<'a> {
     }
 
     /// Attempts to extract every sequence with name in `seq_names` from the input file.
-    /// 
+    ///
     /// If `seq_names` is only `ALL_SEQUENCES` then all the sequences are extracted.
     /// For example: `iirs -s ALL_SEQUENCES -m 5`
     ///
-    /// Otherwise, if at least one sequence is not found, returns an Error with the list of missing 
+    /// Otherwise, if at least one sequence is not found, returns an Error with the list of missing
     /// sequences, together with a list of all the sequences present in the input file.
     pub fn safe_extract_sequences(
         input_file: &str,
