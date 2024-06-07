@@ -37,12 +37,12 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
 #[allow(clippy::too_many_arguments)]
-fn real_lce_mismatches(
+fn real_lce_mismatches<R: Rmq>(
     s: &[u8],
     i: usize,
     j: usize,
     inv_sa: &[usize],
-    rmq: &Tabulation,
+    rmq: &R,
     mut mismatches: i32,
     initial_gap: usize,
     matrix: &MatchMatrix,
@@ -94,10 +94,10 @@ fn real_lce_mismatches(
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
-pub fn add_irs(
+pub fn add_irs<R: Rmq>(
     s: &[u8],
     inv_sa: &[usize],
-    rmq: &Tabulation,
+    rmq: &R,
     params: &SearchParams,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
@@ -120,11 +120,11 @@ pub fn add_irs(
     result
 }
 
-fn add_irs_at_this_center(
+fn add_irs_at_this_center<R: Rmq>(
     s: &[u8],
     n: usize,
     inv_sa: &[usize],
-    rmq: &Tabulation,
+    rmq: &R,
     params: &SearchParams,
     matrix: &MatchMatrix,
     c: usize,

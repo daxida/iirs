@@ -69,7 +69,10 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 
     // Calculate LCP & RMQ
     let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
-    // let rmq_prep = rmq::rmq_preprocess(&lcp, s_n);
+    // By default use the Sparse Table implementation for the Rmq
+    #[cfg(not(feature = "tabulation"))]
+    let rmq = rmq::Sparse::new(&lcp);
+    #[cfg(feature = "tabulation")]
     let rmq = rmq::Tabulation::new(&lcp);
 
     // Calculate inverted repeats
