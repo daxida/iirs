@@ -43,7 +43,7 @@ testalys arg="":
   else if arg == "partab" \
     { MAIN_RUN_PARALLEL_TABULATION} \
   else { MAIN_RUN } }} -- \
-    -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
+    -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20 -q
 
 # Perf test for alys (sequential)
 testalys-perf:
