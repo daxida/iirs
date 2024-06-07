@@ -29,14 +29,17 @@ fn main() -> Result<()> {
             let start_idx = start_idx + keyword.len();
 
             if let Some(end_idx) = config.seq_name[start_idx..].find("..") {
-                if let Ok(position_value) = config.seq_name[start_idx..start_idx + end_idx].trim().parse::<usize>() {
+                if let Ok(position_value) = config.seq_name[start_idx..start_idx + end_idx]
+                    .trim()
+                    .parse::<usize>()
+                {
                     offset = position_value;
                 }
             }
         }
 
-        let irs = find_irs(&config.params, &seq)?;
-        let (header, irs_str) = stringify_irs(&config, &irs, &seq, offset)?;
+        let irs = find_irs(&config.params, seq)?;
+        let (header, irs_str) = stringify_irs(config, &irs, seq, offset)?;
 
         if idx == 0 {
             writeln!(&mut file, "{}", &header)?;

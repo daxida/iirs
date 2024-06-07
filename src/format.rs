@@ -169,7 +169,10 @@ pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8], offset: usize) -
 
         out_str.push_str(&format!(
             "{},{},{},{}\n",
-            outer_left + offset, nucleotide, gap_nucleotide, reverse_complement
+            outer_left + offset,
+            nucleotide,
+            gap_nucleotide,
+            reverse_complement
         ));
     }
 

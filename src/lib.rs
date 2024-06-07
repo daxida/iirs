@@ -156,7 +156,10 @@ pub fn stringify_irs(
             format::fmt_csv_header(),
             format::fmt_csv(irs, seq, &matrix, &complement),
         )),
-        "custom" => Ok((format::fmt_custom_header(), format::fmt_custom(irs, seq, offset))),
+        "custom" => Ok((
+            format::fmt_custom_header(),
+            format::fmt_custom(irs, seq, offset),
+        )),
         // Already tested in utils::verify_format
         _ => unreachable!(),
     }
