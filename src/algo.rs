@@ -1,4 +1,4 @@
-use rmq::{Rmq, Tabulation};
+use rmq::Rmq;
 
 use crate::{config::SearchParams, matrix::MatchMatrix};
 
@@ -94,7 +94,7 @@ fn real_lce_mismatches<R: Rmq>(
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
-pub fn add_irs<R: Rmq>(
+pub fn add_irs<R: Rmq + std::marker::Sync>(
     s: &[u8],
     inv_sa: &[usize],
     rmq: &R,
