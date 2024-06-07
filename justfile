@@ -24,6 +24,7 @@ testedge:
 
 MAIN_RUN := "cargo run --quiet --release"
 MAIN_RUN_PARALLEL := "cargo run --quiet --release --features parallel"
+MAIN_RUN_PARALLEL_TABULATION := "cargo run --quiet --release --features 'parallel tabulation'"
 BINARY_RELEASE_WITH_DEBUG := "target/release-with-debug/iirs"
 
 # Perf test for banana
@@ -35,8 +36,13 @@ testbanana-perf:
 # Test alys
 # `just testalys` will run the sequential version
 # `just testalys par` will run the parallel version
+# `just testalys partab` will run the parallel + tabulation version
 testalys arg="":
-  {{ if arg == "par" { MAIN_RUN_PARALLEL } else { MAIN_RUN } }} -- \
+  {{ if arg == "par" \
+    { MAIN_RUN_PARALLEL } \
+  else if arg == "partab" \
+    { MAIN_RUN_PARALLEL_TABULATION} \
+  else { MAIN_RUN } }} -- \
     -f tests/test_data/alys.fna -s NZ_CP059564.1 -m 3 -M 100 -g 20
 
 # Perf test for alys (sequential)

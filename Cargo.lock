@@ -233,6 +233,7 @@ dependencies = [
  "divsufsort",
  "elapsed-time",
  "rayon",
+ "rmq-tabulation",
  "seq_io",
 ]
 
@@ -350,6 +351,14 @@ checksum = "1465873a3dfdaa8ae7cb14b4383657caab0b3e8a0aa9ae8e04b044854c8dfce2"
 dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "rmq-tabulation"
+version = "0.1.0"
+source = "git+https://github.com/daxida/rmq-tabulation?branch=master#7e84efe36af67b5aed4e43128d3775a16431f9cf"
+dependencies = [
+ "rand",
 ]
 
 [[package]]
