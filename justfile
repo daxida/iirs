@@ -1,8 +1,9 @@
 clean:
-  rm -f *iirs.out
+  rm -rf iirs.out
   rm -f rand.fasta
   rm -f IUPACpal.out
   rm -f perf.data*
+  rm -rf tmp
   
 # Simple tests over input.fasta
 test:
@@ -21,6 +22,12 @@ teststar:
 testedge:
   cargo run --release -- \
     -f tests/test_data/truncation_edge_case.fasta -m 8 -M 100 -g 10 -x 6
+
+# Test ALL_SEQUENCES behaviour with --output-file
+testallseq:
+  mkdir tmp
+  cargo run --release -- \
+    -s ALL_SEQUENCES -m 3 -g 5 -o "tmp"
 
 MAIN_RUN := "cargo run --quiet --release"
 MAIN_RUN_PARALLEL := "cargo run --quiet --release --features parallel"

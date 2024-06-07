@@ -32,6 +32,7 @@ pub struct Cli {
     mismatches: usize,
 
     /// Output filename.
+    /// For multiple sequences this is treated as a folder.
     #[arg(long, short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
     output_file: String,
 
@@ -74,7 +75,7 @@ impl Cli {
             let this_output_file: Box<str> = if only_one_sequence_found {
                 self.output_file.clone().into()
             } else {
-                format!("{}_{}", seq_name, self.output_file).into_boxed_str()
+                format!("{}/{}", self.output_file, seq_name).into_boxed_str()
             };
 
             let config = Config {
