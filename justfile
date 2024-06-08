@@ -29,6 +29,11 @@ testallseq:
   cargo run --release -- \
     -s ALL_SEQUENCES -m 3 -g 5 -o "tmp"
 
+# Test ALL_SEQUENCES behaviour with --output-file when only one sequence is present
+testallseqone:
+  cargo run --release -- \
+    -f tests/test_data/test3.fasta -s ALL_SEQUENCES -m 3 -g 5 -o "tmp"
+
 MAIN_RUN := "cargo run --quiet --release"
 MAIN_RUN_PARALLEL := "cargo run --quiet --release --features parallel"
 MAIN_RUN_PARALLEL_TABULATION := "cargo run --quiet --release --features 'parallel tabulation'"
