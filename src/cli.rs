@@ -8,36 +8,36 @@ use crate::constants::*;
 pub struct Cli {
     /// Input filename (FASTA).
     #[arg(long, short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
-    input_file: String,
+    pub input_file: String,
 
     /// Input sequence names.
     #[arg(long, short, default_value = DEFAULT_SEQ_NAME, value_delimiter = ' ')]
-    seq_names: Vec<String>,
+    pub seq_names: Vec<String>,
 
     /// Minimum length.
     #[arg(long, short, default_value_t = DEFAULT_MIN_LEN)]
-    min_len: usize,
+    pub min_len: usize,
 
     /// Maximum length.
     #[arg(long, short = 'M', default_value_t = DEFAULT_MAX_LEN)]
-    max_len: usize,
+    pub max_len: usize,
 
     /// Maximum permissible gap.
     #[arg(long, short = 'g', default_value_t = DEFAULT_MAX_GAP)]
-    max_gap: usize,
+    pub max_gap: usize,
 
     /// Maximum permissible mismatches.
     #[arg(long, short = 'x', default_value_t = DEFAULT_MISMATCHES)]
-    mismatches: usize,
+    pub mismatches: usize,
 
     /// Output filename.
     /// For multiple sequences this is treated as a folder.
     #[arg(long, short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
-    output_file: String,
+    pub output_file: String,
 
     /// Output format
     #[arg(long, short = 'F', default_value_t, value_enum)]
-    output_format: OutputFormat,
+    pub output_format: OutputFormat,
 
     /// Quiet flag: Suppresses non-essential output when enabled.
     #[arg(long, short, default_value_t = false)]

@@ -147,7 +147,7 @@ pub fn fmt_custom_header() -> String {
     String::from("ir_start,motif,gap_motif,reverse_complement")
 }
 
-pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8], offset: usize) -> String {
+pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8]) -> String {
     let mut out_str = String::new();
 
     for (left, right, gap) in irs {
@@ -169,10 +169,7 @@ pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8], offset: usize) -
 
         out_str.push_str(&format!(
             "{},{},{},{}\n",
-            outer_left + offset,
-            nucleotide,
-            gap_nucleotide,
-            reverse_complement
+            outer_left, nucleotide, gap_nucleotide, reverse_complement
         ));
     }
 
@@ -296,7 +293,7 @@ mod tests {
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
-        let received = format!("{}\n{}", fmt_custom_header(), fmt_custom(&irs, &seq, 0));
+        let received = format!("{}\n{}", fmt_custom_header(), fmt_custom(&irs, &seq));
         let expected = r#"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
 3,ucsggtgtwkmmm,kk,nngah*nn-nddb

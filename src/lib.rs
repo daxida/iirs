@@ -117,7 +117,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///     ..Default::default()
 /// };
 /// let irs = find_irs(&config.params, &seq).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq, 0);
+/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
 ///     1,3,acb,6,4,tgb,111\n";
@@ -125,7 +125,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///
 /// // For the classic method, all the fields are used in the header.
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", OutputFormat::Classic).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq, 0);
+/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
 /// let expected = "\
 ///     Palindromes of: in.fasta\n\
 ///     Sequence name: seq0\n\
@@ -143,7 +143,6 @@ pub fn stringify_irs(
     config: &Config,
     irs: &Vec<(usize, usize, usize)>,
     seq: &[u8],
-    offset: usize,
 ) -> (String, String) {
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
@@ -157,7 +156,7 @@ pub fn stringify_irs(
             format::fmt_csv_header(),
             format::fmt_csv(irs, seq, &matrix, &complement),
         ),
-        OutputFormat::Custom => (format::fmt_custom_header(), format::fmt_custom(irs, seq, offset)),
+        OutputFormat::Custom => (format::fmt_custom_header(), format::fmt_custom(irs, seq)),
     }
 }
 
