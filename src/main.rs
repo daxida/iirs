@@ -11,11 +11,11 @@ use std::io::Write;
 fn main() -> Result<()> {
     let args = Cli::parse_args();
     let check_bounds = true;
-    let config_seq_pairs = args.try_from_args(check_bounds)?;
+    let config_record_pairs = args.try_from_args(check_bounds)?;
 
-    for (config, seq) in config_seq_pairs {
-        let irs = find_irs(&config.params, &seq)?;
-        let (header, irs_str) = stringify_irs(&config, &irs, &seq);
+    for (config, record) in config_record_pairs {
+        let irs = find_irs(&config.params, &record.seq)?;
+        let (header, irs_str) = stringify_irs(&config, &irs, &record.seq);
 
         let mut file = File::create(config.output_file)?;
         writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
