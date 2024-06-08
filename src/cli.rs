@@ -3,7 +3,6 @@ use clap::Parser;
 
 use crate::config::{Config, SearchParams};
 use crate::constants::*;
-use crate::utils;
 
 #[derive(Parser, Debug)]
 pub struct Cli {
@@ -36,9 +35,9 @@ pub struct Cli {
     #[arg(long, short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
     output_file: String,
 
-    /// Output format (classic, csv or custom).
-    #[arg(long, short = 'F', default_value_t = String::from(DEFAULT_OUTPUT_FORMAT))]
-    output_format: String,
+    /// Output format
+    #[arg(long, short = 'F', default_value_t, value_enum)]
+    output_format: OutputFormat,
 
     /// Quiet flag: Suppresses non-essential output when enabled.
     #[arg(long, short, default_value_t = false)]
@@ -58,8 +57,6 @@ impl Cli {
     /// The `Config` is different for every sequence since it contains the sequence name and
     /// the output file, but the parameters do not change.
     pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, Vec<u8>)>> {
-        utils::verify_format(&self.output_format)?;
-
         let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
         let seqs_with_names = Config::safe_extract_sequences(&self.input_file, &self.seq_names)?;
         let only_one_sequence_found = seqs_with_names.len() == 1;
@@ -83,7 +80,7 @@ impl Cli {
                 seq_name: Box::leak(seq_name.into_boxed_str()),
                 params: params.clone(),
                 output_file: Box::leak(this_output_file),
-                output_format: &self.output_format,
+                output_format: self.output_format.clone(),
             };
 
             if check_bounds {

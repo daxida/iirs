@@ -40,7 +40,7 @@ fn main() -> Result<()> {
         }
 
         let irs = find_irs(&config.params, seq)?;
-        let (header, irs_str) = stringify_irs(config, &irs, seq, offset)?;
+        let (header, irs_str) = stringify_irs(config, &irs, seq, offset);
 
         if idx == 0 {
             writeln!(&mut file, "{}", &header)?;

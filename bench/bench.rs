@@ -27,7 +27,7 @@ fn main() -> Result<()> {
                 mismatches: 0,
             },
             output_file: RUST_OUTPUT_PATH,
-            output_format: "classic",
+            output_format: iirs::OutputFormat::Classic,
         },
         "rand" => Config {
             input_file: "tests/test_data/rand1000000.fasta",
@@ -39,7 +39,7 @@ fn main() -> Result<()> {
                 mismatches: 1,
             },
             output_file: RUST_OUTPUT_PATH,
-            output_format: "classic",
+            output_format: iirs::OutputFormat::Classic,
         },
         _ => todo!(),
     };

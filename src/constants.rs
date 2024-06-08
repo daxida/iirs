@@ -8,9 +8,25 @@ pub const DEFAULT_MISMATCHES: usize = 0;
 pub const DEFAULT_INPUT_FILE: &str = "input.fasta";
 pub const DEFAULT_SEQ_NAME: &str = "seq0";
 pub const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
-pub const DEFAULT_OUTPUT_FORMAT: &str = "classic";
 
-pub const EXISTING_FORMATS: [&str; 3] = ["classic", "csv", "custom"];
+#[derive(clap::ValueEnum, Debug, Clone, Default)]
+pub enum OutputFormat {
+    #[default]
+    Classic,
+    Csv,
+    Custom,
+}
+
+impl std::fmt::Display for OutputFormat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let fmted = match self {
+            OutputFormat::Classic => "classic",
+            OutputFormat::Csv => "csv",
+            OutputFormat::Custom => "custom",
+        };
+        write!(f, "{}", fmted)
+    }
+}
 
 pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
