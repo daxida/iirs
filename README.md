@@ -58,14 +58,13 @@ $ git clone https://github.com/daxida/iirs
 $ cargo install --path=.
 ```
 
-## Branches
+## Features
 
-TODO
+The default uses a Sparse Table implementation for the range minimum query, and it is sequential over IR centers. To change this behaviour you can use the features `tabulation`, `parallel` or a combination of both:
 
-- master (Sparse table)
-- parallel (parallelize the main loop - not ideal if we want to parallelize over sequences, but THE FASTEST if we only query one sequence)
-- [tabulation](https://github.com/daxida/rmq-tabulation) (maybe better than master? needs testing)
-- visualize && custom > ignore
+```
+cargo build --release --features "parallel tabulation"
+```
 
 ## Testing
 
