@@ -5,7 +5,6 @@ use super::config::{Config, SearchParams};
 use super::constants;
 use super::find_irs;
 use super::matrix;
-use super::stringify_irs;
 use super::utils;
 
 /// Attemps to extract the first sequence (string) from the fasta file. Returns a trimmed lowercase String.
@@ -77,15 +76,6 @@ fn test_correct_truncation_three() {
         ..Default::default()
     };
     correct_truncation_helper(&config)
-}
-
-#[test]
-fn test_invalid_output_format_stringify() {
-    let config = Config {
-        output_format: "inexistent",
-        ..Default::default()
-    };
-    assert!(stringify_irs(&config, &Vec::new(), &Vec::new()).is_err());
 }
 
 // Tests from local files
@@ -207,15 +197,4 @@ fn test_test_1() {
         ..Default::default()
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 84)
-}
-
-#[test]
-fn test_formats() {
-    for output_format in constants::EXISTING_FORMATS {
-        let config = Config {
-            output_format,
-            ..Default::default()
-        };
-        assert!(stringify_irs(&config, &vec![], &vec![]).is_ok())
-    }
 }

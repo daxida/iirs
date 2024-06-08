@@ -86,7 +86,7 @@ pub struct Config<'a> {
     pub seq_name: &'a str,
     pub params: SearchParams,
     pub output_file: &'a str,
-    pub output_format: &'a str,
+    pub output_format: OutputFormat,
 }
 
 impl<'a> Config<'a> {
@@ -99,7 +99,7 @@ impl<'a> Config<'a> {
         max_gap: usize,
         mismatches: usize,
         output_file: &'a str,
-        output_format: &'a str,
+        output_format: OutputFormat,
     ) -> Result<Self> {
         let params = SearchParams::new(min_len, max_len, max_gap, mismatches)?;
         Ok(Self {
@@ -164,7 +164,7 @@ impl<'a> Default for Config<'a> {
             seq_name: DEFAULT_SEQ_NAME,
             params: SearchParams::default(),
             output_file: DEFAULT_OUTPUT_FILE,
-            output_format: DEFAULT_OUTPUT_FORMAT,
+            output_format: OutputFormat::default(),
         }
     }
 }

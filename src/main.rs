@@ -15,7 +15,7 @@ fn main() -> Result<()> {
 
     for (config, seq) in config_seq_pairs {
         let irs = find_irs(&config.params, &seq)?;
-        let (header, irs_str) = stringify_irs(&config, &irs, &seq)?;
+        let (header, irs_str) = stringify_irs(&config, &irs, &seq);
 
         let mut file = File::create(config.output_file)?;
         writeln!(&mut file, "{}\n{}", &header, &irs_str)?;

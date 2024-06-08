@@ -4,8 +4,10 @@ pub use cli::Cli;
 mod config;
 pub use config::{Config, SearchParams};
 
-mod algo;
 mod constants;
+pub use constants::OutputFormat;
+
+mod algo;
 mod format;
 mod matrix;
 mod utils;
@@ -104,25 +106,26 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 /// ```rust
 /// use iirs::{SearchParams, Config};
 /// use iirs::{find_irs, stringify_irs};
+/// use iirs::OutputFormat;
 ///
 /// // Simple example for the csv output format.
 /// let seq = "acbbgt".as_bytes();
 /// let config = Config {
 ///     params: SearchParams::new(3, 6, 2, 0).unwrap(),
-///     output_format: "csv",
+///     output_format: OutputFormat::Csv,
 ///     // The remaining fields are not relevant here.
 ///     ..Default::default()
 /// };
 /// let irs = find_irs(&config.params, &seq).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq).unwrap();
+/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
 ///     1,3,acb,6,4,tgb,111\n";
 /// assert_eq!(format!("{}\n{}", &header, &irs_str), expected);
 ///
 /// // For the classic method, all the fields are used in the header.
-/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", "classic").unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq).unwrap();
+/// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", OutputFormat::Classic).unwrap();
+/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
 /// let expected = "\
 ///     Palindromes of: in.fasta\n\
 ///     Sequence name: seq0\n\
@@ -140,24 +143,20 @@ pub fn stringify_irs(
     config: &Config,
     irs: &Vec<(usize, usize, usize)>,
     seq: &[u8],
-) -> Result<(String, String)> {
+) -> (String, String) {
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
 
-    utils::verify_format(config.output_format)?;
-
     match config.output_format {
-        "classic" => Ok((
+        OutputFormat::Classic => (
             format::fmt_classic_header(config, seq.len()),
             format::fmt_classic(irs, seq, &matrix, &complement),
-        )),
-        "csv" => Ok((
+        ),
+        OutputFormat::Csv => (
             format::fmt_csv_header(),
             format::fmt_csv(irs, seq, &matrix, &complement),
-        )),
-        "custom" => Ok((format::fmt_custom_header(), format::fmt_custom(irs, seq))),
-        // Already tested in utils::verify_format
-        _ => unreachable!(),
+        ),
+        OutputFormat::Custom => (format::fmt_custom_header(), format::fmt_custom(irs, seq)),
     }
 }
 

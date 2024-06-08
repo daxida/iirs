@@ -1,4 +1,4 @@
-use crate::constants::{EXISTING_FORMATS, IUPAC_SYMBOLS};
+use crate::constants::IUPAC_SYMBOLS;
 use anyhow::{anyhow, Result};
 use std::fs;
 
@@ -33,17 +33,6 @@ pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
     Ok(sanitized_seq)
 }
 
-/// Verify that the given format does actually exist.
-pub fn verify_format(output_format: &str) -> Result<()> {
-    if !EXISTING_FORMATS.contains(&output_format) {
-        return Err(anyhow!(
-            "Invalid output format. Allowed formats are: {}.",
-            EXISTING_FORMATS.join(", ")
-        ));
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -74,17 +63,5 @@ mod tests {
     fn test_sanitize_sequence_not_in_iupac() {
         let seq = "de".as_bytes().to_vec();
         assert!(sanitize_sequence(&seq).is_err());
-    }
-
-    #[test]
-    fn test_valid_output_format() {
-        assert!(verify_format("classic").is_ok());
-        assert!(verify_format("csv").is_ok());
-        assert!(verify_format("custom").is_ok())
-    }
-
-    #[test]
-    fn test_invalid_output_format() {
-        assert!(verify_format("wrong").is_err())
     }
 }
