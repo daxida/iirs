@@ -3,6 +3,8 @@ use clap::Parser;
 
 use crate::config::{Config, SearchParams};
 use crate::constants::*;
+use crate::utils::safe_extract_records;
+use seq_io::fasta::{OwnedRecord, Record};
 
 #[derive(Parser, Debug)]
 pub struct Cli {
@@ -10,7 +12,7 @@ pub struct Cli {
     #[arg(long, short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
     pub input_file: String,
 
-    /// Input sequence names.
+    /// Input sequence names (ids).
     #[arg(long, short, default_value = DEFAULT_SEQ_NAME, value_delimiter = ' ')]
     pub seq_names: Vec<String>,
 
@@ -49,26 +51,27 @@ impl Cli {
         Cli::parse()
     }
 
-    /// Return a vector of pairs `(Config, sequence)` from the CLI arguments.
+    /// Return a vector of pairs `(Config, OwnedRecord)` from the CLI arguments.
     ///
-    /// A `check_bounds` argument determines if bound checking has to be performed for
+    /// The `check_bounds` argument determines if bound checking has to be performed for
     /// every sequence.
     ///
-    /// The `Config` is different for every sequence since it contains the sequence name and
-    /// the output file, but the parameters do not change.
-    pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, Vec<u8>)>> {
+    /// The `Config` is different for every sequence since it contains the sequence name (id)
+    /// and the output file. The SearchParams do not change.
+    pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, OwnedRecord)>> {
         let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
-        let seqs_with_names = Config::safe_extract_sequences(&self.input_file, &self.seq_names)?;
-        let only_one_sequence_found = seqs_with_names.len() == 1;
-        let mut results = Vec::new();
+        let records = safe_extract_records(&self.input_file, &self.seq_names)?;
+        let only_one_sequence_found = records.len() == 1;
+        let mut config_record_pairs = Vec::new();
 
-        for (seq, seq_name) in seqs_with_names {
+        for record in records {
             // I don't really like this leak hack to preserve the references
             // but the alternative of making everything a String is even worse.
 
             // IUPACpal convention is to always use IUPACpal.out no matter the sequence name.
             // In order to ease the validity checks, we keep that convention if the input consists
             // of only one sequence. Otherwise we preface the output_file with the sequence name.
+            let seq_name = String::from(record.id()?);
             let this_output_file: Box<str> = if only_one_sequence_found {
                 self.output_file.clone().into()
             } else {
@@ -84,11 +87,11 @@ impl Cli {
             };
 
             if check_bounds {
-                config.params.check_bounds(seq.len())?;
+                config.params.check_bounds(record.seq.len())?;
             }
-            results.push((config, seq))
+            config_record_pairs.push((config, record))
         }
 
-        Ok(results)
+        Ok(config_record_pairs)
     }
 }

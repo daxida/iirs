@@ -1,9 +1,10 @@
 extern crate elapsed_time;
 
 use iirs::find_irs;
-use iirs::{Cli, OutputFormat};
+use iirs::Cli;
 
 use anyhow::Result;
+use seq_io::fasta::Record;
 use std::fs::File;
 use std::io::Write;
 
@@ -11,11 +12,7 @@ fn fmt_custom_header() -> String {
     String::from("ir_start,motif,gap_motif,reverse_complement")
 }
 
-fn fmt_custom_with_offset(
-    irs: &Vec<(usize, usize, usize)>,
-    seq: &[u8],
-    offset: usize,
-) -> String {
+fn fmt_custom_with_offset(irs: &Vec<(usize, usize, usize)>, seq: &[u8], offset: usize) -> String {
     let mut out_str = String::new();
 
     for (left, right, gap) in irs {
@@ -71,27 +68,29 @@ fn extract_offset_from_record_head(seq_name: &str) -> usize {
 
 #[elapsed_time::elapsed]
 fn main() -> Result<()> {
+    // Note: this is only intended to be run with:
+    // args.output_format == OutputFormat::Custom
     let args = Cli::parse_args();
-    assert_eq!(args.output_format, OutputFormat::Custom);
 
     let check_bounds = false;
-    let config_seq_pairs = args.try_from_args(check_bounds)?;
+    let config_record_pairs = args.try_from_args(check_bounds)?;
     let output_file = &args.output_file;
     let mut file = File::create(output_file)?;
 
-    write!(&mut file, "{}", &fmt_custom_header())?;
+    writeln!(&mut file, "{}", &fmt_custom_header())?;
 
-    for (idx, (config, seq)) in config_seq_pairs.iter().enumerate() {
-        if let Err(e) = config.params.check_bounds(seq.len()) {
+    for (idx, (config, record)) in config_record_pairs.iter().enumerate() {
+        if let Err(e) = config.params.check_bounds(record.seq.len()) {
             println!("Constraints violated for seq number {}", idx);
             println!("{}", e);
             continue;
         }
 
-        let offset = extract_offset_from_record_head(config.seq_name);
+        let head = String::from_utf8(record.head().to_vec())?;
+        let offset = extract_offset_from_record_head(&head);
 
-        let irs = find_irs(&config.params, seq)?;
-        let irs_str = fmt_custom_with_offset(&irs, seq, offset);
+        let irs = find_irs(&config.params, &record.seq)?;
+        let irs_str = fmt_custom_with_offset(&irs, &record.seq, offset);
         write!(&mut file, "{}", &irs_str)?;
 
         if !args.quiet {
