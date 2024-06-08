@@ -12,7 +12,8 @@ fn main() -> Result<()> {
     let args = Cli::parse_args();
     let check_bounds = false;
     let config_seq_pairs = args.try_from_args(check_bounds)?;
-    let mut file = File::create("iirs.out")?;
+    let output_file = config_seq_pairs[0].0.output_file;
+    let mut file = File::create(output_file)?;
 
     for (idx, (config, seq)) in config_seq_pairs.iter().enumerate() {
         if let Err(e) = config.params.check_bounds(seq.len()) {
