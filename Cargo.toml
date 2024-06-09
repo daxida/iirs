@@ -1,9 +1,10 @@
 [package]
 name = "iirs"
 default-run = "iirs"
-version = "0.9.2"
+version = "0.9.3"
 edition = "2021"
 license = "GPL-3.0"
+repository = "https://github.com/daxida/iirs"
 readme = "README.md"
 description = "Inverted repeats finder"
 keywords = [
@@ -20,18 +21,17 @@ members = [".", "bench"]
 
 [dependencies]
 anyhow = "1.0"
-divsufsort = "2.0.0"
 clap = { version = "4.4.12", features = ["derive"] }
+divsufsort = "2.0.0"
 elapsed-time = "0.1.1"
-rmq-tabulation = { git = "https://github.com/daxida/rmq-tabulation", branch = "master" }
-seq_io = "0.3.2"
 rayon = { version = "1.8.1", optional = true }
+rmq-tabulation = "1.2.0"
+seq_io = "0.3.2"
 
 [features]
 default = []
 parallel = ["rayon"]
 tabulation = []
-
 # [profile.dev]
 # opt-level = 3
 
