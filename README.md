@@ -4,7 +4,7 @@ IIRS is an [Iupac](https://en.wikipedia.org/wiki/International_Union_of_Pure_and
 
 That is, an exact tool for efficient identification of Inverted Repeats (IRs) in IUPAC-encoded DNA sequences as substrings of a large text, allowing also for potential mismatches and gaps.
 
-Compared to the original, this version is faster, platform-independent and modular, facilitating the creation of customized format outputs. It does not require `cmake`, `libdivsufsort` nor `sdsl`.
+Compared to the original, this version is faster, platform-independent and modular, facilitating the creation of customized format outputs. It does not require `cmake` nor `sdsl`. It uses [divsufsort](https://github.com/fasterthanlime/stringsearch/tree/master/crates/divsufsort) instead of [libdivsufsort](https://github.com/y-256/libdivsufsort).
 
 ## How to use the binary
 
@@ -69,13 +69,7 @@ cargo build --release --features "parallel tabulation"
 ## Testing
 
 - `cargo test` for unit tests.
-- [Justfile](https://github.com/casey/just) for individual tests against sequences. Some use the Linux profiler [perf](https://en.wikipedia.org/wiki/Perf_(Linux)).
-- `bench.rs` benches against a single file. To use together with `just bench` after modifying the parameters in `bench.rs`.
+- [Justfile](https://github.com/casey/just) for individual tests against sequences. Some use the Linux profiler [perf](https://en.wikipedia.org/wiki/Perf_(Linux)). To see the full list of commands use `just -l`. 
+- `bench.rs` benches against a single file. To use together with `just bench` after modifying the parameters in `bench.rs`. To test against different features you can add them as arguments: `just bench parallel` or `just bench parallel tabulation`.
 - `logs.rs` benches against the cpp binary. You will need a [IUPACpal](https://github.com/steven31415/IUPACpal) binary (and they only support Linux). The binary is expected to be in the bench folder, but that can be changed in `logs.rs` and `validate.py`. 
-- For instance, create the heatmaps with `just printlogs`. You can also modify the `steps` in which the binaries are compared. A heatmap will be created per `size_seq` (size of sequence). **NOTE**: There is a `requirements.txt` that needs to be previously installed, with libraries like plotly to be able to print the heatmaps.
-
-## Links
-* [IUPACpal](https://github.com/steven31415/IUPACpal)
-* [divsufsort](https://github.com/y-256/libdivsufsort) and [dismantling divsufsort](https://arxiv.org/pdf/1710.01896.pdf)
-* [libdivsufsort port in rust](https://github.com/fasterthanlime/stringsearch?tab=readme-ov-file)
-* [Alternative RMQ implementations](https://github.com/birc-stormtroopers/rmq)
+- Note that `just heatmap` requires the python libraries listed in `bench/requirements.txt`.
