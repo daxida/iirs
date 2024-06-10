@@ -1,15 +1,17 @@
 [package]
 name = "iirs"
 default-run = "iirs"
-version = "0.9.3"
+version = "0.9.4"
 edition = "2021"
 license = "GPL-3.0"
 repository = "https://github.com/daxida/iirs"
 readme = "README.md"
 description = "Inverted repeats finder"
 keywords = [
+    "cli",
     "iupac",
     "inverted-repeats",
+    "rmq",
 ]
 
 [lib]
@@ -30,10 +32,8 @@ seq_io = "0.3.2"
 
 [features]
 default = []
-parallel = ["rayon"]
+parallel = ["dep:rayon"]
 tabulation = []
-# [profile.dev]
-# opt-level = 3
 
 [profile.test]
 opt-level = 3
