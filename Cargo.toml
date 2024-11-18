@@ -19,7 +19,7 @@ name = "iirs"
 path = "src/lib.rs"
 
 [workspace]
-members = [".", "bench"]
+members = [".", "bench", "py-iirs"]
 
 [dependencies]
 anyhow = "1.0"

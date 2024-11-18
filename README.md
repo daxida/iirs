@@ -43,6 +43,22 @@ The default uses a Sparse Table implementation for the range minimum query, and 
 cargo install iirs --features "parallel tabulation"
 ```
 
+## Extra
+
+It can also be used as a library both in rust and python.
+
+```
+cargo add iirs [--features X]
+```
+
+Or to python, after cloning the repo, via (no wheels yet):
+
+```
+pip install py-iirs/
+```
+
+Both libraries are minimal and only contain a struct / class `SearchParams` that does some bound checking, and a `find_irs` function.
+
 ## Testing
 
 - `cargo test` for unit tests.
