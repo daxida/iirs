@@ -3,7 +3,7 @@ use iirs::{find_irs, SearchParams};
 fn test_amount_irs(params: &SearchParams, string: &str) -> usize {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     params.check_bounds(seq.len()).unwrap();
-    find_irs(&params, &seq).unwrap().len()
+    find_irs(params, &seq).unwrap().len()
 }
 
 #[test]

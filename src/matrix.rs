@@ -130,13 +130,13 @@ mod tests {
     #[test]
     fn test_matches_not() {
         let matrix = MatchMatrix::new();
-        assert_eq!(matrix.match_u8(b'a', b't'), false);
+        assert!(!matrix.match_u8(b'a', b't'));
     }
 
     #[test]
     fn test_matches_complementary() {
         let matrix = MatchMatrix::new();
         let complement = build_complement_array();
-        assert_eq!(matrix.match_u8(b'k', complement['u' as usize]), false);
+        assert!(!matrix.match_u8(b'k', complement['u' as usize]));
     }
 }

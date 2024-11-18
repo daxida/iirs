@@ -110,7 +110,7 @@ impl<'a> Config<'a> {
     }
 }
 
-impl<'a> Default for Config<'a> {
+impl Default for Config<'_> {
     fn default() -> Self {
         Config {
             input_file: DEFAULT_INPUT_FILE,
@@ -122,7 +122,7 @@ impl<'a> Default for Config<'a> {
     }
 }
 
-impl<'a> std::fmt::Display for Config<'a> {
+impl std::fmt::Display for Config<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "input_file:  {}", self.input_file)?;
         writeln!(f, "seq_name:    {}", self.seq_name)?;

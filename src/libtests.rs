@@ -11,8 +11,8 @@ use super::utils;
 ///
 /// Returns an error if there are no sequences.
 fn extract_first_sequence(config: &Config) -> Result<String> {
-    utils::check_file_exist(&config.input_file)?;
-    let mut reader = Reader::from_path(&config.input_file)?;
+    utils::check_file_exist(config.input_file)?;
+    let mut reader = Reader::from_path(config.input_file)?;
     let record = reader
         .next()
         .expect("No sequences found")
