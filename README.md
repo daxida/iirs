@@ -8,25 +8,14 @@ Compared to the original, this version is faster, platform-independent and modul
 
 ## How to use the binary
 
-The command line shares much of the functionality of the original IUPACpal. Typing `iirs --help` will return:
+The command line shares much of the functionality of the original IUPACpal. 
 
-```
-Usage: iirs [OPTIONS]
+Type `iirs --help` for a full description.
 
-Options:
-  -f, --input-file <INPUT_FILE>        Input filename (FASTA) [default: input.fasta]
-  -s, --seq-names <SEQ_NAMES>          Input sequence names [default: seq0]
-  -m, --min-len <MIN_LEN>              Minimum length [default: 10]
-  -M, --max-len <MAX_LEN>              Maximum length [default: 100]
-  -g, --max-gap <MAX_GAP>              Maximum permissible gap [default: 100]
-  -x, --mismatches <MISMATCHES>        Maximum permissible mismatches [default: 0]
-  -o, --output-file <OUTPUT_FILE>      Output filename [default: iirs.out]
-  -F, --output-format <OUTPUT_FORMAT>  Output format (classic, csv or custom) [default: classic]
-  -q, --quiet                          Quiet flag: Suppresses non-essential output when enabled
-  -h, --help                           Print help
-```
-
-With the notable differences being support for multiple sequence names, the `ALL_SEQUENCES` argument for processing all the sequences in the input file, and the output format. Long versions of the flags are also available.
+The notable differences are:
+- Support for multiple sequence names.
+- `ALL_SEQUENCES` argument for processing all the sequences in the input file.
+- Output format.
 
 ```
 iirs -f input.fasta -s 't1 t2' -g 5 -F csv
@@ -38,32 +27,20 @@ Many more practical examples can be found in the justfile.
 
 ## How to install the binary
 
-### (Option 1) Download executable
-
-Download the latest binary from [releases](https://github.com/daxida/iirs/releases) and extract it somewhere on your `$PATH`.
-
-### (Option 2) Build executable
+You can either build from source:
 
 ```
-$ git clone https://github.com/daxida/iirs
-$ cd iirs
-$ cargo build --release
-$ // The binary will be located at `target/release/iirs`
+$ cargo install iirs
 ```
 
-### (Option 3) Build from source:
-
-```
-$ git clone https://github.com/daxida/iirs
-$ cargo install --path=.
-```
+Or download the latest binary from [releases](https://github.com/daxida/iirs/releases) and extract it somewhere on your `$PATH`.
 
 ## Features
 
-The default uses a Sparse Table implementation for the range minimum query, and it is sequential over IR centers. To change this behaviour you can use the features `tabulation`, `parallel` or a combination of both:
+The default uses a Sparse Table implementation for the range minimum query, and it is sequential over IR centers. To change this behaviour you can use the features `tabulation`, `parallel` or a combination of both. This may result in a significant speed increase:
 
 ```
-cargo build --release --features "parallel tabulation"
+cargo install iirs --features "parallel tabulation"
 ```
 
 ## Testing
