@@ -1,0 +1,28 @@
+.vscode
+
+# py
+venv
+__pycache__/
+
+# Ignore performance testing files or directories
+perf/
+perf*
+
+# out files
+IUPACpal/IUPACpal.out
+IUPACpalrs.out
+IUPACpal.out
+*iirs.out
+
+# Random data
+IUPACpal/rand.fasta
+rand.fasta
+
+# rust
+/target
+
+# heatmaps
+bench/results.csv
+
+# IUPACpal binary
+bench/IUPACpal
