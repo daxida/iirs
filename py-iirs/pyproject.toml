@@ -1,7 +1,6 @@
 [project]
 name = "iirs"
 version = "0.1.0"
-dependencies = ["maturin"]
 
 [build-system]
 requires = ["maturin>=0.12"]
