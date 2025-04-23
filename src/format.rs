@@ -1,8 +1,9 @@
 // This may present differences in the ordering with IUPACpal - but it is simpler to write
 
 use crate::{config::Config, matrix::MatchMatrix};
+use std::fmt::Write;
 
-fn int_size(x: usize) -> usize {
+const fn int_size(x: usize) -> usize {
     (x.ilog10() + 1) as usize
 }
 
@@ -33,62 +34,53 @@ pub fn fmt_classic_header(config: &Config, n: usize) -> String {
 }
 
 pub fn fmt_classic(
-    irs: &Vec<(usize, usize, usize)>,
+    irs: &[(usize, usize, usize)],
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
 ) -> String {
-    let mut out_str = String::new();
+    let mut out = String::new();
 
     let pad = "         ";
     let pad_length = pad.len(); // 9
 
-    for (left, right, gap) in irs {
+    for &(left, right, gap) in irs {
         let outer_left = left + 1;
         let outer_right = right + 1;
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        let entry = format!(
-            "{ol}{ol_pad}{nucleotide}{il_pad}{il}\n\
-             {pad}{matching_chars}\n\
-             {or}{or_pad}{rcomplementary}{ir_pad}{ir}\n\n",
-            // First line: the nucleotide.
-            ol = outer_left,
-            ol_pad = " ".repeat(pad_length - int_size(outer_left)),
-            nucleotide = (*left..inner_left)
-                .map(|i| seq[i] as char)
-                .collect::<String>(),
-            il_pad = " ".repeat(pad_length - int_size(inner_left)),
-            il = inner_left,
-            // Second line: padding and matching chars
-            pad = pad,
-            matching_chars = (0..=(inner_left - outer_left))
-                .map(|i| {
-                    let l = seq[left + i];
-                    let r = seq[right - i];
-                    if matrix.match_u8(l, complement[r as usize]) {
-                        "|"
-                    } else {
-                        " "
-                    }
-                })
-                .collect::<String>(),
-            // Third line: the nucleotide's reverse complementary
-            or = outer_right,
-            or_pad = " ".repeat(pad_length - int_size(outer_right)),
-            rcomplementary = (inner_right..=outer_right)
-                .rev()
-                .map(|i| seq[i - 1] as char)
-                .collect::<String>(),
-            ir_pad = " ".repeat(pad_length - int_size(inner_right)),
-            ir = inner_right,
-        );
+        let ol_pad = " ".repeat(pad_length - int_size(outer_left));
+        let il_pad = " ".repeat(pad_length - int_size(inner_left));
+        let or_pad = " ".repeat(pad_length - int_size(outer_right));
+        let ir_pad = " ".repeat(pad_length - int_size(inner_right));
 
-        out_str.push_str(&entry);
+        // 1. First line (nucleotide strand)
+        write!(&mut out, "{}{}", outer_left, ol_pad).unwrap();
+        for i in left..inner_left {
+            out.push(seq[i] as char);
+        }
+        write!(&mut out, "{}{}\n", il_pad, inner_left).unwrap();
+
+        // 2. Second line (matching bars)
+        out.push_str(pad);
+        for i in 0..=(inner_left - outer_left) {
+            let l = seq[left + i];
+            let r = seq[right - i];
+            let matching = matrix.match_u8(l, complement[r as usize]);
+            out.push(if matching { '|' } else { ' ' })
+        }
+        out.push('\n');
+
+        // 3. Third line (reverse complement strand)
+        write!(&mut out, "{}{}", outer_right, or_pad).unwrap();
+        for i in (inner_right..=outer_right).rev() {
+            out.push(seq[i - 1] as char);
+        }
+        write!(&mut out, "{}{}\n\n", ir_pad, inner_right).unwrap();
     }
 
-    out_str
+    out
 }
 
 pub fn fmt_csv_header() -> String {
@@ -96,84 +88,83 @@ pub fn fmt_csv_header() -> String {
 }
 
 pub fn fmt_csv(
-    irs: &Vec<(usize, usize, usize)>,
+    irs: &[(usize, usize, usize)],
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
 ) -> String {
-    let mut out_str = String::new();
+    let mut out = String::new();
 
-    for (left, right, gap) in irs {
+    for &(left, right, gap) in irs {
         let outer_left = left + 1;
         let outer_right = right + 1;
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        let nucleotide = (*left..inner_left)
-            .map(|i| seq[i] as char)
-            .collect::<String>();
-        let reverse_complement = ((inner_right - 1)..outer_right)
-            .rev()
-            .map(|i| seq[i] as char)
-            .collect::<String>();
-        let matching_line = (0..=(inner_left - outer_left))
-            .map(|i| {
-                let l = seq[left + i];
-                let r = seq[right - i];
-                if matrix.match_u8(l, complement[r as usize]) {
-                    "1"
-                } else {
-                    "0"
-                }
-            })
-            .collect::<String>();
+        write!(&mut out, "{},{},", outer_left, inner_left).unwrap();
 
-        out_str.push_str(&format!(
-            "{},{},{},{},{},{},{}\n",
-            outer_left,
-            inner_left,
-            nucleotide,
-            outer_right,
-            inner_right,
-            reverse_complement,
-            matching_line
-        ));
+        // 1. Nucleotide strand
+        for i in left..inner_left {
+            out.push(seq[i] as char);
+        }
+        out.push(',');
+
+        write!(&mut out, "{},{},", outer_right, inner_right).unwrap();
+
+        // 2. Reverse complement
+        for i in (inner_right..=outer_right).rev() {
+            out.push(seq[i - 1] as char);
+        }
+        out.push(',');
+
+        // 3. Matching line
+        for i in 0..=(inner_left - outer_left) {
+            let l = seq[left + i];
+            let r = seq[right - i];
+            let matching = matrix.match_u8(l, complement[r as usize]);
+            out.push(if matching { '1' } else { '0' });
+        }
+        out.push('\n');
     }
 
-    out_str
+    out
 }
 
 pub fn fmt_custom_header() -> String {
     String::from("ir_start,motif,gap_motif,reverse_complement")
 }
 
-pub fn fmt_custom(irs: &Vec<(usize, usize, usize)>, seq: &[u8]) -> String {
-    let mut out_str = String::new();
+pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8]) -> String {
+    let mut out = String::new();
 
-    for (left, right, gap) in irs {
+    for &(left, right, gap) in irs {
         let outer_left = left + 1;
         let outer_right = right + 1;
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        let nucleotide = (*left..inner_left)
-            .map(|i| seq[i] as char)
-            .collect::<String>();
-        let gap_nucleotide = (inner_left..(inner_right - 1))
-            .map(|i| seq[i] as char)
-            .collect::<String>();
-        let reverse_complement = ((inner_right - 1)..outer_right)
-            .rev()
-            .map(|i| seq[i] as char)
-            .collect::<String>();
+        write!(&mut out, "{},", outer_left).unwrap();
 
-        out_str.push_str(&format!(
-            "{},{},{},{}\n",
-            outer_left, nucleotide, gap_nucleotide, reverse_complement
-        ));
+        // 1. Nucleotide strand
+        for i in left..inner_left {
+            out.push(seq[i] as char);
+        }
+        out.push(',');
+
+        // 2. Gap motif
+        for i in inner_left..(inner_right - 1) {
+            out.push(seq[i] as char);
+        }
+        out.push(',');
+
+        // 3. Reverse complement
+        for i in (inner_right..=outer_right).rev() {
+            out.push(seq[i - 1] as char);
+        }
+        out.push('\n');
     }
 
-    out_str
+    out
 }
 
 #[cfg(test)]

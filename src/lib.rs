@@ -141,7 +141,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 /// ```
 pub fn stringify_irs(
     config: &Config,
-    irs: &Vec<(usize, usize, usize)>,
+    irs: &[(usize, usize, usize)],
     seq: &[u8],
 ) -> (String, String) {
     let matrix = matrix::MatchMatrix::new();
