@@ -1,5 +1,5 @@
 use crate::constants::IUPAC_SYMBOLS;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use seq_io::fasta::{OwnedRecord, Reader, Record};
 use std::fs;
 
@@ -19,7 +19,7 @@ pub fn check_file_exist(path: &str) -> Result<()> {
 pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
     let mut sanitized_seq = Vec::new();
 
-    for &byte in seq.iter() {
+    for &byte in seq {
         if byte != b'\n' && byte != b'\r' {
             if !IUPAC_SYMBOLS.contains(byte.to_ascii_lowercase() as char) {
                 return Err(anyhow!(
@@ -84,7 +84,7 @@ mod tests {
 
     #[test]
     fn test_sanitize_sequence_ok() {
-        let seq = "acgturyswkmbdhvn*-".as_bytes().to_vec();
+        let seq = b"acgturyswkmbdhvn*-".to_vec();
         assert!(sanitize_sequence(&seq).is_ok());
     }
 
@@ -106,7 +106,7 @@ mod tests {
 
     #[test]
     fn test_sanitize_sequence_not_in_iupac() {
-        let seq = "de".as_bytes().to_vec();
+        let seq = b"de".to_vec();
         assert!(sanitize_sequence(&seq).is_err());
     }
 }

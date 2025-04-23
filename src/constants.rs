@@ -20,11 +20,11 @@ pub enum OutputFormat {
 impl std::fmt::Display for OutputFormat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let fmted = match self {
-            OutputFormat::Classic => "classic",
-            OutputFormat::Csv => "csv",
-            OutputFormat::Custom => "custom",
+            Self::Classic => "classic",
+            Self::Csv => "csv",
+            Self::Custom => "custom",
         };
-        write!(f, "{}", fmted)
+        write!(f, "{fmted}")
     }
 }
 

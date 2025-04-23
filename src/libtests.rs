@@ -55,7 +55,7 @@ fn test_correct_truncation_one() {
         input_file: "tests/test_data/test1.fasta",
         ..Default::default()
     };
-    correct_truncation_helper(&config)
+    correct_truncation_helper(&config);
 }
 
 #[test]
@@ -65,7 +65,7 @@ fn test_correct_truncation_two() {
         input_file: "tests/test_data/truncation_edge_case.fasta",
         ..Default::default()
     };
-    correct_truncation_helper(&config)
+    correct_truncation_helper(&config);
 }
 
 #[test]
@@ -75,7 +75,7 @@ fn test_correct_truncation_three() {
         input_file: "tests/test_data/truncation_edge_case.fasta",
         ..Default::default()
     };
-    correct_truncation_helper(&config)
+    correct_truncation_helper(&config);
 }
 
 // Tests from local files
@@ -96,7 +96,7 @@ fn test_irs_edge_gap() {
         input_file: "tests/test_data/edge_gap.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 1)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 1);
 }
 
 #[test]
@@ -106,7 +106,7 @@ fn test_irs_alys() {
         input_file: "tests/test_data/alys.fna",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 739728)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 739728);
 }
 
 #[test]
@@ -116,7 +116,7 @@ fn test_irs_8100_n() {
         input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189);
 }
 
 #[test]
@@ -126,7 +126,7 @@ fn test_irs_8100_n_with_mismatches() {
         input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189);
 }
 
 #[test]
@@ -136,7 +136,7 @@ fn test_irs_d00596() {
         input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 5251)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 5251);
 }
 
 #[test]
@@ -146,7 +146,7 @@ fn test_irs_d00596_with_mismatches() {
         input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 31555)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 31555);
 }
 
 #[test]
@@ -156,7 +156,7 @@ fn test_rand_1000() {
         input_file: "tests/test_data/rand1000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 254)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 254);
 }
 
 #[test]
@@ -166,7 +166,7 @@ fn test_rand_10000() {
         input_file: "tests/test_data/rand10000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 2484)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 2484);
 }
 
 #[test]
@@ -176,7 +176,7 @@ fn test_rand_100000() {
         input_file: "tests/test_data/rand100000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 25440)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 25440);
 }
 
 #[test]
@@ -186,7 +186,7 @@ fn test_rand_1000000() {
         input_file: "tests/test_data/rand1000000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 253566)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 253566);
 }
 
 #[test]
@@ -196,5 +196,5 @@ fn test_test_1() {
         input_file: "tests/test_data/test1.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 84)
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 84);
 }

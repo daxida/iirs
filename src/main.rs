@@ -21,7 +21,7 @@ fn main() -> Result<()> {
         writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
 
         if !args.quiet {
-            println!("\n{}", config);
+            println!("\n{config}");
             println!("Search complete for {}!", &config.seq_name);
             println!("Found n={} inverted repeats\n", irs.len());
         }

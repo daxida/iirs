@@ -6,6 +6,14 @@ clean:
   rm -f perf.data*
   rm -rf tmp
 
+clippy *args:
+  cargo clippy --all-targets --all-features {{args}} -- \
+  -W clippy::nursery -W clippy::pedantic \
+  -A clippy::must_use_candidate \
+  -A clippy::manual_range_contains \
+  -A clippy::cast_sign_loss \
+  -A clippy::inline_always \
+
 # Test input.fasta - testseq
 test:
   cargo run --release -- \

@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
 
-use crate::constants::*;
+use crate::constants::{DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES, DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat};
 
 #[derive(Debug, Clone)]
 pub struct SearchParams {
@@ -68,7 +68,7 @@ impl SearchParams {
 
 impl Default for SearchParams {
     fn default() -> Self {
-        SearchParams::new(
+        Self::new(
             DEFAULT_MIN_LEN,
             DEFAULT_MAX_LEN,
             DEFAULT_MAX_GAP,

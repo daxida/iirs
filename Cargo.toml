@@ -2,7 +2,7 @@
 name = "iirs"
 default-run = "iirs"
 version = "0.9.4"
-edition = "2021"
+edition = "2024"
 license = "GPL-3.0"
 repository = "https://github.com/daxida/iirs"
 readme = "README.md"

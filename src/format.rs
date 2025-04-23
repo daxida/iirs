@@ -192,7 +192,7 @@ mod tests {
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_classic(&irs, &seq, &matrix, &complement);
-        let expected = r#"2        gucsggtgtwkmmm       15
+        let expected = r"2        gucsggtgtwkmmm       15
          ||| ||||||||||
 30       nngah*nn-nddbk       17
 
@@ -242,11 +242,11 @@ mod tests {
 
 13       mmmkkbddn-       22
          || |||||||
-33       uganngah*n       24"#;
-        let expected_lines = expected.split("\n");
-        let received_lines = received.split("\n");
+33       uganngah*n       24";
+        let expected_lines = expected.split('\n');
+        let received_lines = received.split('\n');
         for (idx, (e, r)) in expected_lines.zip(received_lines).enumerate() {
-            assert_eq!(e, r, "Difference at line {}", idx)
+            assert_eq!(e, r, "Difference at line {idx}");
         }
     }
 
@@ -264,7 +264,7 @@ mod tests {
             fmt_csv_header(),
             fmt_csv(&irs, &seq, &matrix, &complement)
         );
-        let expected = r#"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
+        let expected = r"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
 3,15,ucsggtgtwkmmm,30,18,nngah*nn-nddb,1110111111111
 3,14,ucsggtgtwkmm,27,16,ah*nn-nddbkk,101111111111
@@ -278,11 +278,11 @@ mod tests {
 12,21,kmmmkkbddn,31,22,anngah*nn-,1111111111
 13,23,mmmkkbddn-n,34,24,guganngah*n,11111101111
 13,22,mmmkkbddn-,33,24,uganngah*n,1101111111
-"#;
-        let expected_lines = expected.split("\n");
-        let received_lines = received.split("\n");
+";
+        let expected_lines = expected.split('\n');
+        let received_lines = received.split('\n');
         for (idx, (e, r)) in expected_lines.zip(received_lines).enumerate() {
-            assert_eq!(e, r, "Difference at line {}", idx)
+            assert_eq!(e, r, "Difference at line {idx}");
         }
     }
 
@@ -294,7 +294,7 @@ mod tests {
         params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
         let received = format!("{}\n{}", fmt_custom_header(), fmt_custom(&irs, &seq));
-        let expected = r#"ir_start,motif,gap_motif,reverse_complement
+        let expected = r"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
 3,ucsggtgtwkmmm,kk,nngah*nn-nddb
 3,ucsggtgtwkmm,m,ah*nn-nddbkk
@@ -308,11 +308,11 @@ mod tests {
 12,kmmmkkbddn,,anngah*nn-
 13,mmmkkbddn-n,,guganngah*n
 13,mmmkkbddn-,n,uganngah*n
-"#;
-        let expected_lines = expected.split("\n");
-        let received_lines = received.split("\n");
+";
+        let expected_lines = expected.split('\n');
+        let received_lines = received.split('\n');
         for (idx, (e, r)) in expected_lines.zip(received_lines).enumerate() {
-            assert_eq!(e, r, "Difference at line {}", idx)
+            assert_eq!(e, r, "Difference at line {idx}");
         }
     }
 }

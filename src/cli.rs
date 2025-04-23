@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 
 use crate::config::{Config, SearchParams};
-use crate::constants::*;
+use crate::constants::{DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES, DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat};
 use crate::utils::safe_extract_records;
 use seq_io::fasta::{OwnedRecord, Record};
 
@@ -48,7 +48,7 @@ pub struct Cli {
 
 impl Cli {
     pub fn parse_args() -> Self {
-        Cli::parse()
+        Self::parse()
     }
 
     /// Return a vector of pairs `(Config, OwnedRecord)` from the CLI arguments.
@@ -57,7 +57,7 @@ impl Cli {
     /// every sequence.
     ///
     /// The `Config` is different for every sequence since it contains the sequence name (id)
-    /// and the output file. The SearchParams do not change.
+    /// and the output file. The `SearchParams` do not change.
     pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, OwnedRecord)>> {
         let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
         let records = safe_extract_records(&self.input_file, &self.seq_names)?;
@@ -89,7 +89,7 @@ impl Cli {
             if check_bounds {
                 config.params.check_bounds(record.seq.len())?;
             }
-            config_record_pairs.push((config, record))
+            config_record_pairs.push((config, record));
         }
 
         Ok(config_record_pairs)
