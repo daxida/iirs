@@ -9,7 +9,7 @@ pub const DEFAULT_INPUT_FILE: &str = "input.fasta";
 pub const DEFAULT_SEQ_NAME: &str = "seq0";
 pub const DEFAULT_OUTPUT_FILE: &str = "iirs.out";
 
-#[derive(clap::ValueEnum, Debug, Clone, Default, PartialEq)]
+#[derive(clap::ValueEnum, Debug, Clone, Default, PartialEq, Eq)]
 pub enum OutputFormat {
     #[default]
     Classic,

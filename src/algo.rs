@@ -37,6 +37,7 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
 #[allow(clippy::too_many_arguments)]
+#[allow(clippy::many_single_char_names)]
 fn real_lce_mismatches<R: Rmq>(
     s: &[u8],
     i: usize,
@@ -242,12 +243,12 @@ fn add_irs_at_this_center<R: Rmq>(
             };
 
             // Check if truncation results in the potential IR ending in a mismatch
-            if overshoot != mismatch_gap {
-                // Potential IR does not end in a mismatch, so add to output
-                (left + overshoot, right - overshoot, gap)
-            } else {
+            if overshoot == mismatch_gap {
                 // Potential IR does end in a mismatch, so truncate a character
                 (left + overshoot + 1, right - overshoot - 1, gap)
+            } else {
+                // Potential IR does not end in a mismatch, so add to output
+                (left + overshoot, right - overshoot, gap)
             }
         };
 

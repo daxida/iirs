@@ -1,46 +1,53 @@
-use crate::constants::{build_iupac_rules, ALL_SYMBOLS_COUNT};
+use crate::constants::{ALL_SYMBOLS_COUNT, build_iupac_rules};
 use std::collections::HashMap;
 
+/// Struct to check if two IUPAC characters match.
 pub struct MatchMatrix {
-    match_matrix: Vec<bool>,    // linearized 1D bool array
-    iupac_to_value: Vec<usize>, // used for faster indexing
+    /// Linearized 1D bool array.
+    match_matrix: [bool; ALL_SYMBOLS_COUNT * ALL_SYMBOLS_COUNT],
+    /// Array for faster indexing.
+    ///
+    /// Only `ALL_SYMBOLS_COUNT` indices are actually used.
+    /// The bytes range from 35 (#) to 121 (y).
+    ///
+    /// Ex. `iupac_char_to_index[36]` = 19
+    /// since ord('$') = 36, which is the 19th key in `iupac_rules`.
+    iupac_char_to_index: [usize; 128],
 }
 
 impl MatchMatrix {
     pub fn new() -> Self {
         let iupac_rules = build_iupac_rules();
 
-        // iupac_map is a hash of: (IUPAC_char, set(complements[IUPAC_char]))
-        // iupac_to_value is a slice for faster indexing:
-        // F.e. ord('$') = 36, which is the 19th key in iupac_rules, so iupac_to_value[36] = 19
+        // HashMap from an IUPAC char to the set of its complements.
         let mut iupac_map = HashMap::new();
-        let mut iupac_to_value = vec![0; 128];
+        let mut iupac_char_to_index = [0; 128];
         for (index, (iupac_char, mapped_chars)) in iupac_rules.iter().enumerate() {
             iupac_map.insert(*iupac_char, mapped_chars.to_owned());
-            iupac_to_value[*iupac_char as usize] = index;
+            iupac_char_to_index[*iupac_char as usize] = index;
         }
 
-        let mut match_matrix: Vec<bool> = vec![false; ALL_SYMBOLS_COUNT * ALL_SYMBOLS_COUNT];
-        for (it1_char, it1_set) in iupac_map.iter() {
-            let i = iupac_to_value[*it1_char as usize];
-            for (it2_char, it2_set) in iupac_map.iter() {
-                let j = iupac_to_value[*it2_char as usize];
+        let mut match_matrix = [false; ALL_SYMBOLS_COUNT * ALL_SYMBOLS_COUNT];
+        for (it1_char, it1_set) in &iupac_map {
+            let i = iupac_char_to_index[*it1_char as usize];
+            for (it2_char, it2_set) in &iupac_map {
+                let j = iupac_char_to_index[*it2_char as usize];
                 let matching = !it1_set.is_disjoint(it2_set);
                 match_matrix[i * ALL_SYMBOLS_COUNT + j] = matching;
             }
         }
 
-        MatchMatrix {
+        Self {
             match_matrix,
-            iupac_to_value,
+            iupac_char_to_index,
         }
     }
 
     pub fn match_u8(&self, b1: u8, b2: u8) -> bool {
-        let i = self.iupac_to_value[b1 as usize];
-        let j = self.iupac_to_value[b2 as usize];
-        debug_assert!(i <= 20, "{}", b1);
-        debug_assert!(j <= 20, "{}", b2);
+        let i = self.iupac_char_to_index[b1 as usize];
+        let j = self.iupac_char_to_index[b2 as usize];
+        debug_assert!(i <= 20, "{b1}");
+        debug_assert!(j <= 20, "{b2}");
         self.match_matrix[i * ALL_SYMBOLS_COUNT + j]
     }
 }
@@ -48,8 +55,9 @@ impl MatchMatrix {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::constants::{build_complement_array, ALL_SYMBOLS};
+    use crate::constants::{ALL_SYMBOLS, build_complement_array};
 
+    #[allow(clippy::format_push_string)]
     fn display_matrix(matrix: &MatchMatrix, complement: &[u8; 128]) -> String {
         let header = format!(
             "Match Matrix:\n  {}\n",
@@ -62,7 +70,7 @@ mod tests {
 
         let mut matrix_str = String::new();
         for si in ALL_SYMBOLS.chars() {
-            matrix_str += &format!("{} ", si);
+            matrix_str += &format!("{si} ");
             for sj in ALL_SYMBOLS.chars() {
                 // Check for special cases ($ and # behavior) where the complement is not defined
                 let matched = if si == '$' || si == '#' || sj == '$' || sj == '#' {

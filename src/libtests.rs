@@ -106,7 +106,7 @@ fn test_irs_alys() {
         input_file: "tests/test_data/alys.fna",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 739728);
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 739_728);
 }
 
 #[test]
@@ -116,7 +116,7 @@ fn test_irs_8100_n() {
         input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189);
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 16_189);
 }
 
 #[test]
@@ -126,7 +126,7 @@ fn test_irs_8100_n_with_mismatches() {
         input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 16189);
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 16_189);
 }
 
 #[test]
@@ -146,7 +146,7 @@ fn test_irs_d00596_with_mismatches() {
         input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 31555);
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 31_555);
 }
 
 #[test]
@@ -176,7 +176,7 @@ fn test_rand_100000() {
         input_file: "tests/test_data/rand100000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 25440);
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 25_440);
 }
 
 #[test]
@@ -186,7 +186,7 @@ fn test_rand_1000000() {
         input_file: "tests/test_data/rand1000000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 253566);
+    assert_eq!(find_irs_from_first_sequence(&config).len(), 253_566);
 }
 
 #[test]
