@@ -97,9 +97,9 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 /// based on the specified output format in the configuration.
 ///
 /// An error is returned for an invalid output format.
-/// Valid formats are: classic (same as IUPACpal), csv and custom.
+/// Valid formats are: classic (same as `IUPACpal`), csv and custom.
 ///
-/// If the specified format is valid, the function returns a tuple of Strings: (header, stringified_irs).
+/// If the specified format is valid, the function returns a tuple of Strings: (header, stringified irs).
 ///
 /// # Examples
 ///

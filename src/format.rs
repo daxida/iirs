@@ -1,4 +1,6 @@
 // This may present differences in the ordering with IUPACpal - but it is simpler to write
+#![allow(clippy::needless_range_loop)]
+#![allow(clippy::similar_names)]
 
 use crate::{config::Config, matrix::MatchMatrix};
 use std::fmt::Write;
@@ -56,11 +58,11 @@ pub fn fmt_classic(
         let ir_pad = " ".repeat(pad_length - int_size(inner_right));
 
         // 1. First line (nucleotide strand)
-        write!(&mut out, "{}{}", outer_left, ol_pad).unwrap();
+        write!(&mut out, "{outer_left}{ol_pad}").unwrap();
         for i in left..inner_left {
             out.push(seq[i] as char);
         }
-        write!(&mut out, "{}{}\n", il_pad, inner_left).unwrap();
+        writeln!(&mut out, "{il_pad}{inner_left}").unwrap();
 
         // 2. Second line (matching bars)
         out.push_str(pad);
@@ -68,16 +70,16 @@ pub fn fmt_classic(
             let l = seq[left + i];
             let r = seq[right - i];
             let matching = matrix.match_u8(l, complement[r as usize]);
-            out.push(if matching { '|' } else { ' ' })
+            out.push(if matching { '|' } else { ' ' });
         }
         out.push('\n');
 
         // 3. Third line (reverse complement strand)
-        write!(&mut out, "{}{}", outer_right, or_pad).unwrap();
+        write!(&mut out, "{outer_right}{or_pad}").unwrap();
         for i in (inner_right..=outer_right).rev() {
             out.push(seq[i - 1] as char);
         }
-        write!(&mut out, "{}{}\n\n", ir_pad, inner_right).unwrap();
+        write!(&mut out, "{ir_pad}{inner_right}\n\n").unwrap();
     }
 
     out
@@ -101,7 +103,7 @@ pub fn fmt_csv(
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        write!(&mut out, "{},{},", outer_left, inner_left).unwrap();
+        write!(&mut out, "{outer_left},{inner_left},").unwrap();
 
         // 1. Nucleotide strand
         for i in left..inner_left {
@@ -109,7 +111,7 @@ pub fn fmt_csv(
         }
         out.push(',');
 
-        write!(&mut out, "{},{},", outer_right, inner_right).unwrap();
+        write!(&mut out, "{outer_right},{inner_right},").unwrap();
 
         // 2. Reverse complement
         for i in (inner_right..=outer_right).rev() {
@@ -143,7 +145,7 @@ pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8]) -> String {
         let inner_left = (outer_left + outer_right - 1 - gap) / 2;
         let inner_right = (outer_right + outer_left + 1 + gap) / 2;
 
-        write!(&mut out, "{},", outer_left).unwrap();
+        write!(&mut out, "{outer_left},").unwrap();
 
         // 1. Nucleotide strand
         for i in left..inner_left {

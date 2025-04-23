@@ -1,3 +1,5 @@
+#![allow(clippy::many_single_char_names)]
+
 use rmq::Rmq;
 
 use crate::{config::SearchParams, matrix::MatchMatrix};
@@ -37,7 +39,6 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
 //
 #[allow(clippy::too_many_arguments)]
-#[allow(clippy::many_single_char_names)]
 fn real_lce_mismatches<R: Rmq>(
     s: &[u8],
     i: usize,
@@ -234,7 +235,8 @@ fn add_irs_at_this_center<R: Rmq>(
             // IR is too long, so attempt truncation
             let overshoot = ir_length - params.max_len;
 
-            let prev_ptr = (end_it_ptr as i32 - 2).max(0) as usize;
+            // 0 if end_it_ptr <= 2
+            let prev_ptr = end_it_ptr.saturating_sub(2);
             let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
             let mismatch_gap = if end_mismatch == prev {
                 0
