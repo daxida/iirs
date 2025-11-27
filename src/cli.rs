@@ -12,6 +12,7 @@ use crate::utils::safe_extract_records;
 use seq_io::fasta::{OwnedRecord, Record};
 
 #[derive(Parser, Debug)]
+#[command(version)]
 pub struct Cli {
     /// Input filename (FASTA)
     #[arg(long, short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
