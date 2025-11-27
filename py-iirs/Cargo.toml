@@ -9,4 +9,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = { version = "0.24.1", features = ["extension-module"] }
-iirs = { version = "0.9.4", path = "../" }
+iirs = { version = "1.0.0", path = "../" }
