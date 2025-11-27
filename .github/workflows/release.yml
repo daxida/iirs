@@ -1,24 +1,79 @@
+# Intended to be run when pushing a tag
+# git tag v1.0.0
+# git push origin v1.0.0
+
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - "v*"
 
 jobs:
-  release:
-    name: release ${{ matrix.target }}
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl, x86_64-apple-darwin]
-    steps:
-      - uses: actions/checkout@master
+        include:
+        - os: ubuntu-latest
+          target: x86_64-unknown-linux-musl
+          bin: iirs
+          archive: iirs_linux.tar.gz
+        - os: macos-latest
+          target: x86_64-apple-darwin
+          bin: iirs
+          archive: iirs_macos.tar.gz
+        - os: windows-latest
+          target: x86_64-pc-windows-gnu
+          bin: iirs.exe
+          archive: iirs_windows.zip
 
-      - name: Compile and release
-        uses: rust-build/rust-build.action@v1.4.5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install musl (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt install musl-tools
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
         with:
-          RUSTTARGET: ${{ matrix.target }}
-          TOOLCHAIN_VERSION: "1.90"
+          toolchain: stable
+          target: ${{ matrix.target }}
+
+      - name: Build release binary
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Compress binary
+        shell: bash
+        run: |
+          cd target/${{ matrix.target }}/release
+          tar czf ${{ matrix.archive }} ${{ matrix.bin }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.archive }}
+          path: target/${{ matrix.target }}/release/${{ matrix.archive }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/**
+
