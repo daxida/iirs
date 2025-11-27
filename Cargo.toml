@@ -2,7 +2,6 @@
 name = "iirs"
 default-run = "iirs"
 version = "1.0.0"
-edition = "2024"
 license = "GPL-3.0"
 repository = "https://github.com/daxida/iirs"
 readme = "README.md"
@@ -13,6 +12,8 @@ keywords = [
     "inverted-repeats",
     "rmq",
 ]
+edition = "2024"
+rust-version = "1.90"
 
 [lib]
 name = "iirs"
