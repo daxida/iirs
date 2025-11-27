@@ -13,15 +13,22 @@ const RUST_OUTPUT_PATH: &str = "iirs.out";
 // Change to None to print only to stdout
 const OUTPUT_FILE: Option<&str> = Some("bench/bench_result.txt");
 
+#[allow(unused)]
+#[derive(Debug)]
+enum DataChoice {
+    Alys,
+    Rand,
+}
+
 fn main() -> Result<()> {
     let start = Instant::now();
 
-    let data = "alys";
+    let data = DataChoice::Alys;
     let times = 10;
     let output_format = iirs::OutputFormat::Classic;
 
     let config = match data {
-        "alys" => Config {
+        DataChoice::Alys => Config {
             input_file: "tests/test_data/alys.fna",
             seq_name: "NZ_CP059564.1",
             params: SearchParams {
@@ -30,10 +37,10 @@ fn main() -> Result<()> {
                 max_gap: 20,
                 mismatches: 0,
             },
-            output_file: RUST_OUTPUT_PATH,
+            output_path: RUST_OUTPUT_PATH.into(),
             output_format,
         },
-        "rand" => Config {
+        DataChoice::Rand => Config {
             input_file: "tests/test_data/rand1000000.fasta",
             seq_name: "seq0",
             params: SearchParams {
@@ -42,10 +49,9 @@ fn main() -> Result<()> {
                 max_gap: 5,
                 mismatches: 1,
             },
-            output_file: RUST_OUTPUT_PATH,
+            output_path: RUST_OUTPUT_PATH.into(),
             output_format,
         },
-        _ => todo!(),
     };
 
     let mut output: Box<dyn Write> = match OUTPUT_FILE {
@@ -69,7 +75,7 @@ fn main() -> Result<()> {
     }
 
     let summary = format!(
-        "\nResults of bench against {}\n>> Took {}ms on average ({} runs).\n",
+        "\nResults of bench against {:?}\n>> Took {}ms on average ({} runs).\n",
         data,
         start.elapsed().as_millis() / times,
         times

@@ -4,7 +4,7 @@ use iirs::Cli;
 use iirs::{find_irs, stringify_irs};
 
 use anyhow::Result;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::Write;
 
 #[elapsed_time::elapsed]
@@ -17,7 +17,14 @@ fn main() -> Result<()> {
         let irs = find_irs(&config.params, &record.seq)?;
         let (header, irs_str) = stringify_irs(&config, &irs, &record.seq);
 
-        let mut file = File::create(config.output_file)?;
+        // Create folder(s) if we are scanning multiple sequences
+        if let Some(parent) = config.output_path.parent() {
+            if !parent.as_os_str().is_empty() {
+                fs::create_dir_all(parent)?;
+            }
+        }
+
+        let mut file = File::create(&config.output_path)?;
         writeln!(&mut file, "{}\n{}", &header, &irs_str)?;
 
         if !args.quiet {

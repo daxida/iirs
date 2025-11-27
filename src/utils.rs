@@ -21,13 +21,14 @@ pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
 
     for &byte in seq {
         if byte != b'\n' && byte != b'\r' {
-            if !IUPAC_SYMBOLS.contains(byte.to_ascii_lowercase() as char) {
+            let byte_lower = byte.to_ascii_lowercase();
+            if !IUPAC_SYMBOLS.contains(byte_lower as char) {
                 return Err(anyhow!(
                     "sequence contains '{}' which is not an IUPAC symbol.",
                     byte as char
                 ));
             }
-            sanitized_seq.push(byte.to_ascii_lowercase());
+            sanitized_seq.push(byte_lower);
         }
     }
 
@@ -46,7 +47,7 @@ pub fn sanitize_sequence(seq: &[u8]) -> Result<Vec<u8>> {
 pub fn safe_extract_records(input_file: &str, seq_ids: &[String]) -> Result<Vec<OwnedRecord>> {
     check_file_exist(input_file)?;
 
-    let do_all_sequences = seq_ids.len() == 1 && seq_ids[0] == "ALL_SEQUENCES";
+    let do_all_sequences = seq_ids == ["ALL_SEQUENCES"];
 
     let mut reader = Reader::from_path(input_file)?;
     let mut all_seq_ids_found = Vec::new();

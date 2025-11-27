@@ -1,4 +1,5 @@
-use anyhow::{Result, anyhow};
+use anyhow::{Result, bail};
+use std::path::PathBuf;
 
 use crate::constants::{
     DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES,
@@ -16,21 +17,13 @@ pub struct SearchParams {
 impl SearchParams {
     pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Result<Self> {
         if min_len < 2 {
-            return Err(anyhow!("min_len={} must not be less than 2.", min_len));
+            bail!("min_len={min_len} must not be less than 2.")
         }
         if min_len > max_len {
-            return Err(anyhow!(
-                "min_len={} must be less than max_len={}.",
-                min_len,
-                max_len
-            ));
+            bail!("min_len={min_len} must be less than max_len={max_len}.")
         }
         if mismatches >= min_len {
-            return Err(anyhow!(
-                "mismatches={} must be less than min_len={}.",
-                mismatches,
-                min_len
-            ));
+            bail!("mismatches={mismatches} must be less than min_len={min_len}.",)
         }
 
         Ok(Self {
@@ -43,26 +36,25 @@ impl SearchParams {
 
     pub fn check_bounds(&self, n: usize) -> Result<()> {
         if self.min_len >= n {
-            return Err(anyhow!(
+            bail!(
                 "min_len={} must be less than sequence length={}.",
                 self.min_len,
                 n
-            ));
+            )
         }
         if self.max_gap >= n {
-            return Err(anyhow!(
+            bail!(
                 "max_gap={} must be less than sequence length={}.",
                 self.max_gap,
                 n
-            ));
+            )
         }
-
         if self.mismatches >= n {
-            return Err(anyhow!(
+            bail!(
                 "mismatches={} must be less than sequence length={}.",
                 self.mismatches,
                 n
-            ));
+            )
         }
 
         Ok(())
@@ -86,7 +78,7 @@ pub struct Config<'a> {
     pub input_file: &'a str,
     pub seq_name: &'a str,
     pub params: SearchParams,
-    pub output_file: &'a str,
+    pub output_path: PathBuf,
     pub output_format: OutputFormat,
 }
 
@@ -99,7 +91,7 @@ impl<'a> Config<'a> {
         max_len: usize,
         max_gap: usize,
         mismatches: usize,
-        output_file: &'a str,
+        output_path: &'a str,
         output_format: OutputFormat,
     ) -> Result<Self> {
         let params = SearchParams::new(min_len, max_len, max_gap, mismatches)?;
@@ -107,7 +99,7 @@ impl<'a> Config<'a> {
             input_file,
             seq_name,
             params,
-            output_file,
+            output_path: output_path.into(),
             output_format,
         })
     }
@@ -119,7 +111,7 @@ impl Default for Config<'_> {
             input_file: DEFAULT_INPUT_FILE,
             seq_name: DEFAULT_SEQ_NAME,
             params: SearchParams::default(),
-            output_file: DEFAULT_OUTPUT_FILE,
+            output_path: PathBuf::from(DEFAULT_OUTPUT_FILE),
             output_format: OutputFormat::default(),
         }
     }
@@ -133,7 +125,7 @@ impl std::fmt::Display for Config<'_> {
         writeln!(f, "max_len:     {}", self.params.max_len)?;
         writeln!(f, "max_gap:     {}", self.params.max_gap)?;
         writeln!(f, "mismatches:  {}", self.params.mismatches)?;
-        writeln!(f, "output_file: {}", self.output_file)?;
+        writeln!(f, "output_path: {}", self.output_path.display())?;
         writeln!(f, "output_fmt:  {}", self.output_format)?;
         Ok(())
     }

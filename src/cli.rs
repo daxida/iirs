@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use anyhow::Result;
 use clap::Parser;
 
@@ -15,7 +17,7 @@ pub struct Cli {
     #[arg(long, short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
     pub input_file: String,
 
-    /// Input sequence names (ids)
+    /// Input sequence names (ids), or `ALL_SEQUENCES`.
     #[arg(long, short, default_value = DEFAULT_SEQ_NAME, value_delimiter = ' ')]
     pub seq_names: Vec<String>,
 
@@ -35,9 +37,9 @@ pub struct Cli {
     #[arg(long, short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     pub mismatches: usize,
 
-    /// Output filename. For multiple sequences this is treated as a folder
-    #[arg(long, short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
-    pub output_file: String,
+    /// Output filename for a single sequence. Output directory for multiple
+    #[arg(long, short, default_value = DEFAULT_OUTPUT_FILE)]
+    pub output_path: PathBuf,
 
     /// Output format
     #[arg(long, short = 'F', default_value_t, value_enum)]
@@ -72,19 +74,19 @@ impl Cli {
 
             // IUPACpal convention is to always use IUPACpal.out no matter the sequence name.
             // In order to ease the validity checks, we keep that convention if the input consists
-            // of only one sequence. Otherwise we preface the output_file with the sequence name.
+            // of only one sequence.
             let seq_name = String::from(record.id()?);
-            let this_output_file: Box<str> = if only_one_sequence_found {
-                self.output_file.clone().into()
+            let output_path: PathBuf = if only_one_sequence_found {
+                self.output_path.clone()
             } else {
-                format!("{}/{}", self.output_file, seq_name).into_boxed_str()
+                self.output_path.join(&seq_name)
             };
 
             let config = Config {
                 input_file: &self.input_file,
                 seq_name: Box::leak(seq_name.into_boxed_str()),
                 params: params.clone(),
-                output_file: Box::leak(this_output_file),
+                output_path,
                 output_format: self.output_format.clone(),
             };
 

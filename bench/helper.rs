@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{bail, Result};
 use iirs::Config;
 
 use std::process::Command;
@@ -28,11 +28,13 @@ pub fn run_command(cmd_beginning: &str, config: &Config) -> Result<Duration> {
     let stderr = String::from_utf8_lossy(&output.stderr);
 
     if stderr.contains("Error") {
-        return Err(anyhow!("Error: (STDERR) {}", stderr));
+        eprintln!("Ran command: {command}");
+        bail!("(STDERR) {}", stderr)
     }
 
     if stdout.contains("Error") {
-        return Err(anyhow!("Error: (STDOUT) {}", stdout));
+        eprintln!("Ran command: {command}");
+        bail!("(STDOUT) {}", stdout)
     }
 
     Ok(start.elapsed())
