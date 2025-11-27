@@ -11,7 +11,7 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
     for i in 1..s_n {
         if inv_sa[i] != 0 {
             let l = lcp[inv_sa[i - 1]];
-            j = if l > 1 { l - 1 } else { 0 };
+            j = l.saturating_sub(1);
 
             while s[i + j] == s[sa[inv_sa[i] - 1] as usize + j] {
                 j += 1;

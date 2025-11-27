@@ -1,6 +1,9 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 
-use crate::constants::{DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES, DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat};
+use crate::constants::{
+    DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES,
+    DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat,
+};
 
 #[derive(Debug, Clone)]
 pub struct SearchParams {

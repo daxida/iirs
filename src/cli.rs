@@ -2,38 +2,40 @@ use anyhow::Result;
 use clap::Parser;
 
 use crate::config::{Config, SearchParams};
-use crate::constants::{DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES, DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat};
+use crate::constants::{
+    DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES,
+    DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat,
+};
 use crate::utils::safe_extract_records;
 use seq_io::fasta::{OwnedRecord, Record};
 
 #[derive(Parser, Debug)]
 pub struct Cli {
-    /// Input filename (FASTA).
+    /// Input filename (FASTA)
     #[arg(long, short = 'f', default_value_t = String::from(DEFAULT_INPUT_FILE))]
     pub input_file: String,
 
-    /// Input sequence names (ids).
+    /// Input sequence names (ids)
     #[arg(long, short, default_value = DEFAULT_SEQ_NAME, value_delimiter = ' ')]
     pub seq_names: Vec<String>,
 
-    /// Minimum length.
+    /// Minimum length
     #[arg(long, short, default_value_t = DEFAULT_MIN_LEN)]
     pub min_len: usize,
 
-    /// Maximum length.
+    /// Maximum length
     #[arg(long, short = 'M', default_value_t = DEFAULT_MAX_LEN)]
     pub max_len: usize,
 
-    /// Maximum permissible gap.
+    /// Maximum permissible gap
     #[arg(long, short = 'g', default_value_t = DEFAULT_MAX_GAP)]
     pub max_gap: usize,
 
-    /// Maximum permissible mismatches.
+    /// Maximum permissible mismatches
     #[arg(long, short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     pub mismatches: usize,
 
-    /// Output filename.
-    /// For multiple sequences this is treated as a folder.
+    /// Output filename. For multiple sequences this is treated as a folder
     #[arg(long, short, default_value_t = String::from(DEFAULT_OUTPUT_FILE))]
     pub output_file: String,
 
@@ -41,7 +43,7 @@ pub struct Cli {
     #[arg(long, short = 'F', default_value_t, value_enum)]
     pub output_format: OutputFormat,
 
-    /// Quiet flag: Suppresses non-essential output when enabled.
+    /// Suppresses non-essential output when enabled
     #[arg(long, short, default_value_t = false)]
     pub quiet: bool,
 }
@@ -58,7 +60,7 @@ impl Cli {
     ///
     /// The `Config` is different for every sequence since it contains the sequence name (id)
     /// and the output file. The `SearchParams` do not change.
-    pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config, OwnedRecord)>> {
+    pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config<'_>, OwnedRecord)>> {
         let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
         let records = safe_extract_records(&self.input_file, &self.seq_names)?;
         let only_one_sequence_found = records.len() == 1;

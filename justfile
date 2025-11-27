@@ -12,7 +12,11 @@ clippy *args:
   -A clippy::must_use_candidate \
   -A clippy::manual_range_contains \
   -A clippy::cast_sign_loss \
+  -A clippy::missing_errors_doc \
   -A clippy::inline_always \
+  # -A clippy::cast_possible_truncation \
+  # -A clippy::cast_possible_wrap \
+  # -A clippy::cast_precision_loss \
 
 # Test input.fasta - testseq
 test:
