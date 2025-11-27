@@ -34,18 +34,12 @@ impl SearchParams {
         })
     }
 
+    // Note that if max_gap >= n, the result is the same as if it was equal to n.
     pub fn check_bounds(&self, n: usize) -> Result<()> {
         if self.min_len >= n {
             bail!(
                 "min_len={} must be less than sequence length={}.",
                 self.min_len,
-                n
-            )
-        }
-        if self.max_gap >= n {
-            bail!(
-                "max_gap={} must be less than sequence length={}.",
-                self.max_gap,
                 n
             )
         }

@@ -18,10 +18,10 @@ fn main() -> Result<()> {
         let (header, irs_str) = stringify_irs(&config, &irs, &record.seq);
 
         // Create folder(s) if we are scanning multiple sequences
-        if let Some(parent) = config.output_path.parent() {
-            if !parent.as_os_str().is_empty() {
-                fs::create_dir_all(parent)?;
-            }
+        if let Some(parent) = config.output_path.parent()
+            && !parent.as_os_str().is_empty()
+        {
+            fs::create_dir_all(parent)?;
         }
 
         let mut file = File::create(&config.output_path)?;

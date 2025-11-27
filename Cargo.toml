@@ -1,7 +1,7 @@
 [package]
 name = "iirs"
 default-run = "iirs"
-version = "1.0.0"
+version = "1.0.1"
 license = "GPL-3.0"
 repository = "https://github.com/daxida/iirs"
 readme = "README.md"

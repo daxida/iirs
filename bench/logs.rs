@@ -1,7 +1,7 @@
 mod helper;
 use helper::run_command;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use csv::WriterBuilder;
 use iirs::{Config, SearchParams};

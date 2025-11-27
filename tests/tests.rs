@@ -35,6 +35,26 @@ fn test_irs_no_gap_with_mismatches() {
 }
 
 #[test]
+fn test_irs_max_gap_with_mismatches() {
+    let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
+    let params = SearchParams::new(10, 100, string.len() - 1, 5).unwrap();
+    assert_eq!(test_amount_irs(&params, string), 54);
+
+    let params = SearchParams::new(10, 100, string.len(), 5).unwrap();
+    assert_eq!(test_amount_irs(&params, string), 54);
+}
+
+#[test]
+fn test_irs_huge_gap_with_mismatches() {
+    let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
+    let params = SearchParams::new(10, 100, 100, 5).unwrap();
+    assert_eq!(test_amount_irs(&params, string), 54);
+
+    let params = SearchParams::new(10, 100, 101, 5).unwrap();
+    assert_eq!(test_amount_irs(&params, string), 54);
+}
+
+#[test]
 fn test_irs_no_mismatches_min_len_two() {
     let params = SearchParams::new(2, 100, 5, 0).unwrap();
     let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
