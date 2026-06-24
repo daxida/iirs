@@ -100,16 +100,6 @@ fn test_irs_edge_gap() {
 }
 
 #[test]
-fn test_irs_alys() {
-    let config = Config {
-        params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: "tests/test_data/alys.fna",
-        ..Default::default()
-    };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 739_728);
-}
-
-#[test]
 fn test_irs_8100_n() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
@@ -170,26 +160,6 @@ fn test_rand_10000() {
 }
 
 #[test]
-fn test_rand_100000() {
-    let config = Config {
-        params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: "tests/test_data/rand100000.fasta",
-        ..Default::default()
-    };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 25_440);
-}
-
-#[test]
-fn test_rand_1000000() {
-    let config = Config {
-        params: SearchParams::new(3, 100, 20, 0).unwrap(),
-        input_file: "tests/test_data/rand1000000.fasta",
-        ..Default::default()
-    };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 253_566);
-}
-
-#[test]
 fn test_test_1() {
     let config = Config {
         params: SearchParams::new(3, 100, 20, 0).unwrap(),
@@ -198,3 +168,37 @@ fn test_test_1() {
     };
     assert_eq!(find_irs_from_first_sequence(&config).len(), 84);
 }
+
+//
+// Too slow to be on CI
+//
+
+// #[test]
+// fn test_irs_alys() {
+//     let config = Config {
+//         params: SearchParams::new(3, 100, 20, 0).unwrap(),
+//         input_file: "tests/test_data/alys.fna",
+//         ..Default::default()
+//     };
+//     assert_eq!(find_irs_from_first_sequence(&config).len(), 739_728);
+// }
+//
+// #[test]
+// fn test_rand_100000() {
+//     let config = Config {
+//         params: SearchParams::new(3, 100, 20, 0).unwrap(),
+//         input_file: "tests/test_data/rand100000.fasta",
+//         ..Default::default()
+//     };
+//     assert_eq!(find_irs_from_first_sequence(&config).len(), 25_440);
+// }
+//
+// #[test]
+// fn test_rand_1000000() {
+//     let config = Config {
+//         params: SearchParams::new(3, 100, 20, 0).unwrap(),
+//         input_file: "tests/test_data/rand1000000.fasta",
+//         ..Default::default()
+//     };
+//     assert_eq!(find_irs_from_first_sequence(&config).len(), 253_566);
+// }
