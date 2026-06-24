@@ -4,6 +4,9 @@ use rmq::Rmq;
 
 use crate::{config::SearchParams, matrix::MatchMatrix};
 
+/// Build the LCP (Longest Common Prefix) array from a suffix array.
+///
+/// Employs a slightly modified version of the classic Kasai's algorithm.
 pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usize> {
     let mut lcp: Vec<usize> = vec![0; s_n];
     let mut j: usize;
@@ -24,20 +27,25 @@ pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usiz
     lcp
 }
 
-// Calculates a list of Longest Common Extensions, corresponding to 0, 1, 2, etc. allowed mismatches,
-// up to maximum number of allowed mismatches.
+/// Compute the mismatch location list.
+///
+/// Return the offsets of each mismatch found when extending outward from positions
+/// `(i, j)` simultaneously, up to `mismatches` real mismatches (Kangaroo method).
+///
+/// A sentinel `0` is prepended. Mismatches within the first `initial_gap` characters
+/// are recorded but do not consume the budget.
+///
+/// Note that because IUPAC matching is not transitive (A matches N, N matches G but A
+/// doesn't match G), and our helper structures (lcp, rmq) were built on exact equality,
+/// here we need to check at the frontier via match_u8.
 //
-// EXTRA INFO:
-// - Only considers "real" mismatches (degenerate string mismatching according to IUPAC character matrix)
-// - Takes into account the matching possibility of non A, C, G, T/U characters
+// Notes:
+// - Only considers "real" mismatches (degenerate string mismatching according to IUPAC
+//   character matrix)
 // - Longest Common Extension calculated from positions i and j
-// - Only starts counting number of allowed mismatches that occur after the given initial gap,
-//   however earlier mismatches are still storeds
-//
-// - Kangaroo algorithm. A simple explanation can be found here: https://www.youtube.com/watch?v=Njv_q9RA-hs
+// - Simple explanation of the Kangaroo method: https://www.youtube.com/watch?v=Njv_q9RA-hs
 // - For the BANANA case, the given (i, j) will be:
 //     (1, 13), (1, 12), (2, 12), (2, 11), (3, 11) ... (6, 8)
-//
 #[allow(clippy::too_many_arguments)]
 fn real_lce_mismatches<R: Rmq>(
     s: &[u8],
@@ -83,19 +91,19 @@ fn real_lce_mismatches<R: Rmq>(
     mismatch_locs
 }
 
-// TODO: Clear this
+#[cfg(feature = "parallel")]
+use rayon::prelude::*;
+
+/// Find all IRs in `seq` and return them as `(left, right, gap)` triples.
+///
+/// Recall that `s` is `seq` concatenated with its reverse complementary.
 //
-// Finds all inverted repeats (IRs) with given parameters and adds them to an output set
-//
-// NOTES:
+// Notes:
 // - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
 //   It was marginally slower (compared to Vec<(i32, i32, i32)>, while making the code less clear.
 //   >> AT NO POINT IS A DUPLICATE pushed into "irs".
 // - If we use instead a Vec<(i32, i32, 32)> the collection needs to be returned sorted if the data
 //   will be printed sorted afterwards in "format".
-#[cfg(feature = "parallel")]
-use rayon::prelude::*;
-
 pub fn add_irs<R: Rmq + std::marker::Sync>(
     s: &[u8],
     inv_sa: &[usize],
@@ -122,6 +130,11 @@ pub fn add_irs<R: Rmq + std::marker::Sync>(
     result
 }
 
+/// Find all IRs centred at `c`.
+///
+/// Derives arm positions, collects mismatch locations via the Kangaroo method, then uses
+/// a two-pointer sweep to emit every valid window within the mismatch budget and
+/// `[min_len, max_len]` arm length, truncating overlong arms as needed.
 fn add_irs_at_this_center<R: Rmq>(
     s: &[u8],
     n: usize,
