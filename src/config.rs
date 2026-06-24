@@ -23,7 +23,7 @@ impl SearchParams {
             bail!("min_len={min_len} must be less than max_len={max_len}.")
         }
         if mismatches >= min_len {
-            bail!("mismatches={mismatches} must be less than min_len={min_len}.",)
+            bail!("mismatches={mismatches} must be less than min_len={min_len}.")
         }
 
         Ok(Self {

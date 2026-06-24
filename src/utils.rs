@@ -6,12 +6,12 @@ use std::fs;
 /// Just some clearer error handling.
 pub fn check_file_exist(path: &str) -> Result<()> {
     let metadata = fs::metadata(path)
-        .map_err(|_| anyhow!("'{}' does not exist or cannot access the path.", path))?;
+        .map_err(|_| anyhow!("'{path}' does not exist or cannot access the path."))?;
 
     if metadata.is_file() {
         Ok(())
     } else {
-        Err(anyhow!("'{}' is not a file", path))
+        Err(anyhow!("'{path}' is not a file"))
     }
 }
 
