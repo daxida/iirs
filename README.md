@@ -6,6 +6,8 @@ That is, an exact tool for efficient identification of Inverted Repeats ([IRs](h
 
 Compared to the original, this version is faster, platform-independent and modular, facilitating the creation of customized format outputs.
 
+A short introduction to the [algorithm](https://github.com/daxida/iirs/blob/master/docs/algorithm.md) can be found in the docs folder.
+
 ## Installation
 
 You can either build from source:
