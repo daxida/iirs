@@ -28,7 +28,7 @@ use anyhow::Result;
 /// let params = SearchParams::new(3, 6, 2, 0).unwrap();
 /// assert!(params.check_bounds(seq.len()).is_ok());
 /// let irs = find_irs(&params, &seq);
-/// // The only IR in the sequence is "acbbg"
+/// // The only IR in the sequence is "acbbgt"
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
 ///
 /// // Returns an error if the given sequence contains invalid characters

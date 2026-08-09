@@ -62,6 +62,22 @@ $ pip install py-iirs/
 
 Both libraries are minimal and only contain a struct / class `SearchParams` that does some bound checking, and a `find_irs` function.
 
+
+```python
+from iirs import SearchParams, find_irs
+
+seq = "acbbgt"
+params = SearchParams(
+    min_len=3,
+    max_len=6,
+    max_gap=2,
+    mismatches=0,
+)
+irs = find_irs(params, seq)
+# The only IR in the sequence is "acbbgt" (with a "bb" gap)
+assert irs == [(0, 5, 0)]
+```
+
 ## Testing
 
 - `cargo test` for unit tests.
