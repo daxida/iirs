@@ -46,22 +46,23 @@ The default uses a Sparse Table implementation for the range minimum query (rmq)
 $ cargo install iirs --features "parallel tabulation"
 ```
 
-## Extra
+## Library
 
-It can also be used as a library both in rust and python.
+iirs can also be used as a library both in rust and python. Both libraries are minimal and only contain a struct / class `SearchParams` that does some bound checking, and a `find_irs` function.
+
+To add it in rust:
 
 ```console
 $ cargo add iirs [--features X]
 ```
 
-Or to python, after cloning the repo, via (no wheels yet):
+In python, after cloning the repo, via (no wheels yet):
 
 ```console
 $ pip install py-iirs/
 ```
 
-Both libraries are minimal and only contain a struct / class `SearchParams` that does some bound checking, and a `find_irs` function.
-
+And, for example:
 
 ```python
 from iirs import SearchParams, find_irs
