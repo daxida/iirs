@@ -42,7 +42,7 @@ Many more practical examples can be found in the [justfile](https://github.com/c
 
 ## Features
 
-The default uses a Sparse Table implementation for the range minimum query (rmq), and it is sequential over IR centers. To change this behaviour you can use the features `tabulation` (to change the rmq implementation), `parallel` (to run in parallel over IR centers) or a combination of both. This may result in a significant speed increase:
+The default uses a linear space block decomposition for the range minimum query (rmq), and it is sequential over IR centers. To change this behaviour you can use the features `tabulation` (to change the rmq implementation), `parallel` (to run in parallel over IR centers) or a combination of both. This may result in a significant speed increase:
 
 ```console
 $ cargo install iirs --features "parallel tabulation"
