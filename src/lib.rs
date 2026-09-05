@@ -9,6 +9,7 @@ pub use constants::OutputFormat;
 
 mod algo;
 mod format;
+mod lcp_min;
 mod matrix;
 mod utils;
 
@@ -71,11 +72,11 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 
     // Calculate LCP & RMQ
     let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
-    // By default use the Sparse Table implementation for the Rmq
+    // By default use the linear space block decomposition for the Rmq
     #[cfg(not(feature = "tabulation"))]
-    let rmq = rmq::Sparse::new(&lcp);
+    let rmq = lcp_min::LcpMin::new(rmq::BlockMask::new(&lcp), &lcp);
     #[cfg(feature = "tabulation")]
-    let rmq = rmq::Tabulation::new(&lcp);
+    let rmq = lcp_min::LcpMin::new(rmq::Tabulation::new(&lcp), &lcp);
 
     // Calculate inverted repeats
     let mut irs = algo::add_irs(&s, &inv_sa, &rmq, params, &matrix);

@@ -442,9 +442,9 @@ dependencies = [
 
 [[package]]
 name = "rmq-tabulation"
-version = "1.2.0"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2025c00333ba5531487c7de61fb9884388dcd3f6325ac39b87e1680b9f9f8e2b"
+checksum = "d591aea371e2d3a9db012cb0e7adeb3aee8dfa334b910de7312592318fefbd0e"
 
 [[package]]
 name = "ryu"

@@ -2,6 +2,7 @@
 
 use rmq::Rmq;
 
+use crate::lcp_min::LcpMin;
 use crate::{config::SearchParams, matrix::MatchMatrix};
 
 /// Build the LCP (Longest Common Prefix) array from a suffix array.
@@ -52,7 +53,7 @@ fn real_lce_mismatches<R: Rmq>(
     i: usize,
     j: usize,
     inv_sa: &[usize],
-    rmq: &R,
+    rmq: &LcpMin<R>,
     mut mismatches: i32,
     initial_gap: usize,
     matrix: &MatchMatrix,
@@ -67,7 +68,7 @@ fn real_lce_mismatches<R: Rmq>(
         let jj = inv_sa[j + real_lce];
 
         if ii < jj {
-            real_lce += rmq.rmq(ii + 1, jj + 1).unwrap_or(0);
+            real_lce += rmq.min(ii + 1, jj + 1);
         }
 
         let ni = i + real_lce;
@@ -107,7 +108,7 @@ use rayon::prelude::*;
 pub fn add_irs<R: Rmq + std::marker::Sync>(
     s: &[u8],
     inv_sa: &[usize],
-    rmq: &R,
+    rmq: &LcpMin<R>,
     params: &SearchParams,
     matrix: &MatchMatrix,
 ) -> Vec<(usize, usize, usize)> {
@@ -139,7 +140,7 @@ fn add_irs_at_this_center<R: Rmq>(
     s: &[u8],
     n: usize,
     inv_sa: &[usize],
-    rmq: &R,
+    rmq: &LcpMin<R>,
     params: &SearchParams,
     matrix: &MatchMatrix,
     c: usize,
