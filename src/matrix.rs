@@ -57,6 +57,17 @@ mod tests {
     use super::*;
     use crate::constants::{ALL_SYMBOLS, build_complement_array};
 
+    #[test]
+    fn every_symbol_matches_itself() {
+        let matrix = MatchMatrix::new();
+        for c in ALL_SYMBOLS.chars() {
+            assert!(
+                matrix.match_u8(c as u8, c as u8),
+                "{c} does not match itself"
+            );
+        }
+    }
+
     #[allow(clippy::format_push_string)]
     fn display_matrix(matrix: &MatchMatrix, complement: &[u8; 128]) -> String {
         let header = format!(
