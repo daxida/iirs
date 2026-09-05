@@ -78,6 +78,29 @@ fn test_correct_truncation_three() {
     correct_truncation_helper(&config);
 }
 
+// An IR truncated down to `max_len` may land on a mismatch, and it is not allowed to end
+// on one. This only shows up when `max_len` is small enough to truncate anything, which
+// the tests above, all using the default of 100, never do.
+#[test]
+fn test_correct_truncation_max_len() {
+    // Reading outward from the center of this sequence, the pairs match at the offsets
+    // one to four (the two `gtac` around it), mismatch at five and six, match again at
+    // seven to nine, and mismatch at ten, on the two ends:
+    //
+    //     acgtac gtac | gtac aaacga
+    //
+    // So with a budget of two mismatches the IR reaching the tenth offset is nine long,
+    // and truncating it to `max_len` lands right on the mismatched sixth offset. Trimming
+    // those two mismatches away leaves the four long `gtac ... gtac`.
+    let seq = b"acgtacgtacgtacaaacga".to_vec();
+    let params = SearchParams::new(3, 6, 0, 2).unwrap();
+
+    assert_eq!(
+        find_irs(&params, &seq).unwrap(),
+        vec![(0, 11, 0), (0, 7, 0), (2, 13, 0), (6, 17, 0), (6, 13, 0)]
+    );
+}
+
 // Tests from local files
 //
 // Test generator

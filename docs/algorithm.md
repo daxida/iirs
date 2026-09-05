@@ -46,7 +46,7 @@ Given that list of mismatch positions, `iirs` slides two pointers across it to f
 - is at least `--min-len` long and at most `--max-len` long,
 - has a gap between its two arms no larger than `--max-gap`.
 
-Each valid stretch found this way becomes one reported IR: a `(start, end, gap)` triple. If a candidate would exceed `--max-len`, it's trimmed down to size rather than discarded, as long as trimming doesn't leave it ending awkwardly in the middle of a mismatch.
+Each valid stretch found this way becomes one reported IR: a `(start, end, gap)` triple. If a candidate would exceed `--max-len`, it's trimmed down to size rather than discarded, keeping its gap; and trimmed a little further if that would leave it ending awkwardly on a mismatch, which can in turn make it too short to report.
 
 ## Putting it together
 

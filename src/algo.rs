@@ -264,26 +264,25 @@ fn add_irs_at_this_center<R: Rmq>(
             // IR is not too long, so add to output
             (left, right, gap)
         } else {
-            // IR is too long, so attempt truncation
-            let overshoot = ir_length - params.max_len;
-
-            // 0 if end_it_ptr <= 2
-            let prev_ptr = end_it_ptr.saturating_sub(2);
-            let prev = (valid_end_locs[prev_ptr].0 - 1) as usize;
-            let mismatch_gap = if end_mismatch == prev {
-                0
-            } else {
-                end_mismatch - prev - 1
-            };
-
-            // Check if truncation results in the potential IR ending in a mismatch
-            if overshoot == mismatch_gap {
-                // Potential IR does end in a mismatch, so truncate a character
-                (left + overshoot + 1, right - overshoot - 1, gap)
-            } else {
-                // Potential IR does not end in a mismatch, so add to output
-                (left + overshoot, right - overshoot, gap)
+            // IR is too long, so truncate it, keeping the gap. The offset the truncation
+            // lands on may be a mismatch, and an IR is not allowed to end on one, so
+            // walk further in until it does not. There are at most `mismatches` of them
+            // in a row.
+            let mut truncated = start_mismatch + params.max_len;
+            while truncated > start_mismatch
+                && !matrix.match_u8(s[i + truncated - 1], s[j + truncated - 1])
+            {
+                truncated -= 1;
             }
+
+            // Trimming those mismatches may have made the IR too short to report
+            if truncated - start_mismatch < params.min_len {
+                start_it_ptr += 1;
+                continue;
+            }
+
+            let overshoot = end_mismatch - truncated;
+            (left + overshoot, right - overshoot, gap)
         };
 
         irs_at_this_center.push(ir);
