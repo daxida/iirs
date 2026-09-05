@@ -5,6 +5,9 @@ use rmq::Rmq;
 use crate::lcp_min::LcpMin;
 use crate::{config::SearchParams, matrix::MatchMatrix};
 
+/// Longest run of equal characters walked directly before falling back to the rmq.
+const LCE_SCAN_LIMIT: usize = 8;
+
 /// Build the LCP (Longest Common Prefix) array from a suffix array.
 ///
 /// Employs a slightly modified version of the classic Kasai's algorithm.
@@ -65,12 +68,25 @@ fn real_lce_mismatches<R: Rmq>(
     let mut real_lce = 0;
 
     while mismatches >= 0 && j + real_lce != s_n {
-        // LCE function in the original
-        let ii = inv_sa[i + real_lce];
-        let jj = inv_sa[j + real_lce];
+        debug_assert!(i < j);
+        // The rmq is constant time but its two rank lookups miss cache, and a shared
+        // prefix is nearly always a character or two. So walk the frontier directly and
+        // only pay for the rmq once a run gets long.
+        let a = i + real_lce;
+        let b = j + real_lce;
+        if s[a] == s[b] {
+            let mut k = 1;
+            while k < LCE_SCAN_LIMIT && s[a + k] == s[b + k] {
+                k += 1;
+            }
 
-        if ii < jj {
-            real_lce += rmq.min(ii + 1, jj + 1);
+            if k < LCE_SCAN_LIMIT {
+                real_lce += k;
+            } else {
+                let (ii, jj) = (inv_sa[a], inv_sa[b]);
+                let (lo, hi) = if ii < jj { (ii, jj) } else { (jj, ii) };
+                real_lce += rmq.min(lo + 1, hi + 1);
+            }
         }
 
         let ni = i + real_lce;
