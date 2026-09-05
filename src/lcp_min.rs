@@ -7,17 +7,17 @@ use rmq::Rmq;
 /// The Rmq structures report the *index* of a minimum, but the kangaroo step wants *value*.
 pub struct LcpMin<'a, R: Rmq> {
     rmq: R,
-    lcp: &'a [usize],
+    lcp: &'a [u32],
 }
 
 impl<'a, R: Rmq> LcpMin<'a, R> {
-    pub fn new(rmq: R, lcp: &'a [usize]) -> Self {
+    pub fn new(rmq: R, lcp: &'a [u32]) -> Self {
         Self { rmq, lcp }
     }
 
     /// The smallest LCP value in `[i, j)`, or zero if the range is empty.
     #[inline(always)]
     pub fn min(&self, i: usize, j: usize) -> usize {
-        self.rmq.rmq(i, j).map_or(0, |k| self.lcp[k])
+        self.rmq.rmq(i, j).map_or(0, |k| self.lcp[k] as usize)
     }
 }

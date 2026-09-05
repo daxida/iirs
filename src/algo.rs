@@ -8,20 +8,22 @@ use crate::{config::SearchParams, matrix::MatchMatrix};
 /// Build the LCP (Longest Common Prefix) array from a suffix array.
 ///
 /// Employs a slightly modified version of the classic Kasai's algorithm.
-pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<usize> {
-    let mut lcp: Vec<usize> = vec![0; s_n];
+pub fn lcp_array(s: &[u8], s_n: usize, sa: &[i32], inv_sa: &[usize]) -> Vec<u32> {
+    // The values are bounded by the length of `s`, which divsufsort's i32 index type
+    // already keeps below `i32::MAX`, so half of what `u32` holds.
+    let mut lcp: Vec<u32> = vec![0; s_n];
     let mut j: usize;
 
     for i in 1..s_n {
         if inv_sa[i] != 0 {
-            let l = lcp[inv_sa[i - 1]];
+            let l = lcp[inv_sa[i - 1]] as usize;
             j = l.saturating_sub(1);
 
             while s[i + j] == s[sa[inv_sa[i] - 1] as usize + j] {
                 j += 1;
             }
 
-            lcp[inv_sa[i]] = j;
+            lcp[inv_sa[i]] = j as u32;
         }
     }
 
