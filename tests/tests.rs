@@ -186,4 +186,3 @@ fn test_amount_of_repeats_of_each_type() {
         }
     }
 }
-

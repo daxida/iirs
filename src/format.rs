@@ -9,8 +9,16 @@ const fn int_size(x: usize) -> usize {
     (x.ilog10() + 1) as usize
 }
 
-/// The two arms of a repeat, as 1-based inclusive positions: `outer_left .. inner_left`,
-/// then, after the gap, `inner_right .. outer_right`.
+/// The two arms of a repeat, as 1-based inclusive positions.
+///
+/// ```text
+/// [ first arm ] ... gap ... [ second arm ]
+/// ^           ^             ^            ^
+/// outer_left  inner_left    inner_right  outer_right
+/// ```
+///
+/// The second arm is read from `outer_right` down to `inner_right` when the repeat is
+/// reversed, and from `inner_right` up to `outer_right` otherwise.
 struct Arms {
     outer_left: usize,
     inner_left: usize,
@@ -22,16 +30,20 @@ struct Arms {
 
 impl Arms {
     const fn new((left, right, gap): (usize, usize, usize), repeat_type: RepeatType) -> Self {
+        let outer_left = left + 1;
+        let outer_right = right + 1;
+
         Self {
-            outer_left: left + 1,
-            inner_left: (left + right + 1 - gap) / 2,
-            inner_right: (left + right + 3 + gap) / 2,
-            outer_right: right + 1,
-            arm_len: (right + 1 - left - gap) / 2,
+            outer_left,
+            inner_left: (outer_left + outer_right - 1 - gap) / 2,
+            inner_right: (outer_right + outer_left + 1 + gap) / 2,
+            outer_right,
+            arm_len: (outer_right + 1 - outer_left - gap) / 2,
             repeat_type,
         }
     }
 
+    /// 0-based index in `seq` of the `i`th character of the first arm.
     const fn first(&self, i: usize) -> usize {
         self.outer_left - 1 + i
     }
