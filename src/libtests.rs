@@ -225,3 +225,38 @@ fn test_test_1() {
 //     };
 //     assert_eq!(find_irs_from_first_sequence(&config).len(), 253_566);
 // }
+
+// Two corners of the diagonal search, where the gap behaves the other way round
+
+mod diagonals {
+    use super::super::config::SearchParams;
+    use super::super::constants::RepeatType;
+    use super::super::find_repeats;
+
+    fn direct(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> SearchParams {
+        SearchParams::new(min_len, max_len, max_gap, mismatches)
+            .unwrap()
+            .with_repeat_type(RepeatType::Direct)
+    }
+
+    #[test]
+    fn test_the_gap_bounds_the_arm() {
+        assert_eq!(
+            find_repeats(&direct(3, 100, 2, 0), b"acgttacg").unwrap(),
+            vec![(0, 7, 2)]
+        );
+        assert_eq!(
+            find_repeats(&direct(3, 100, 1, 0), b"acgttacg").unwrap(),
+            vec![]
+        );
+    }
+
+    #[test]
+    fn test_truncation_does_not_end_on_a_mismatch() {
+        // Six apart, the pairs match, match, MISMATCH, match, match, MISMATCH. With one
+        // mismatch allowed the run is five long, past `max_len`, and truncating it to
+        // three would leave it ending on that first mismatch
+        let found = find_repeats(&direct(2, 3, 4, 1), b"acgacgactact").unwrap();
+        assert_eq!(found, vec![(0, 7, 4), (0, 5, 0), (3, 10, 4), (6, 11, 0)]);
+    }
+}
