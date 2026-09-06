@@ -12,17 +12,19 @@ const fn int_size(x: usize) -> usize {
 /// Follows [IUPACpal](https://github.com/steven31415/IUPACpal) convention
 /// of calling Inverted Repeats, palindromes
 pub fn fmt_classic_header(config: &Config, n: usize) -> String {
+    let noun = config.params.repeat_type.noun();
+
     format!(
-        "Palindromes of: {}\n\
+        "{noun}s of: {}\n\
         Sequence name: {}\n\
         Sequence length is: {}\n\
         Start at position: {}\n\
         End at position: {}\n\
-        Minimum length of Palindromes is: {}\n\
-        Maximum length of Palindromes is: {}\n\
+        Minimum length of {noun}s is: {}\n\
+        Maximum length of {noun}s is: {}\n\
         Maximum gap between elements is: {}\n\
-        Number of mismatches allowed in Palindrome: {}\n\n\n\n\
-        Palindromes:",
+        Number of mismatches allowed in {noun}: {}\n\n\n\n\
+        {noun}s:",
         &config.input_file,
         &config.seq_name,
         n,

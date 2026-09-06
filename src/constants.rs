@@ -63,6 +63,16 @@ impl RepeatType {
     pub const fn is_complemented(self) -> bool {
         matches!(self, Self::Inverted | Self::Complement)
     }
+
+    /// How the repeats are named in the reports.
+    pub const fn noun(self) -> &'static str {
+        match self {
+            Self::Inverted => "Palindrome", // IUPACpal convention
+            Self::Mirror => "Mirror repeat",
+            Self::Direct => "Direct repeat",
+            Self::Complement => "Complementary repeat",
+        }
+    }
 }
 
 impl std::fmt::Display for RepeatType {
