@@ -30,7 +30,11 @@ fn main() -> Result<()> {
         if !args.quiet {
             println!("\n{config}");
             println!("Search complete for {}!", &config.seq_name);
-            println!("Found n={} inverted repeats\n", irs.len());
+            println!(
+                "Found n={} {} repeats\n",
+                irs.len(),
+                config.params.repeat_type
+            );
         }
     }
 
