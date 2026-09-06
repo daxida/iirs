@@ -97,6 +97,22 @@ impl std::fmt::Display for RepeatType {
     }
 }
 
+impl std::str::FromStr for RepeatType {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> anyhow::Result<Self> {
+        match s.to_ascii_lowercase().as_str() {
+            "inverted" => Ok(Self::Inverted),
+            "mirror" => Ok(Self::Mirror),
+            "direct" => Ok(Self::Direct),
+            "complement" => Ok(Self::Complement),
+            _ => anyhow::bail!(
+                "'{s}' is not a repeat type. Valid types are: inverted, mirror, direct, complement."
+            ),
+        }
+    }
+}
+
 pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
 pub const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
