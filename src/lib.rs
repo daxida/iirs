@@ -154,6 +154,7 @@ pub fn stringify_repeats(
 ) -> (String, String) {
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
+    let repeat_type = config.params.repeat_type;
 
     match config.output_format {
         OutputFormat::Classic => (
@@ -161,10 +162,13 @@ pub fn stringify_repeats(
             format::fmt_classic(irs, seq, &matrix, &complement),
         ),
         OutputFormat::Csv => (
-            format::fmt_csv_header(),
+            format::fmt_csv_header(repeat_type),
             format::fmt_csv(irs, seq, &matrix, &complement),
         ),
-        OutputFormat::Custom => (format::fmt_custom_header(), format::fmt_custom(irs, seq)),
+        OutputFormat::Custom => (
+            format::fmt_custom_header(repeat_type),
+            format::fmt_custom(irs, seq),
+        ),
     }
 }
 

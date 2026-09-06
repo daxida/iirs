@@ -73,6 +73,16 @@ impl RepeatType {
             Self::Complement => "Complementary repeat",
         }
     }
+
+    /// Header of the column holding the second arm.
+    pub const fn arm_label(self) -> &'static str {
+        match self {
+            Self::Inverted => "reverse_complement",
+            Self::Mirror => "reverse",
+            Self::Direct => "direct",
+            Self::Complement => "complement",
+        }
+    }
 }
 
 impl std::fmt::Display for RepeatType {

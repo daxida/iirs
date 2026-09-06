@@ -2,7 +2,7 @@
 #![allow(clippy::needless_range_loop)]
 #![allow(clippy::similar_names)]
 
-use crate::{config::Config, matrix::MatchMatrix};
+use crate::{config::Config, constants::RepeatType, matrix::MatchMatrix};
 use std::fmt::Write;
 
 const fn int_size(x: usize) -> usize {
@@ -87,8 +87,11 @@ pub fn fmt_classic(
     out
 }
 
-pub fn fmt_csv_header() -> String {
-    String::from("start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching")
+pub fn fmt_csv_header(repeat_type: RepeatType) -> String {
+    format!(
+        "start_n,end_n,nucleotide,start_ir,end_ir,{},matching",
+        repeat_type.arm_label()
+    )
 }
 
 pub fn fmt_csv(
@@ -134,8 +137,8 @@ pub fn fmt_csv(
     out
 }
 
-pub fn fmt_custom_header() -> String {
-    String::from("ir_start,motif,gap_motif,reverse_complement")
+pub fn fmt_custom_header(repeat_type: RepeatType) -> String {
+    format!("ir_start,motif,gap_motif,{}", repeat_type.arm_label())
 }
 
 pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8]) -> String {
@@ -256,7 +259,7 @@ mod tests {
         let complement = build_complement_array();
         let received = format!(
             "{}\n{}",
-            fmt_csv_header(),
+            fmt_csv_header(RepeatType::Inverted),
             fmt_csv(&irs, &seq, &matrix, &complement)
         );
         let expected = r"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
@@ -288,7 +291,11 @@ mod tests {
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
-        let received = format!("{}\n{}", fmt_custom_header(), fmt_custom(&irs, &seq));
+        let received = format!(
+            "{}\n{}",
+            fmt_custom_header(RepeatType::Inverted),
+            fmt_custom(&irs, &seq)
+        );
         let expected = r"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
 3,ucsggtgtwkmmm,kk,nngah*nn-nddb
