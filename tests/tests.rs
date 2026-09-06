@@ -140,3 +140,50 @@ fn test_irs_full_n_no_gap() {
     let string = "N".repeat(500);
     assert_eq!(test_amount_irs(&params, &string), 481);
 }
+
+//
+// The other repeat types
+//
+
+fn test_amount_repeats(params: &SearchParams, string: &str) -> usize {
+    let seq = string.to_ascii_lowercase().as_bytes().to_vec();
+    params.check_bounds(seq.len()).unwrap();
+    find_repeats(params, &seq).unwrap().len()
+}
+
+#[test]
+fn test_amount_of_repeats_of_each_type() {
+    let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA";
+
+    // how many of each of the four kinds, in order, the sequence holds
+    let cases = [
+        (
+            SearchParams::default(),
+            string.repeat(100),
+            [10068, 13138, 13531, 7698],
+        ),
+        (
+            SearchParams::new(10, 100, 5, 1).unwrap(),
+            string.to_string(),
+            [21, 25, 20, 13],
+        ),
+    ];
+
+    for (params, seq, expected) in cases {
+        let types = [
+            RepeatType::Inverted,
+            RepeatType::Mirror,
+            RepeatType::Direct,
+            RepeatType::Complement,
+        ];
+        for (repeat_type, expected) in types.into_iter().zip(expected) {
+            let params = params.clone().with_repeat_type(repeat_type);
+            assert_eq!(
+                test_amount_repeats(&params, &seq),
+                expected,
+                "{repeat_type}"
+            );
+        }
+    }
+}
+
