@@ -62,35 +62,47 @@ $ cargo install iirs --features "parallel tabulation"
 
 ## Library
 
-iirs can also be used as a library both in rust and python. Both libraries are minimal and only contain a struct / class `SearchParams` that does some bound checking, and a `find_irs` function.
+iirs can also be used as a library, both in rust and in python. Both are minimal: a `SearchParams` struct / class that does some bound checking, and a `find_repeats` function.
 
-To add it in rust:
+### Rust
 
 ```console
 $ cargo add iirs [--features X]
 ```
 
-In python, after cloning the repo, via (no wheels yet):
+```rust
+use iirs::{RepeatType, SearchParams, find_repeats};
+
+let params = SearchParams::new(3, 6, 2, 0)?;
+assert_eq!(find_repeats(&params, b"acbbgt")?, vec![(0, 5, 0)]);
+
+// The other three kinds are selected with `with_repeat_type`
+let params = params.with_repeat_type(RepeatType::Direct);
+assert_eq!(find_repeats(&params, b"acgacg")?, vec![(0, 5, 0)]);
+```
+
+### Python
+
+After cloning the repo (no wheels yet):
 
 ```console
 $ pip install py-iirs/
 ```
 
-And, for example:
-
 ```python
-from iirs import SearchParams, find_irs
+from iirs import SearchParams, find_repeats
 
-seq = "acbbgt"
-params = SearchParams(
-    min_len=3,
-    max_len=6,
-    max_gap=2,
-    mismatches=0,
-)
-irs = find_irs(params, seq)
-# The only IR in the sequence is "acbbgt" (with a "bb" gap)
-assert irs == [(0, 5, 0)]
+params = SearchParams(min_len=3, max_len=6, max_gap=2, mismatches=0)
+assert find_repeats(params, "acbbgt") == [(0, 5, 0)]
+
+# The other three kinds are selected with the `repeat_type` argument, one of
+# "inverted" (the default), "mirror", "direct" or "complement"
+params = SearchParams(3, 6, 2, 0, repeat_type="direct")
+assert find_repeats(params, "acgacg") == [(0, 5, 0)]
+
+start, end, gap = find_repeats(params, "acgacg")[0]
+arm_len = (end + 1 - start - gap) // 2
+assert ("acgacg"[start:start + arm_len], "acgacg"[end + 1 - arm_len:end + 1]) == ("acg", "acg")
 ```
 
 ## Testing
