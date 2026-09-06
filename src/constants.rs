@@ -28,6 +28,43 @@ impl std::fmt::Display for OutputFormat {
     }
 }
 
+/// The kind of repeat to look for: the four ways of deriving the second arm `v` of a
+/// repeat `u ... v` from the first one, by reversing it or not, complementing it or not.
+///
+/// ```text
+/// Inverted    aacc ... ggtt    (reverse complement)
+/// Mirror      aacc ... ccaa    (reverse)
+/// Direct      aacc ... aacc    (as is)
+/// Complement  aacc ... ttgg    (complement)
+/// ```
+#[derive(clap::ValueEnum, Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum RepeatType {
+    /// `u ... revcomp(u)`: the classic inverted repeat (palindrome).
+    #[default]
+    Inverted,
+    /// `u ... reverse(u)`, without complementing.
+    Mirror,
+    /// `u ... u`.
+    Direct,
+    /// `u ... complement(u)`, without reversing.
+    Complement,
+}
+
+impl RepeatType {
+    /// Whether the second arm is read backwards.
+    ///
+    /// This is what decides the algorithm: the arms of a reversed repeat grow apart from a
+    /// common center, those of a non reversed one grow side by side along a fixed shift.
+    pub const fn is_reversed(self) -> bool {
+        matches!(self, Self::Inverted | Self::Mirror)
+    }
+
+    /// Whether the second arm is complemented.
+    pub const fn is_complemented(self) -> bool {
+        matches!(self, Self::Inverted | Self::Complement)
+    }
+}
+
 pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
 pub const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";

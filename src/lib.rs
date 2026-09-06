@@ -5,7 +5,7 @@ mod config;
 pub use config::{Config, SearchParams};
 
 mod constants;
-pub use constants::OutputFormat;
+pub use constants::{OutputFormat, RepeatType};
 
 mod algo;
 mod format;
