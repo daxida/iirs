@@ -159,15 +159,15 @@ pub fn stringify_repeats(
     match config.output_format {
         OutputFormat::Classic => (
             format::fmt_classic_header(config, seq.len()),
-            format::fmt_classic(irs, seq, &matrix, &complement),
+            format::fmt_classic(irs, seq, &matrix, &complement, repeat_type),
         ),
         OutputFormat::Csv => (
             format::fmt_csv_header(repeat_type),
-            format::fmt_csv(irs, seq, &matrix, &complement),
+            format::fmt_csv(irs, seq, &matrix, &complement, repeat_type),
         ),
         OutputFormat::Custom => (
             format::fmt_custom_header(repeat_type),
-            format::fmt_custom(irs, seq),
+            format::fmt_custom(irs, seq, repeat_type),
         ),
     }
 }

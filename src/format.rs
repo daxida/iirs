@@ -17,16 +17,18 @@ struct Arms {
     inner_right: usize,
     outer_right: usize,
     arm_len: usize,
+    repeat_type: RepeatType,
 }
 
 impl Arms {
-    const fn new((left, right, gap): (usize, usize, usize)) -> Self {
+    const fn new((left, right, gap): (usize, usize, usize), repeat_type: RepeatType) -> Self {
         Self {
             outer_left: left + 1,
             inner_left: (left + right + 1 - gap) / 2,
             inner_right: (left + right + 3 + gap) / 2,
             outer_right: right + 1,
             arm_len: (right + 1 - left - gap) / 2,
+            repeat_type,
         }
     }
 
@@ -36,7 +38,11 @@ impl Arms {
 
     /// 0-based index in `seq` of the character the `i`th one of the first arm pairs with.
     const fn second(&self, i: usize) -> usize {
-        self.outer_right - 1 - i
+        if self.repeat_type.is_reversed() {
+            self.outer_right - 1 - i
+        } else {
+            self.inner_right - 1 + i
+        }
     }
 
     /// Whether the `i`th pair of the repeat matches.
@@ -78,6 +84,7 @@ pub fn fmt_classic(
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
+    repeat_type: RepeatType,
 ) -> String {
     let mut out = String::new();
 
@@ -85,7 +92,7 @@ pub fn fmt_classic(
     let pad_length = pad.len(); // 9
 
     for &ir in irs {
-        let arms = Arms::new(ir);
+        let arms = Arms::new(ir, repeat_type);
 
         let ol_pad = " ".repeat(pad_length - int_size(arms.outer_left));
         let il_pad = " ".repeat(pad_length - int_size(arms.inner_left));
@@ -130,11 +137,12 @@ pub fn fmt_csv(
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
+    repeat_type: RepeatType,
 ) -> String {
     let mut out = String::new();
 
     for &ir in irs {
-        let arms = Arms::new(ir);
+        let arms = Arms::new(ir, repeat_type);
 
         write!(&mut out, "{},{},", arms.outer_left, arms.inner_left).unwrap();
 
@@ -167,11 +175,11 @@ pub fn fmt_custom_header(repeat_type: RepeatType) -> String {
     format!("ir_start,motif,gap_motif,{}", repeat_type.arm_label())
 }
 
-pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8]) -> String {
+pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8], repeat_type: RepeatType) -> String {
     let mut out = String::new();
 
     for &ir in irs {
-        let arms = Arms::new(ir);
+        let arms = Arms::new(ir, repeat_type);
 
         write!(&mut out, "{},", arms.outer_left).unwrap();
 
@@ -212,7 +220,7 @@ mod tests {
         let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
-        let received = fmt_classic(&irs, &seq, &matrix, &complement);
+        let received = fmt_classic(&irs, &seq, &matrix, &complement, RepeatType::Inverted);
         let expected = r"2        gucsggtgtwkmmm       15
          ||| ||||||||||
 30       nngah*nn-nddbk       17
@@ -283,7 +291,7 @@ mod tests {
         let received = format!(
             "{}\n{}",
             fmt_csv_header(RepeatType::Inverted),
-            fmt_csv(&irs, &seq, &matrix, &complement)
+            fmt_csv(&irs, &seq, &matrix, &complement, RepeatType::Inverted)
         );
         let expected = r"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
@@ -317,7 +325,7 @@ mod tests {
         let received = format!(
             "{}\n{}",
             fmt_custom_header(RepeatType::Inverted),
-            fmt_custom(&irs, &seq)
+            fmt_custom(&irs, &seq, RepeatType::Inverted)
         );
         let expected = r"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
