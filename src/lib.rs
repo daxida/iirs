@@ -9,6 +9,7 @@ pub use constants::OutputFormat;
 
 mod algo;
 mod format;
+mod lcp;
 mod lcp_min;
 mod matrix;
 mod utils;
@@ -71,7 +72,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     }
 
     // Calculate LCP & RMQ
-    let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
+    let lcp = lcp::lcp_array(&s, s_n, &sa, &inv_sa);
     // By default use the linear space block decomposition for the Rmq
     #[cfg(not(feature = "tabulation"))]
     let rmq = lcp_min::LcpMin::new(rmq::BlockMask::new(&lcp), &lcp);
