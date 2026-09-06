@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use crate::constants::{
     DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES,
-    DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat,
+    DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat, RepeatType,
 };
 
 #[derive(Debug, Clone)]
@@ -12,9 +12,11 @@ pub struct SearchParams {
     pub max_len: usize,
     pub max_gap: usize,
     pub mismatches: usize,
+    pub repeat_type: RepeatType,
 }
 
 impl SearchParams {
+    /// Build the parameters of a search for inverted repeats.
     pub fn new(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> Result<Self> {
         if min_len < 2 {
             bail!("min_len={min_len} must not be less than 2.")
@@ -31,7 +33,14 @@ impl SearchParams {
             max_len,
             max_gap,
             mismatches,
+            repeat_type: RepeatType::default(),
         })
+    }
+
+    #[must_use]
+    pub const fn with_repeat_type(mut self, repeat_type: RepeatType) -> Self {
+        self.repeat_type = repeat_type;
+        self
     }
 
     // Note that if max_gap >= n, the result is the same as if it was equal to n.
@@ -119,6 +128,7 @@ impl std::fmt::Display for Config<'_> {
         writeln!(f, "max_len:     {}", self.params.max_len)?;
         writeln!(f, "max_gap:     {}", self.params.max_gap)?;
         writeln!(f, "mismatches:  {}", self.params.mismatches)?;
+        writeln!(f, "repeat_type: {}", self.params.repeat_type)?;
         writeln!(f, "output_path: {}", self.output_path.display())?;
         writeln!(f, "output_fmt:  {}", self.output_format)?;
         Ok(())
