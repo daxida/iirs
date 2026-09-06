@@ -1,7 +1,7 @@
 extern crate elapsed_time;
 
 use iirs::Cli;
-use iirs::{find_irs, stringify_irs};
+use iirs::{find_repeats, stringify_repeats};
 
 use anyhow::Result;
 use std::fs::{self, File};
@@ -14,8 +14,8 @@ fn main() -> Result<()> {
     let config_record_pairs = args.try_from_args(check_bounds)?;
 
     for (config, record) in config_record_pairs {
-        let irs = find_irs(&config.params, &record.seq)?;
-        let (header, irs_str) = stringify_irs(&config, &irs, &record.seq);
+        let irs = find_repeats(&config.params, &record.seq)?;
+        let (header, irs_str) = stringify_repeats(&config, &irs, &record.seq);
 
         // Create folder(s) if we are scanning multiple sequences
         if let Some(parent) = config.output_path.parent()
@@ -30,7 +30,11 @@ fn main() -> Result<()> {
         if !args.quiet {
             println!("\n{config}");
             println!("Search complete for {}!", &config.seq_name);
-            println!("Found n={} inverted repeats\n", irs.len());
+            println!(
+                "Found n={} {} repeats\n",
+                irs.len(),
+                config.params.repeat_type
+            );
         }
     }
 

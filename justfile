@@ -33,6 +33,11 @@ teststar:
   cargo run --release -- \
     -s tstar -m 2 -g 5 -F csv
 
+# Test the python bindings
+testpy:
+  uv pip install ./py-iirs pytest
+  pytest py-iirs/tests
+
 # Test truncation edge case
 testedge:
   cargo run --release -- \

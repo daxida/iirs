@@ -36,6 +36,7 @@ fn main() -> Result<()> {
                 max_len: 100,
                 max_gap: 20,
                 mismatches: 0,
+                ..Default::default()
             },
             output_path: RUST_OUTPUT_PATH.into(),
             output_format,
@@ -48,6 +49,7 @@ fn main() -> Result<()> {
                 max_len: 100,
                 max_gap: 5,
                 mismatches: 1,
+                ..Default::default()
             },
             output_path: RUST_OUTPUT_PATH.into(),
             output_format,

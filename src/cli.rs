@@ -6,7 +6,7 @@ use clap::Parser;
 use crate::config::{Config, SearchParams};
 use crate::constants::{
     DEFAULT_INPUT_FILE, DEFAULT_MAX_GAP, DEFAULT_MAX_LEN, DEFAULT_MIN_LEN, DEFAULT_MISMATCHES,
-    DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat,
+    DEFAULT_OUTPUT_FILE, DEFAULT_SEQ_NAME, OutputFormat, RepeatType,
 };
 use crate::utils::safe_extract_records;
 use seq_io::fasta::{OwnedRecord, Record};
@@ -38,6 +38,10 @@ pub struct Cli {
     #[arg(long, short = 'x', default_value_t = DEFAULT_MISMATCHES)]
     pub mismatches: usize,
 
+    /// Kind of repeat to look for
+    #[arg(long, short = 'r', default_value_t, value_enum)]
+    pub repeat_type: RepeatType,
+
     /// Output filename for a single sequence. Output directory for multiple
     #[arg(long, short, default_value = DEFAULT_OUTPUT_FILE)]
     pub output_path: PathBuf,
@@ -64,7 +68,8 @@ impl Cli {
     /// The `Config` is different for every sequence since it contains the sequence name (id)
     /// and the output file. The `SearchParams` do not change.
     pub fn try_from_args(&self, check_bounds: bool) -> Result<Vec<(Config<'_>, OwnedRecord)>> {
-        let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?;
+        let params = SearchParams::new(self.min_len, self.max_len, self.max_gap, self.mismatches)?
+            .with_repeat_type(self.repeat_type);
         let records = safe_extract_records(&self.input_file, &self.seq_names)?;
         let only_one_sequence_found = records.len() == 1;
         let mut config_record_pairs = Vec::new();

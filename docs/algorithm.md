@@ -46,14 +46,25 @@ Given that list of mismatch positions, `iirs` slides two pointers across it to f
 - is at least `--min-len` long and at most `--max-len` long,
 - has a gap between its two arms no larger than `--max-gap`.
 
-Each valid stretch found this way becomes one reported IR: a `(start, end, gap)` triple. If a candidate would exceed `--max-len`, it's trimmed down to size rather than discarded, as long as trimming doesn't leave it ending awkwardly in the middle of a mismatch.
+Each valid stretch found this way becomes one reported IR: a `(start, end, gap)` triple. If a candidate would exceed `--max-len`, it's trimmed down to size rather than discarded, keeping its gap; and trimmed a little further if that would leave it ending awkwardly on a mismatch, which can in turn make it too short to report.
+
+## The other three repeat types
+
+An inverted repeat is `u ... revcomp(u)`. Dropping either half of that transformation gives three more kinds of repeat, all of them supported through `--repeat-type`:
+
+| type | second arm | reversed | complemented |
+| --- | --- | --- | --- |
+| `inverted` | `revcomp(u)` | yes | yes |
+| `mirror` | `reverse(u)` | yes | no |
+| `direct` | `u` | no | no |
+| `complement` | `complement(u)` | no | yes |
 
 ## Putting it together
 
 1. Read the FASTA sequence.
-2. Build `s = seq + "$" + revcomp(seq) + "#"`.
+2. Build `s = seq + "$" + revcomp(seq) + "#"` (or whichever transform the repeat type asks for).
 3. Build the suffix array, LCP array, and RMQ structure over `s`; once.
-4. For every possible center position, use the kangaroo method to get its mismatch list.
-5. Slide a two-pointer window over each mismatch list to collect every valid IR.
+4. For every possible center position (or shift), use the kangaroo method to get its mismatch list.
+5. Slide a two-pointer window over each mismatch list to collect every valid repeat.
 6. Sort and output the results.
 

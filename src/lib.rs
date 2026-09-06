@@ -5,45 +5,57 @@ mod config;
 pub use config::{Config, SearchParams};
 
 mod constants;
-pub use constants::OutputFormat;
+pub use constants::{OutputFormat, RepeatType};
 
 mod algo;
 mod format;
+mod lcp;
 mod lcp_min;
 mod matrix;
 mod utils;
 
 use anyhow::Result;
 
-/// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence
-/// based on the provided parameters.
+/// Find all the repeats in a sequence based on the provided parameters.
 ///
-/// Each IR is returned a tuple of three integers (usize): start position, end position, and gap size.
+/// The kind of repeat looked for is `params.repeat_type`, which defaults to
+/// [`Inverted`](RepeatType::Inverted).
+///
+/// Each repeat is returned as a tuple of three integers (usize): start position, end
+/// position, and gap size. The two arms are therefore
+/// `seq[start..start + arm_len]` and `seq[end + 1 - arm_len..=end]`, where
+/// `arm_len = (end + 1 - start - gap) / 2`.
 ///
 /// # Examples
 ///
 /// ```rust
-/// use iirs::{SearchParams, find_irs};
+/// use iirs::{RepeatType, SearchParams, find_repeats};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let params = SearchParams::new(3, 6, 2, 0).unwrap();
 /// assert!(params.check_bounds(seq.len()).is_ok());
-/// let irs = find_irs(&params, &seq);
-/// // The only IR in the sequence is "acbbgt"
+/// let irs = find_repeats(&params, &seq);
+/// // The only inverted repeat in the sequence is "acbbgt"
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
+///
+/// // The same sequence holds no direct repeat...
+/// let params = params.with_repeat_type(RepeatType::Direct);
+/// assert_eq!(find_repeats(&params, &seq).unwrap(), vec![]);
+///
+/// // ...but "acgacg" does: "acg" repeated with no gap.
+/// let seq = "acgacg".as_bytes();
+/// assert_eq!(find_repeats(&params, &seq).unwrap(), vec![(0, 5, 0)]);
 ///
 /// // Returns an error if the given sequence contains invalid characters
 /// let seq = "jj".as_bytes();
-/// let irs = find_irs(&params, &seq);
-/// assert!(irs.is_err());
+/// assert!(find_repeats(&params, &seq).is_err());
 ///
 /// // It is not case-sensitive and ignores newlines.
-/// let seq = "ACB\n\rBGT".as_bytes();
-/// let irs = find_irs(&params, &seq);
-/// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
+/// let seq = "ACG\n\rACG".as_bytes();
+/// assert_eq!(find_repeats(&params, &seq).unwrap(), vec![(0, 5, 0)]);
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+pub fn find_repeats(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     // Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
     // This was already done through the CLI, but we need to do it again for the standalone version.
     let sanitized_seq = utils::sanitize_sequence(seq)?;
@@ -51,14 +63,25 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
+    let repeat_type = params.repeat_type;
 
-    // Construct s = seq + '$' + complement(reverse(seq)) + '#'
+    // Construct s = seq + '$' + transform(seq) + '#'
+    // For inverted repeats transform(seq) is complement(reverse(seq)).
     let n = sanitized_seq.len();
     let s_n = 2 * n + 2;
     let mut s = vec![0u8; s_n];
     for i in 0..n {
         s[i] = sanitized_seq[i];
-        s[n + 1 + i] = complement[sanitized_seq[n - 1 - i] as usize] as u8;
+        let mirrored = if repeat_type.is_reversed() {
+            sanitized_seq[n - 1 - i]
+        } else {
+            sanitized_seq[i]
+        };
+        s[n + 1 + i] = if repeat_type.is_complemented() {
+            complement[mirrored as usize]
+        } else {
+            mirrored
+        };
     }
     s[n] = b'$';
     s[2 * n + 1] = b'#';
@@ -71,15 +94,19 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     }
 
     // Calculate LCP & RMQ
-    let lcp = algo::lcp_array(&s, s_n, &sa, &inv_sa);
+    let lcp = lcp::lcp_array(&s, s_n, &sa, &inv_sa);
     // By default use the linear space block decomposition for the Rmq
     #[cfg(not(feature = "tabulation"))]
     let rmq = lcp_min::LcpMin::new(rmq::BlockMask::new(&lcp), &lcp);
     #[cfg(feature = "tabulation")]
     let rmq = lcp_min::LcpMin::new(rmq::Tabulation::new(&lcp), &lcp);
 
-    // Calculate inverted repeats
-    let mut irs = algo::add_irs(&s, &inv_sa, &rmq, params, &matrix);
+    // Calculate the repeats.
+    let mut irs = if repeat_type.is_reversed() {
+        algo::add_irs(&s, &inv_sa, &rmq, params, &matrix)
+    } else {
+        algo::add_drs(&s, &inv_sa, &rmq, params, &matrix)
+    };
 
     // Deal with the sorting strategy.
     // Alternatives, or even skipping sorting altogether, can improve the performance.
@@ -94,8 +121,13 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     Ok(irs)
 }
 
-/// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs)
-/// based on the specified output format in the configuration.
+/// Alias of [`find_repeats`], kept for backwards compatibility.
+// TODO: drop in 2.0, together with the `irs` wording of the api
+pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+    find_repeats(params, seq)
+}
+
+/// Stringify the given repeats based on the specified output format in the configuration.
 ///
 /// An error is returned for an invalid output format.
 /// Valid formats are: classic (same as `IUPACpal`), csv and custom.
@@ -106,7 +138,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///
 /// ```rust
 /// use iirs::{SearchParams, Config};
-/// use iirs::{find_irs, stringify_irs};
+/// use iirs::{find_repeats, stringify_repeats};
 /// use iirs::OutputFormat;
 ///
 /// // Simple example for the csv output format.
@@ -117,8 +149,8 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///     // The remaining fields are not relevant here.
 ///     ..Default::default()
 /// };
-/// let irs = find_irs(&config.params, &seq).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
+/// let irs = find_repeats(&config.params, &seq).unwrap();
+/// let (header, irs_str) = stringify_repeats(&config, &irs, &seq);
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
 ///     1,3,acb,6,4,tgb,111\n";
@@ -126,7 +158,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///
 /// // For the classic method, all the fields are used in the header.
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", OutputFormat::Classic).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
+/// let (header, irs_str) = stringify_repeats(&config, &irs, &seq);
 /// let expected = "\
 ///     Palindromes of: in.fasta\n\
 ///     Sequence name: seq0\n\
@@ -140,25 +172,39 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///     Palindromes:";
 /// assert_eq!(header, expected);
 /// ```
-pub fn stringify_irs(
+pub fn stringify_repeats(
     config: &Config,
     irs: &[(usize, usize, usize)],
     seq: &[u8],
 ) -> (String, String) {
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
+    let repeat_type = config.params.repeat_type;
 
     match config.output_format {
         OutputFormat::Classic => (
             format::fmt_classic_header(config, seq.len()),
-            format::fmt_classic(irs, seq, &matrix, &complement),
+            format::fmt_classic(irs, seq, &matrix, &complement, repeat_type),
         ),
         OutputFormat::Csv => (
-            format::fmt_csv_header(),
-            format::fmt_csv(irs, seq, &matrix, &complement),
+            format::fmt_csv_header(repeat_type),
+            format::fmt_csv(irs, seq, &matrix, &complement, repeat_type),
         ),
-        OutputFormat::Custom => (format::fmt_custom_header(), format::fmt_custom(irs, seq)),
+        OutputFormat::Custom => (
+            format::fmt_custom_header(repeat_type),
+            format::fmt_custom(irs, seq, repeat_type),
+        ),
     }
+}
+
+/// Alias of [`stringify_repeats`], kept for backwards compatibility.
+// TODO: drop in 2.0, together with the `irs` wording of the api
+pub fn stringify_irs(
+    config: &Config,
+    irs: &[(usize, usize, usize)],
+    seq: &[u8],
+) -> (String, String) {
+    stringify_repeats(config, irs, seq)
 }
 
 #[cfg(test)]

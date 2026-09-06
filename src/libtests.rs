@@ -78,6 +78,29 @@ fn test_correct_truncation_three() {
     correct_truncation_helper(&config);
 }
 
+// An IR truncated down to `max_len` may land on a mismatch, and it is not allowed to end
+// on one. This only shows up when `max_len` is small enough to truncate anything, which
+// the tests above, all using the default of 100, never do.
+#[test]
+fn test_correct_truncation_max_len() {
+    // Reading outward from the center of this sequence, the pairs match at the offsets
+    // one to four (the two `gtac` around it), mismatch at five and six, match again at
+    // seven to nine, and mismatch at ten, on the two ends:
+    //
+    //     acgtac gtac | gtac aaacga
+    //
+    // So with a budget of two mismatches the IR reaching the tenth offset is nine long,
+    // and truncating it to `max_len` lands right on the mismatched sixth offset. Trimming
+    // those two mismatches away leaves the four long `gtac ... gtac`.
+    let seq = b"acgtacgtacgtacaaacga".to_vec();
+    let params = SearchParams::new(3, 6, 0, 2).unwrap();
+
+    assert_eq!(
+        find_irs(&params, &seq).unwrap(),
+        vec![(0, 11, 0), (0, 7, 0), (2, 13, 0), (6, 17, 0), (6, 13, 0)]
+    );
+}
+
 // Tests from local files
 //
 // Test generator
@@ -202,3 +225,38 @@ fn test_test_1() {
 //     };
 //     assert_eq!(find_irs_from_first_sequence(&config).len(), 253_566);
 // }
+
+// Two corners of the diagonal search, where the gap behaves the other way round
+
+mod diagonals {
+    use super::super::config::SearchParams;
+    use super::super::constants::RepeatType;
+    use super::super::find_repeats;
+
+    fn direct(min_len: usize, max_len: usize, max_gap: usize, mismatches: usize) -> SearchParams {
+        SearchParams::new(min_len, max_len, max_gap, mismatches)
+            .unwrap()
+            .with_repeat_type(RepeatType::Direct)
+    }
+
+    #[test]
+    fn test_the_gap_bounds_the_arm() {
+        assert_eq!(
+            find_repeats(&direct(3, 100, 2, 0), b"acgttacg").unwrap(),
+            vec![(0, 7, 2)]
+        );
+        assert_eq!(
+            find_repeats(&direct(3, 100, 1, 0), b"acgttacg").unwrap(),
+            vec![]
+        );
+    }
+
+    #[test]
+    fn test_truncation_does_not_end_on_a_mismatch() {
+        // Six apart, the pairs match, match, MISMATCH, match, match, MISMATCH. With one
+        // mismatch allowed the run is five long, past `max_len`, and truncating it to
+        // three would leave it ending on that first mismatch
+        let found = find_repeats(&direct(2, 3, 4, 1), b"acgacgactact").unwrap();
+        assert_eq!(found, vec![(0, 7, 4), (0, 5, 0), (3, 10, 4), (6, 11, 0)]);
+    }
+}

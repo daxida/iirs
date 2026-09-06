@@ -2,27 +2,100 @@
 #![allow(clippy::needless_range_loop)]
 #![allow(clippy::similar_names)]
 
-use crate::{config::Config, matrix::MatchMatrix};
+use crate::{config::Config, constants::RepeatType, matrix::MatchMatrix};
 use std::fmt::Write;
 
 const fn int_size(x: usize) -> usize {
     (x.ilog10() + 1) as usize
 }
 
+/// The two arms of a repeat, as 1-based inclusive positions.
+///
+/// ```text
+/// [ first arm ] ... gap ... [ second arm ]
+/// ^           ^             ^            ^
+/// outer_left  inner_left    inner_right  outer_right
+/// ```
+///
+/// The second arm is read from `outer_right` down to `inner_right` when the repeat is
+/// reversed, and from `inner_right` up to `outer_right` otherwise.
+struct Arms {
+    outer_left: usize,
+    inner_left: usize,
+    inner_right: usize,
+    outer_right: usize,
+    arm_len: usize,
+    repeat_type: RepeatType,
+}
+
+impl Arms {
+    const fn new((left, right, gap): (usize, usize, usize), repeat_type: RepeatType) -> Self {
+        let outer_left = left + 1;
+        let outer_right = right + 1;
+
+        Self {
+            outer_left,
+            inner_left: (outer_left + outer_right - 1 - gap) / 2,
+            inner_right: (outer_right + outer_left + 1 + gap) / 2,
+            outer_right,
+            arm_len: (outer_right + 1 - outer_left - gap) / 2,
+            repeat_type,
+        }
+    }
+
+    /// 0-based index in `seq` of the `i`th character of the first arm.
+    const fn first(&self, i: usize) -> usize {
+        self.outer_left - 1 + i
+    }
+
+    /// 0-based index in `seq` of the character the `i`th one of the first arm pairs with.
+    const fn second(&self, i: usize) -> usize {
+        if self.repeat_type.is_reversed() {
+            self.outer_right - 1 - i
+        } else {
+            self.inner_right - 1 + i
+        }
+    }
+
+    /// Labels of the first and last printed character of the second arm.
+    const fn second_bounds(&self) -> (usize, usize) {
+        if self.repeat_type.is_reversed() {
+            (self.outer_right, self.inner_right)
+        } else {
+            (self.inner_right, self.outer_right)
+        }
+    }
+
+    /// Whether the `i`th pair of the repeat matches.
+    fn matches(&self, i: usize, seq: &[u8], matrix: &MatchMatrix, complement: &[u8; 128]) -> bool {
+        let l = seq[self.first(i)];
+        let r = seq[self.second(i)];
+        let r = if self.repeat_type.is_complemented() {
+            complement[r as usize]
+        } else {
+            r
+        };
+
+        matrix.match_u8(l, r)
+    }
+}
+
 /// Follows [IUPACpal](https://github.com/steven31415/IUPACpal) convention
 /// of calling Inverted Repeats, palindromes
 pub fn fmt_classic_header(config: &Config, n: usize) -> String {
+    let noun = config.params.repeat_type.noun();
+
     format!(
-        "Palindromes of: {}\n\
+        "{noun}s of: {}\n\
         Sequence name: {}\n\
         Sequence length is: {}\n\
         Start at position: {}\n\
         End at position: {}\n\
-        Minimum length of Palindromes is: {}\n\
-        Maximum length of Palindromes is: {}\n\
+        Minimum length of {noun}s is: {}\n\
+        Maximum length of {noun}s is: {}\n\
         Maximum gap between elements is: {}\n\
-        Number of mismatches allowed in Palindrome: {}\n\n\n\n\
-        Palindromes:",
+        Number of mismatches allowed in {noun}: {}\n\n\n\n\
+        {noun}s:",
         &config.input_file,
         &config.seq_name,
         n,
@@ -40,53 +113,53 @@ pub fn fmt_classic(
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
+    repeat_type: RepeatType,
 ) -> String {
     let mut out = String::new();
 
     let pad = "         ";
     let pad_length = pad.len(); // 9
 
-    for &(left, right, gap) in irs {
-        let outer_left = left + 1;
-        let outer_right = right + 1;
-        let inner_left = (outer_left + outer_right - 1 - gap) / 2;
-        let inner_right = (outer_right + outer_left + 1 + gap) / 2;
+    for &ir in irs {
+        let arms = Arms::new(ir, repeat_type);
+        let (second_from, second_to) = arms.second_bounds();
 
-        let ol_pad = " ".repeat(pad_length - int_size(outer_left));
-        let il_pad = " ".repeat(pad_length - int_size(inner_left));
-        let or_pad = " ".repeat(pad_length - int_size(outer_right));
-        let ir_pad = " ".repeat(pad_length - int_size(inner_right));
+        let ol_pad = " ".repeat(pad_length - int_size(arms.outer_left));
+        let il_pad = " ".repeat(pad_length - int_size(arms.inner_left));
+        let sf_pad = " ".repeat(pad_length - int_size(second_from));
+        let st_pad = " ".repeat(pad_length - int_size(second_to));
 
         // 1. First line (nucleotide strand)
-        write!(&mut out, "{outer_left}{ol_pad}").unwrap();
-        for i in left..inner_left {
-            out.push(seq[i] as char);
+        write!(&mut out, "{}{ol_pad}", arms.outer_left).unwrap();
+        for i in 0..arms.arm_len {
+            out.push(seq[arms.first(i)] as char);
         }
-        writeln!(&mut out, "{il_pad}{inner_left}").unwrap();
+        writeln!(&mut out, "{il_pad}{}", arms.inner_left).unwrap();
 
         // 2. Second line (matching bars)
         out.push_str(pad);
-        for i in 0..=(inner_left - outer_left) {
-            let l = seq[left + i];
-            let r = seq[right - i];
-            let matching = matrix.match_u8(l, complement[r as usize]);
+        for i in 0..arms.arm_len {
+            let matching = arms.matches(i, seq, matrix, complement);
             out.push(if matching { '|' } else { ' ' });
         }
         out.push('\n');
 
-        // 3. Third line (reverse complement strand)
-        write!(&mut out, "{outer_right}{or_pad}").unwrap();
-        for i in (inner_right..=outer_right).rev() {
-            out.push(seq[i - 1] as char);
+        // 3. Third line (second strand)
+        write!(&mut out, "{second_from}{sf_pad}").unwrap();
+        for i in 0..arms.arm_len {
+            out.push(seq[arms.second(i)] as char);
         }
-        write!(&mut out, "{ir_pad}{inner_right}\n\n").unwrap();
+        write!(&mut out, "{st_pad}{second_to}\n\n").unwrap();
     }
 
     out
 }
 
-pub fn fmt_csv_header() -> String {
-    String::from("start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching")
+pub fn fmt_csv_header(repeat_type: RepeatType) -> String {
+    format!(
+        "start_n,end_n,nucleotide,start_ir,end_ir,{},matching",
+        repeat_type.arm_label()
+    )
 }
 
 pub fn fmt_csv(
@@ -94,36 +167,33 @@ pub fn fmt_csv(
     seq: &[u8],
     matrix: &MatchMatrix,
     complement: &[u8; 128],
+    repeat_type: RepeatType,
 ) -> String {
     let mut out = String::new();
 
-    for &(left, right, gap) in irs {
-        let outer_left = left + 1;
-        let outer_right = right + 1;
-        let inner_left = (outer_left + outer_right - 1 - gap) / 2;
-        let inner_right = (outer_right + outer_left + 1 + gap) / 2;
+    for &ir in irs {
+        let arms = Arms::new(ir, repeat_type);
+        let (second_from, second_to) = arms.second_bounds();
 
-        write!(&mut out, "{outer_left},{inner_left},").unwrap();
+        write!(&mut out, "{},{},", arms.outer_left, arms.inner_left).unwrap();
 
         // 1. Nucleotide strand
-        for i in left..inner_left {
-            out.push(seq[i] as char);
+        for i in 0..arms.arm_len {
+            out.push(seq[arms.first(i)] as char);
         }
         out.push(',');
 
-        write!(&mut out, "{outer_right},{inner_right},").unwrap();
+        write!(&mut out, "{second_from},{second_to},").unwrap();
 
-        // 2. Reverse complement
-        for i in (inner_right..=outer_right).rev() {
-            out.push(seq[i - 1] as char);
+        // 2. Second strand
+        for i in 0..arms.arm_len {
+            out.push(seq[arms.second(i)] as char);
         }
         out.push(',');
 
         // 3. Matching line
-        for i in 0..=(inner_left - outer_left) {
-            let l = seq[left + i];
-            let r = seq[right - i];
-            let matching = matrix.match_u8(l, complement[r as usize]);
+        for i in 0..arms.arm_len {
+            let matching = arms.matches(i, seq, matrix, complement);
             out.push(if matching { '1' } else { '0' });
         }
         out.push('\n');
@@ -132,36 +202,33 @@ pub fn fmt_csv(
     out
 }
 
-pub fn fmt_custom_header() -> String {
-    String::from("ir_start,motif,gap_motif,reverse_complement")
+pub fn fmt_custom_header(repeat_type: RepeatType) -> String {
+    format!("ir_start,motif,gap_motif,{}", repeat_type.arm_label())
 }
 
-pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8]) -> String {
+pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8], repeat_type: RepeatType) -> String {
     let mut out = String::new();
 
-    for &(left, right, gap) in irs {
-        let outer_left = left + 1;
-        let outer_right = right + 1;
-        let inner_left = (outer_left + outer_right - 1 - gap) / 2;
-        let inner_right = (outer_right + outer_left + 1 + gap) / 2;
+    for &ir in irs {
+        let arms = Arms::new(ir, repeat_type);
 
-        write!(&mut out, "{outer_left},").unwrap();
+        write!(&mut out, "{},", arms.outer_left).unwrap();
 
         // 1. Nucleotide strand
-        for i in left..inner_left {
-            out.push(seq[i] as char);
+        for i in 0..arms.arm_len {
+            out.push(seq[arms.first(i)] as char);
         }
         out.push(',');
 
         // 2. Gap motif
-        for i in inner_left..(inner_right - 1) {
+        for i in arms.inner_left..(arms.inner_right - 1) {
             out.push(seq[i] as char);
         }
         out.push(',');
 
-        // 3. Reverse complement
-        for i in (inner_right..=outer_right).rev() {
-            out.push(seq[i - 1] as char);
+        // 3. Second strand
+        for i in 0..arms.arm_len {
+            out.push(seq[arms.second(i)] as char);
         }
         out.push('\n');
     }
@@ -184,7 +251,7 @@ mod tests {
         let irs = find_irs(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
-        let received = fmt_classic(&irs, &seq, &matrix, &complement);
+        let received = fmt_classic(&irs, &seq, &matrix, &complement, RepeatType::Inverted);
         let expected = r"2        gucsggtgtwkmmm       15
          ||| ||||||||||
 30       nngah*nn-nddbk       17
@@ -254,8 +321,8 @@ mod tests {
         let complement = build_complement_array();
         let received = format!(
             "{}\n{}",
-            fmt_csv_header(),
-            fmt_csv(&irs, &seq, &matrix, &complement)
+            fmt_csv_header(RepeatType::Inverted),
+            fmt_csv(&irs, &seq, &matrix, &complement, RepeatType::Inverted)
         );
         let expected = r"start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching
 2,15,gucsggtgtwkmmm,30,17,nngah*nn-nddbk,11101111111111
@@ -286,7 +353,11 @@ mod tests {
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
         let irs = find_irs(&params, &seq).unwrap();
-        let received = format!("{}\n{}", fmt_custom_header(), fmt_custom(&irs, &seq));
+        let received = format!(
+            "{}\n{}",
+            fmt_custom_header(RepeatType::Inverted),
+            fmt_custom(&irs, &seq, RepeatType::Inverted)
+        );
         let expected = r"ir_start,motif,gap_motif,reverse_complement
 2,gucsggtgtwkmmm,k,nngah*nn-nddbk
 3,ucsggtgtwkmmm,kk,nngah*nn-nddb

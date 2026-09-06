@@ -28,6 +28,91 @@ impl std::fmt::Display for OutputFormat {
     }
 }
 
+/// The kind of repeat to look for: the four ways of deriving the second arm `v` of a
+/// repeat `u ... v` from the first one, by reversing it or not, complementing it or not.
+///
+/// ```text
+/// Inverted    aacc ... ggtt    (reverse complement)
+/// Mirror      aacc ... ccaa    (reverse)
+/// Direct      aacc ... aacc    (as is)
+/// Complement  aacc ... ttgg    (complement)
+/// ```
+#[derive(clap::ValueEnum, Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum RepeatType {
+    /// `u ... revcomp(u)`: the classic inverted repeat (palindrome).
+    #[default]
+    Inverted,
+    /// `u ... reverse(u)`, without complementing.
+    Mirror,
+    /// `u ... u`.
+    Direct,
+    /// `u ... complement(u)`, without reversing.
+    Complement,
+}
+
+impl RepeatType {
+    /// Whether the second arm is read backwards.
+    ///
+    /// This is what decides the algorithm: the arms of a reversed repeat grow apart from a
+    /// common center, those of a non reversed one grow side by side along a fixed shift.
+    pub const fn is_reversed(self) -> bool {
+        matches!(self, Self::Inverted | Self::Mirror)
+    }
+
+    /// Whether the second arm is complemented.
+    pub const fn is_complemented(self) -> bool {
+        matches!(self, Self::Inverted | Self::Complement)
+    }
+
+    /// How the repeats are named in the reports.
+    pub const fn noun(self) -> &'static str {
+        match self {
+            Self::Inverted => "Palindrome", // IUPACpal convention
+            Self::Mirror => "Mirror repeat",
+            Self::Direct => "Direct repeat",
+            Self::Complement => "Complementary repeat",
+        }
+    }
+
+    /// Header of the column holding the second arm.
+    pub const fn arm_label(self) -> &'static str {
+        match self {
+            Self::Inverted => "reverse_complement",
+            Self::Mirror => "reverse",
+            Self::Direct => "direct",
+            Self::Complement => "complement",
+        }
+    }
+}
+
+impl std::fmt::Display for RepeatType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let fmted = match self {
+            Self::Inverted => "inverted",
+            Self::Mirror => "mirror",
+            Self::Direct => "direct",
+            Self::Complement => "complement",
+        };
+        write!(f, "{fmted}")
+    }
+}
+
+impl std::str::FromStr for RepeatType {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> anyhow::Result<Self> {
+        match s.to_ascii_lowercase().as_str() {
+            "inverted" => Ok(Self::Inverted),
+            "mirror" => Ok(Self::Mirror),
+            "direct" => Ok(Self::Direct),
+            "complement" => Ok(Self::Complement),
+            _ => anyhow::bail!(
+                "'{s}' is not a repeat type. Valid types are: inverted, mirror, direct, complement."
+            ),
+        }
+    }
+}
+
 pub const IUPAC_SYMBOLS: &str = "acgturyswkmbdhvn*-";
 #[allow(dead_code)] // used in the tests
 pub const ALL_SYMBOLS: &str = "acgturyswkmbdhvn*-$#";
