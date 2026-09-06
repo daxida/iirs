@@ -121,12 +121,6 @@ pub fn find_repeats(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usi
     Ok(irs)
 }
 
-/// Alias of [`find_repeats`], kept for backwards compatibility.
-// TODO: drop in 2.0, together with the `irs` wording of the api
-pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
-    find_repeats(params, seq)
-}
-
 /// Stringify the given repeats based on the specified output format in the configuration.
 ///
 /// An error is returned for an invalid output format.
@@ -195,16 +189,6 @@ pub fn stringify_repeats(
             format::fmt_custom(irs, seq, repeat_type),
         ),
     }
-}
-
-/// Alias of [`stringify_repeats`], kept for backwards compatibility.
-// TODO: drop in 2.0, together with the `irs` wording of the api
-pub fn stringify_irs(
-    config: &Config,
-    irs: &[(usize, usize, usize)],
-    seq: &[u8],
-) -> (String, String) {
-    stringify_repeats(config, irs, seq)
 }
 
 #[cfg(test)]
