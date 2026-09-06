@@ -52,14 +52,25 @@ pub fn find_repeats(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usi
     // Build matchmatrix
     let matrix = matrix::MatchMatrix::new();
     let complement = constants::build_complement_array();
+    let repeat_type = params.repeat_type;
 
-    // Construct s = seq + '$' + complement(reverse(seq)) + '#'
+    // Construct s = seq + '$' + transform(seq) + '#'
+    // For inverted repeats transform(seq) is complement(reverse(seq)).
     let n = sanitized_seq.len();
     let s_n = 2 * n + 2;
     let mut s = vec![0u8; s_n];
     for i in 0..n {
         s[i] = sanitized_seq[i];
-        s[n + 1 + i] = complement[sanitized_seq[n - 1 - i] as usize] as u8;
+        let mirrored = if repeat_type.is_reversed() {
+            sanitized_seq[n - 1 - i]
+        } else {
+            sanitized_seq[i]
+        };
+        s[n + 1 + i] = if repeat_type.is_complemented() {
+            complement[mirrored as usize]
+        } else {
+            mirrored
+        };
     }
     s[n] = b'$';
     s[2 * n + 1] = b'#';

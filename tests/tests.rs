@@ -1,9 +1,19 @@
-use iirs::{SearchParams, find_irs};
+use iirs::{RepeatType, SearchParams, find_irs, find_repeats};
 
 fn test_amount_irs(params: &SearchParams, string: &str) -> usize {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     params.check_bounds(seq.len()).unwrap();
     find_irs(params, &seq).unwrap().len()
+}
+
+#[test]
+fn test_mirror_repeats() {
+    // "aacc" followed by its reverse, "ccaa".
+    let seq = "aaccctccaa".as_bytes();
+    let params = SearchParams::new(4, 4, 2, 0).unwrap();
+    let mirror = params.clone().with_repeat_type(RepeatType::Mirror);
+    assert_eq!(find_repeats(&params, seq).unwrap(), vec![]);
+    assert_eq!(find_repeats(&mirror, seq).unwrap(), vec![(0, 9, 2)]);
 }
 
 #[test]
