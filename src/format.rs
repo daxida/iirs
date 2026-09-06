@@ -45,9 +45,26 @@ impl Arms {
         }
     }
 
+    /// Labels of the first and last printed character of the second arm.
+    const fn second_bounds(&self) -> (usize, usize) {
+        if self.repeat_type.is_reversed() {
+            (self.outer_right, self.inner_right)
+        } else {
+            (self.inner_right, self.outer_right)
+        }
+    }
+
     /// Whether the `i`th pair of the repeat matches.
     fn matches(&self, i: usize, seq: &[u8], matrix: &MatchMatrix, complement: &[u8; 128]) -> bool {
-        matrix.match_u8(seq[self.first(i)], complement[seq[self.second(i)] as usize])
+        let l = seq[self.first(i)];
+        let r = seq[self.second(i)];
+        let r = if self.repeat_type.is_complemented() {
+            complement[r as usize]
+        } else {
+            r
+        };
+
+        matrix.match_u8(l, r)
     }
 }
 
@@ -93,11 +110,12 @@ pub fn fmt_classic(
 
     for &ir in irs {
         let arms = Arms::new(ir, repeat_type);
+        let (second_from, second_to) = arms.second_bounds();
 
         let ol_pad = " ".repeat(pad_length - int_size(arms.outer_left));
         let il_pad = " ".repeat(pad_length - int_size(arms.inner_left));
-        let or_pad = " ".repeat(pad_length - int_size(arms.outer_right));
-        let ir_pad = " ".repeat(pad_length - int_size(arms.inner_right));
+        let sf_pad = " ".repeat(pad_length - int_size(second_from));
+        let st_pad = " ".repeat(pad_length - int_size(second_to));
 
         // 1. First line (nucleotide strand)
         write!(&mut out, "{}{ol_pad}", arms.outer_left).unwrap();
@@ -114,12 +132,12 @@ pub fn fmt_classic(
         }
         out.push('\n');
 
-        // 3. Third line (reverse complement strand)
-        write!(&mut out, "{}{or_pad}", arms.outer_right).unwrap();
+        // 3. Third line (second strand)
+        write!(&mut out, "{second_from}{sf_pad}").unwrap();
         for i in 0..arms.arm_len {
             out.push(seq[arms.second(i)] as char);
         }
-        write!(&mut out, "{ir_pad}{}\n\n", arms.inner_right).unwrap();
+        write!(&mut out, "{st_pad}{second_to}\n\n").unwrap();
     }
 
     out
@@ -143,6 +161,7 @@ pub fn fmt_csv(
 
     for &ir in irs {
         let arms = Arms::new(ir, repeat_type);
+        let (second_from, second_to) = arms.second_bounds();
 
         write!(&mut out, "{},{},", arms.outer_left, arms.inner_left).unwrap();
 
@@ -152,9 +171,9 @@ pub fn fmt_csv(
         }
         out.push(',');
 
-        write!(&mut out, "{},{},", arms.outer_right, arms.inner_right).unwrap();
+        write!(&mut out, "{second_from},{second_to},").unwrap();
 
-        // 2. Reverse complement
+        // 2. Second strand
         for i in 0..arms.arm_len {
             out.push(seq[arms.second(i)] as char);
         }
@@ -195,7 +214,7 @@ pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8], repeat_type: Repeat
         }
         out.push(',');
 
-        // 3. Reverse complement
+        // 3. Second strand
         for i in 0..arms.arm_len {
             out.push(seq[arms.second(i)] as char);
         }
