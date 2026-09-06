@@ -16,32 +16,43 @@ mod utils;
 
 use anyhow::Result;
 
-/// Find all the [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs) in a sequence
-/// based on the provided parameters.
+/// Find all the repeats in a sequence based on the provided parameters.
 ///
-/// Each IR is returned a tuple of three integers (usize): start position, end position, and gap size.
+/// The kind of repeat looked for is `params.repeat_type`, which defaults to
+/// [`Inverted`](RepeatType::Inverted).
+///
+/// Each repeat is returned as a tuple of three integers (usize): start position, end
+/// position, and gap size. The two arms are therefore
+/// `seq[start..start + arm_len]` and `seq[end + 1 - arm_len..=end]`, where
+/// `arm_len = (end + 1 - start - gap) / 2`.
 ///
 /// # Examples
 ///
 /// ```rust
-/// use iirs::{SearchParams, find_repeats};
+/// use iirs::{RepeatType, SearchParams, find_repeats};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let params = SearchParams::new(3, 6, 2, 0).unwrap();
 /// assert!(params.check_bounds(seq.len()).is_ok());
 /// let irs = find_repeats(&params, &seq);
-/// // The only IR in the sequence is "acbbgt"
+/// // The only inverted repeat in the sequence is "acbbgt"
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
+///
+/// // The same sequence holds no direct repeat...
+/// let params = params.with_repeat_type(RepeatType::Direct);
+/// assert_eq!(find_repeats(&params, &seq).unwrap(), vec![]);
+///
+/// // ...but "acgacg" does: "acg" repeated with no gap.
+/// let seq = "acgacg".as_bytes();
+/// assert_eq!(find_repeats(&params, &seq).unwrap(), vec![(0, 5, 0)]);
 ///
 /// // Returns an error if the given sequence contains invalid characters
 /// let seq = "jj".as_bytes();
-/// let irs = find_repeats(&params, &seq);
-/// assert!(irs.is_err());
+/// assert!(find_repeats(&params, &seq).is_err());
 ///
 /// // It is not case-sensitive and ignores newlines.
-/// let seq = "ACB\n\rBGT".as_bytes();
-/// let irs = find_repeats(&params, &seq);
-/// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
+/// let seq = "ACG\n\rACG".as_bytes();
+/// assert_eq!(find_repeats(&params, &seq).unwrap(), vec![(0, 5, 0)]);
 /// ```
 #[elapsed_time::elapsed]
 pub fn find_repeats(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
@@ -116,8 +127,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     find_repeats(params, seq)
 }
 
-/// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs)
-/// based on the specified output format in the configuration.
+/// Stringify the given repeats based on the specified output format in the configuration.
 ///
 /// An error is returned for an invalid output format.
 /// Valid formats are: classic (same as `IUPACpal`), csv and custom.
