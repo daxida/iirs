@@ -24,27 +24,27 @@ use anyhow::Result;
 /// # Examples
 ///
 /// ```rust
-/// use iirs::{SearchParams, find_irs};
+/// use iirs::{SearchParams, find_repeats};
 ///
 /// let seq = "acbbgt".as_bytes();
 /// let params = SearchParams::new(3, 6, 2, 0).unwrap();
 /// assert!(params.check_bounds(seq.len()).is_ok());
-/// let irs = find_irs(&params, &seq);
+/// let irs = find_repeats(&params, &seq);
 /// // The only IR in the sequence is "acbbgt"
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
 ///
 /// // Returns an error if the given sequence contains invalid characters
 /// let seq = "jj".as_bytes();
-/// let irs = find_irs(&params, &seq);
+/// let irs = find_repeats(&params, &seq);
 /// assert!(irs.is_err());
 ///
 /// // It is not case-sensitive and ignores newlines.
 /// let seq = "ACB\n\rBGT".as_bytes();
-/// let irs = find_irs(&params, &seq);
+/// let irs = find_repeats(&params, &seq);
 /// assert_eq!(irs.unwrap(), vec![(0, 5, 0)]);
 /// ```
 #[elapsed_time::elapsed]
-pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+pub fn find_repeats(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
     // Removes newlines, cast to lowercase and checks that all the character are in IUPAC.
     // This was already done through the CLI, but we need to do it again for the standalone version.
     let sanitized_seq = utils::sanitize_sequence(seq)?;
@@ -95,6 +95,12 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
     Ok(irs)
 }
 
+/// Alias of [`find_repeats`], kept for backwards compatibility.
+// TODO: drop in 2.0, together with the `irs` wording of the api
+pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, usize)>> {
+    find_repeats(params, seq)
+}
+
 /// Stringify the given [Inverted Repeats](https://en.wikipedia.org/wiki/Inverted_repeat) (IRs)
 /// based on the specified output format in the configuration.
 ///
@@ -107,7 +113,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///
 /// ```rust
 /// use iirs::{SearchParams, Config};
-/// use iirs::{find_irs, stringify_irs};
+/// use iirs::{find_repeats, stringify_repeats};
 /// use iirs::OutputFormat;
 ///
 /// // Simple example for the csv output format.
@@ -118,8 +124,8 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///     // The remaining fields are not relevant here.
 ///     ..Default::default()
 /// };
-/// let irs = find_irs(&config.params, &seq).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
+/// let irs = find_repeats(&config.params, &seq).unwrap();
+/// let (header, irs_str) = stringify_repeats(&config, &irs, &seq);
 /// let expected = "\
 ///     start_n,end_n,nucleotide,start_ir,end_ir,reverse_complement,matching\n\
 ///     1,3,acb,6,4,tgb,111\n";
@@ -127,7 +133,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///
 /// // For the classic method, all the fields are used in the header.
 /// let config = Config::new("in.fasta", "seq0", 3, 6, 2, 0, "out.txt", OutputFormat::Classic).unwrap();
-/// let (header, irs_str) = stringify_irs(&config, &irs, &seq);
+/// let (header, irs_str) = stringify_repeats(&config, &irs, &seq);
 /// let expected = "\
 ///     Palindromes of: in.fasta\n\
 ///     Sequence name: seq0\n\
@@ -141,7 +147,7 @@ pub fn find_irs(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usize, 
 ///     Palindromes:";
 /// assert_eq!(header, expected);
 /// ```
-pub fn stringify_irs(
+pub fn stringify_repeats(
     config: &Config,
     irs: &[(usize, usize, usize)],
     seq: &[u8],
@@ -160,6 +166,16 @@ pub fn stringify_irs(
         ),
         OutputFormat::Custom => (format::fmt_custom_header(), format::fmt_custom(irs, seq)),
     }
+}
+
+/// Alias of [`stringify_repeats`], kept for backwards compatibility.
+// TODO: drop in 2.0, together with the `irs` wording of the api
+pub fn stringify_irs(
+    config: &Config,
+    irs: &[(usize, usize, usize)],
+    seq: &[u8],
+) -> (String, String) {
+    stringify_repeats(config, irs, seq)
 }
 
 #[cfg(test)]
