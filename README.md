@@ -84,6 +84,8 @@ assert irs == [(0, 5, 0)]
 ## Testing
 
 - `cargo test` for unit tests.
+- `just testpy` for the python bindings. It installs `py-iirs/` (which builds the rust
+  side through maturin) together with pytest, then runs `pytest py-iirs/tests`.
 - `bench.rs` benches against a single file. To use together with `just bench` after modifying the parameters in `bench.rs`. To test against different features you can add them as arguments: `just bench parallel` or `just bench parallel tabulation`.
 - `logs.rs` benches against the cpp binary. You will need a [IUPACpal](https://github.com/steven31415/IUPACpal) binary (and they only support Linux). The binary is expected to be in the bench folder, but that can be changed in `logs.rs` and `validate.py`.
 - Note that `just heatmap` requires the python libraries listed in `bench/requirements.txt`.
