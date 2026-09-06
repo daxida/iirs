@@ -44,16 +44,9 @@ pub fn find_repeats(params: &SearchParams, seq: &str) -> PyResult<Vec<(usize, us
     }
 }
 
-/// Alias of `find_repeats`, kept for backwards compatibility.
-#[pyfunction]
-pub fn find_irs(params: &SearchParams, seq: &str) -> PyResult<Vec<(usize, usize, usize)>> {
-    find_repeats(params, seq)
-}
-
 #[pymodule]
 fn iirs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<SearchParams>()?;
     m.add_function(wrap_pyfunction!(find_repeats, m)?)?;
-    m.add_function(wrap_pyfunction!(find_irs, m)?)?;
     Ok(())
 }

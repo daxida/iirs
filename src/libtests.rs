@@ -3,7 +3,7 @@ use seq_io::fasta::{Reader, Record};
 
 use super::config::{Config, SearchParams};
 use super::constants;
-use super::find_irs;
+use super::find_repeats;
 use super::matrix;
 use super::utils;
 
@@ -30,7 +30,7 @@ fn correct_truncation_helper(config: &Config) {
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     let n = seq.len();
     config.params.check_bounds(n).unwrap();
-    let irs = find_irs(&config.params, &seq).unwrap();
+    let irs = find_repeats(&config.params, &seq).unwrap();
 
     let complement = constants::build_complement_array();
     let s_n = 2 * n + 2;
@@ -96,7 +96,7 @@ fn test_correct_truncation_max_len() {
     let params = SearchParams::new(3, 6, 0, 2).unwrap();
 
     assert_eq!(
-        find_irs(&params, &seq).unwrap(),
+        find_repeats(&params, &seq).unwrap(),
         vec![(0, 11, 0), (0, 7, 0), (2, 13, 0), (6, 17, 0), (6, 13, 0)]
     );
 }
@@ -104,11 +104,11 @@ fn test_correct_truncation_max_len() {
 // Tests from local files
 //
 // Test generator
-fn find_irs_from_first_sequence(config: &Config) -> Vec<(usize, usize, usize)> {
+fn find_repeats_from_first_sequence(config: &Config) -> Vec<(usize, usize, usize)> {
     let string = extract_first_sequence(config).unwrap();
     let seq = string.to_ascii_lowercase().as_bytes().to_vec();
     config.params.check_bounds(seq.len()).unwrap(); // BUT THE OUTPUT FORMAT MIGHT BE WRONG?
-    find_irs(&config.params, &seq).unwrap()
+    find_repeats(&config.params, &seq).unwrap()
 }
 
 #[test]
@@ -119,7 +119,7 @@ fn test_irs_edge_gap() {
         input_file: "tests/test_data/edge_gap.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 1);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 1);
 }
 
 #[test]
@@ -129,7 +129,7 @@ fn test_irs_8100_n() {
         input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 16_189);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 16_189);
 }
 
 #[test]
@@ -139,7 +139,7 @@ fn test_irs_8100_n_with_mismatches() {
         input_file: "tests/test_data/8100N.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 16_189);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 16_189);
 }
 
 #[test]
@@ -149,7 +149,7 @@ fn test_irs_d00596() {
         input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 5251);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 5251);
 }
 
 #[test]
@@ -159,7 +159,7 @@ fn test_irs_d00596_with_mismatches() {
         input_file: "tests/test_data/d00596.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 31_555);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 31_555);
 }
 
 #[test]
@@ -169,7 +169,7 @@ fn test_rand_1000() {
         input_file: "tests/test_data/rand1000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 254);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 254);
 }
 
 #[test]
@@ -179,7 +179,7 @@ fn test_rand_10000() {
         input_file: "tests/test_data/rand10000.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 2484);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 2484);
 }
 
 #[test]
@@ -189,7 +189,7 @@ fn test_test_1() {
         input_file: "tests/test_data/test1.fasta",
         ..Default::default()
     };
-    assert_eq!(find_irs_from_first_sequence(&config).len(), 84);
+    assert_eq!(find_repeats_from_first_sequence(&config).len(), 84);
 }
 
 //
@@ -203,7 +203,7 @@ fn test_test_1() {
 //         input_file: "tests/test_data/alys.fna",
 //         ..Default::default()
 //     };
-//     assert_eq!(find_irs_from_first_sequence(&config).len(), 739_728);
+//     assert_eq!(find_repeats_from_first_sequence(&config).len(), 739_728);
 // }
 //
 // #[test]
@@ -213,7 +213,7 @@ fn test_test_1() {
 //         input_file: "tests/test_data/rand100000.fasta",
 //         ..Default::default()
 //     };
-//     assert_eq!(find_irs_from_first_sequence(&config).len(), 25_440);
+//     assert_eq!(find_repeats_from_first_sequence(&config).len(), 25_440);
 // }
 //
 // #[test]
@@ -223,7 +223,7 @@ fn test_test_1() {
 //         input_file: "tests/test_data/rand1000000.fasta",
 //         ..Default::default()
 //     };
-//     assert_eq!(find_irs_from_first_sequence(&config).len(), 253_566);
+//     assert_eq!(find_repeats_from_first_sequence(&config).len(), 253_566);
 // }
 
 // Two corners of the diagonal search, where the gap behaves the other way round

@@ -240,7 +240,7 @@ pub fn fmt_custom(irs: &[(usize, usize, usize)], seq: &[u8], repeat_type: Repeat
 mod tests {
     use super::*;
     use crate::config::SearchParams;
-    use crate::{constants::build_complement_array, find_irs, matrix};
+    use crate::{constants::build_complement_array, find_repeats, matrix};
 
     #[test]
     fn test_format_classic() {
@@ -248,7 +248,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
-        let irs = find_irs(&params, &seq).unwrap();
+        let irs = find_repeats(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = fmt_classic(&irs, &seq, &matrix, &complement, RepeatType::Inverted);
@@ -316,7 +316,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
-        let irs = find_irs(&params, &seq).unwrap();
+        let irs = find_repeats(&params, &seq).unwrap();
         let matrix = matrix::MatchMatrix::new();
         let complement = build_complement_array();
         let received = format!(
@@ -352,7 +352,7 @@ mod tests {
         let seq = string.to_ascii_lowercase().as_bytes().to_vec();
         let params = SearchParams::new(10, 100, 10, 1).unwrap();
         params.check_bounds(seq.len()).unwrap();
-        let irs = find_irs(&params, &seq).unwrap();
+        let irs = find_repeats(&params, &seq).unwrap();
         let received = format!(
             "{}\n{}",
             fmt_custom_header(RepeatType::Inverted),

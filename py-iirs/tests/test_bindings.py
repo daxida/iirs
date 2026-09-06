@@ -10,7 +10,7 @@ just testpy
 
 import pytest
 
-from iirs import SearchParams, find_irs, find_repeats
+from iirs import SearchParams, find_repeats
 
 
 def arms(seq, repeat):
@@ -22,45 +22,45 @@ def arms(seq, repeat):
 
 def test_finds_an_inverted_repeat():
     params = SearchParams(3, 6, 2, 0)
-    assert find_irs(params, "acbbgt") == [(0, 5, 0)]
+    assert find_repeats(params, "acbbgt") == [(0, 5, 0)]
 
 
 def test_parameters_can_be_named():
     params = SearchParams(min_len=3, max_len=6, max_gap=2, mismatches=0)
-    assert find_irs(params, "acbbgt") == [(0, 5, 0)]
+    assert find_repeats(params, "acbbgt") == [(0, 5, 0)]
 
 
 def test_triples_describe_the_arms():
     seq = "acgtacgt"
-    (repeat,) = find_irs(SearchParams(4, 4, 0, 0), seq)
+    (repeat,) = find_repeats(SearchParams(4, 4, 0, 0), seq)
     # "acgt" is its own reverse complement, so both arms read the same way round
     assert arms(seq, repeat) == ("acgt", "acgt")
 
 
 def test_nothing_to_find():
     # "a" is complementary to "t", never to itself
-    assert find_irs(SearchParams(3, 6, 0, 0), "aaaaaa") == []
+    assert find_repeats(SearchParams(3, 6, 0, 0), "aaaaaa") == []
 
 
 def test_max_len_truncates():
     seq = "acgtacgt"
-    assert find_irs(SearchParams(2, 4, 0, 0), seq) == [(0, 7, 0), (0, 3, 0), (4, 7, 0)]
-    assert find_irs(SearchParams(2, 2, 0, 0), seq) == [(0, 3, 0), (2, 5, 0), (4, 7, 0)]
+    assert find_repeats(SearchParams(2, 4, 0, 0), seq) == [(0, 7, 0), (0, 3, 0), (4, 7, 0)]
+    assert find_repeats(SearchParams(2, 2, 0, 0), seq) == [(0, 3, 0), (2, 5, 0), (4, 7, 0)]
 
 
 def test_mismatches_are_allowed():
     # the third pair out of the centre, "g" against "a", does not match
     seq = "acgtaagt"
-    assert find_irs(SearchParams(4, 4, 0, 0), seq) == []
-    assert find_irs(SearchParams(4, 4, 0, 1), seq) == [(0, 7, 0)]
+    assert find_repeats(SearchParams(4, 4, 0, 0), seq) == []
+    assert find_repeats(SearchParams(4, 4, 0, 1), seq) == [(0, 7, 0)]
 
 
 def test_sequences_are_iupac_and_case_insensitive():
-    assert find_irs(SearchParams(3, 6, 2, 0), "ACBBGT") == [(0, 5, 0)]
+    assert find_repeats(SearchParams(3, 6, 2, 0), "ACBBGT") == [(0, 5, 0)]
     # "n" stands for any base, so it is complementary to itself
-    assert find_irs(SearchParams(2, 4, 0, 0), "nnnn") == [(0, 3, 0)]
+    assert find_repeats(SearchParams(2, 4, 0, 0), "nnnn") == [(0, 3, 0)]
     with pytest.raises(ValueError):
-        find_irs(SearchParams(3, 6, 2, 0), "jj")
+        find_repeats(SearchParams(3, 6, 2, 0), "jj")
 
 
 def test_invalid_parameters():
@@ -104,8 +104,3 @@ def test_repeat_type_is_case_insensitive():
 def test_invalid_repeat_type():
     with pytest.raises(ValueError):
         SearchParams(4, 4, 2, 0, repeat_type="nonsense")
-
-
-def test_find_irs_is_an_alias():
-    params = SearchParams(4, 4, 2, 0, repeat_type="direct")
-    assert find_irs(params, SEQS["direct"]) == find_repeats(params, SEQS["direct"])

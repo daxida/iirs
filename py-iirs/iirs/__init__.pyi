@@ -16,7 +16,3 @@ def find_repeats(
     params: SearchParams,
     seq: str,
 ) -> list[tuple[int, int, int]]: ...
-def find_irs(
-    params: SearchParams,
-    seq: str,
-) -> list[tuple[int, int, int]]: ...
