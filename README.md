@@ -4,6 +4,15 @@ IIRS is an [Iupac](https://en.wikipedia.org/wiki/International_Union_of_Pure_and
 
 That is, an exact tool for efficient identification of Inverted Repeats ([IRs](https://en.wikipedia.org/wiki/Inverted_repeat)) in IUPAC-encoded DNA sequences, allowing also for potential mismatches and gaps.
 
+On top of inverted repeats, it can also find the three other kinds of repeat obtained by reading the second arm backwards or not, and complementing it or not:
+
+| `--repeat-type` | Second arm | Example |
+| --- | --- | --- |
+| `inverted` (default) | reverse complement | `aacc` ... `ggtt` |
+| `mirror` | reverse | `aacc` ... `ccaa` |
+| `direct` | as is | `aacc` ... `aacc` |
+| `complement` | complement | `aacc` ... `ttgg` |
+
 Compared to the original, this version is faster, platform-independent and modular, facilitating the creation of customized format outputs.
 
 A short introduction to the [algorithm](https://github.com/daxida/iirs/blob/master/docs/algorithm.md) can be found in the docs folder.
@@ -36,6 +45,9 @@ $ iirs -f input.fasta --seq-names 't1 t2' --max-gap 5 --output-format csv
 
 // Scan all sequences of the fasta file
 $ iirs -f input.fasta -s ALL_SEQUENCES -g 5 -m 3 -F csv
+
+// Look for direct repeats instead of inverted ones
+$ iirs -f input.fasta -g 5 -m 3 -r direct
 ```
 
 Many more practical examples can be found in the [justfile](https://github.com/casey/just).
