@@ -37,16 +37,20 @@ impl std::fmt::Display for OutputFormat {
 /// Direct      aacc ... aacc    (as is)
 /// Complement  aacc ... ttgg    (complement)
 /// ```
+//
+// The variants are commented with `//` rather than `///` on purpose: clap spells doc
+// comments out under a "Possible values:" heading, which pushes every flag of the help
+// onto a block of its own.
 #[derive(clap::ValueEnum, Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum RepeatType {
-    /// `u ... revcomp(u)`: the classic inverted repeat (palindrome).
+    // `u ... revcomp(u)`, the classic inverted repeat (palindrome)
     #[default]
     Inverted,
-    /// `u ... reverse(u)`, without complementing.
+    // `u ... reverse(u)`, without complementing
     Mirror,
-    /// `u ... u`.
+    // `u ... u`
     Direct,
-    /// `u ... complement(u)`, without reversing.
+    // `u ... complement(u)`, without reversing
     Complement,
 }
 
