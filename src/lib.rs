@@ -90,8 +90,12 @@ pub fn find_repeats(params: &SearchParams, seq: &[u8]) -> Result<Vec<(usize, usi
     #[cfg(feature = "tabulation")]
     let rmq = lcp_min::LcpMin::new(rmq::Tabulation::new(&lcp), &lcp);
 
-    // Calculate inverted repeats
-    let mut irs = algo::add_irs(&s, &inv_sa, &rmq, params, &matrix);
+    // Calculate the repeats.
+    let mut irs = if repeat_type.is_reversed() {
+        algo::add_irs(&s, &inv_sa, &rmq, params, &matrix)
+    } else {
+        algo::add_drs(&s, &inv_sa, &rmq, params, &matrix)
+    };
 
     // Deal with the sorting strategy.
     // Alternatives, or even skipping sorting altogether, can improve the performance.

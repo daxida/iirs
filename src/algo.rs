@@ -85,12 +85,69 @@ fn real_lce_mismatches<R: Rmq>(
     mismatch_locs
 }
 
+/// Compute the mismatch location list.
+///
+/// The diagonal links position `i` (in the first half of `s`) with position `j` (in the
+/// second half), and is walked for `len` characters. Returns the offsets, relative to
+/// `i`, at which the two do not match.
+///
+/// Same kangaroo idea as [`real_lce_mismatches`], but with no mismatch budget: a direct
+/// repeat is not tied to a center, so it may start anywhere along the diagonal and the
+/// whole of it has to be inspected.
+fn diagonal_mismatches<R: Rmq>(
+    s: &[u8],
+    i: usize,
+    j: usize,
+    len: usize,
+    inv_sa: &[usize],
+    rmq: &LcpMin<R>,
+    matrix: &MatchMatrix,
+) -> Vec<usize> {
+    let mut mismatch_locs = Vec::new();
+    let mut offset = 0;
+
+    while offset < len {
+        let (a, b) = (i + offset, j + offset);
+
+        // Same frontier scan / rmq tradeoff as in `real_lce_mismatches`.
+        if s[a] == s[b] {
+            let mut k = 1;
+            while k < LCE_SCAN_LIMIT && s[a + k] == s[b + k] {
+                k += 1;
+            }
+
+            let jump = if k < LCE_SCAN_LIMIT {
+                k
+            } else {
+                let (ii, jj) = (inv_sa[a], inv_sa[b]);
+                let (lo, hi) = if ii < jj { (ii, jj) } else { (jj, ii) };
+                rmq.min(lo + 1, hi + 1)
+            };
+
+            offset += jump.max(1);
+
+            continue;
+        }
+
+        // Only the frontier needs the IUPAC check, the run behind it being exactly equal.
+        if !matrix.match_u8(s[a], s[b]) {
+            mismatch_locs.push(offset);
+        }
+
+        offset += 1;
+    }
+
+    mismatch_locs
+}
+
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
-/// Find all IRs in `seq` and return them as `(left, right, gap)` triples.
+/// Find all inverted (or mirror) repeats in `seq` and return them as `(left, right, gap)`
+/// triples: the outer bounds of the repeat, and the gap left between its two arms.
 ///
-/// Recall that `s` is `seq` concatenated with its reverse complementary.
+/// Recall that here `s` is `seq` concatenated with its reverse, complemented or not, so
+/// that both arms of a repeat read forwards.
 //
 // Notes:
 // - The original algorithm returned a set of tuples: BTreeSet<(i32, i32, i32)> but did no sorting.
@@ -124,11 +181,12 @@ pub fn add_irs<R: Rmq + std::marker::Sync>(
     result
 }
 
-/// Find all IRs centred at `c`.
+/// Find all the repeats centered on `c`.
 ///
-/// Derives arm positions, collects mismatch locations via the Kangaroo method, then uses
-/// a two-pointer sweep to emit every valid window within the mismatch budget and
-/// `[min_len, max_len]` arm length, truncating overlong arms as needed.
+/// Collects the mismatch locations of a walk outwards from the center (the kangaroo
+/// method), then uses a two-pointer sweep to emit, for every gap the two arms may leave
+/// between them, the longest arm that stays within the mismatch budget, truncating
+/// overlong ones.
 fn add_irs_at_this_center<R: Rmq>(
     s: &[u8],
     n: usize,
@@ -266,4 +324,134 @@ fn add_irs_at_this_center<R: Rmq>(
     }
 
     irs_at_this_center
+}
+
+/// Find all direct (or complementary) repeats in `seq` and return them as
+/// `(left, right, gap)` triples, with the same convention as [`add_irs`].
+///
+/// Recall that here `s` is `seq` concatenated with itself, complemented or not, so that
+/// both arms of a repeat read forwards.
+///
+/// Such a repeat has no center to hang from: it is pinned by its start *and* by the shift
+/// between its arms. In the grid of which position pairs with which, that is a diagonal,
+/// one per shift.
+pub fn add_drs<R: Rmq + std::marker::Sync>(
+    s: &[u8],
+    inv_sa: &[usize],
+    rmq: &LcpMin<R>,
+    params: &SearchParams,
+    matrix: &MatchMatrix,
+) -> Vec<(usize, usize, usize)> {
+    let n = s.len() / 2 - 1;
+
+    // A shift of `n - 1` already puts the second arm on the last character.
+    let max_shift = params
+        .max_len
+        .saturating_add(params.max_gap)
+        .min(n.saturating_sub(1));
+
+    if params.min_len > max_shift {
+        return Vec::new();
+    }
+
+    // Conditional compilation for parallel execution
+    #[cfg(feature = "parallel")]
+    let result: Vec<_> = (params.min_len..=max_shift)
+        .into_par_iter()
+        .flat_map(|shift| add_drs_at_this_shift(s, n, inv_sa, rmq, params, matrix, shift))
+        .collect();
+
+    // Conditional compilation for sequential execution
+    #[cfg(not(feature = "parallel"))]
+    let result: Vec<_> = (params.min_len..=max_shift)
+        .flat_map(|shift| add_drs_at_this_shift(s, n, inv_sa, rmq, params, matrix, shift))
+        .collect();
+
+    result
+}
+
+/// Find all the repeats whose two arms are `shift` characters apart.
+///
+/// Collects the mismatch locations of the whole diagonal (the kangaroo method again, with
+/// no budget to stop it early), then uses a two-pointer sweep to emit, for every position
+/// an arm may start at, the longest arm that stays within the mismatch budget, truncating
+/// overlong ones.
+fn add_drs_at_this_shift<R: Rmq>(
+    s: &[u8],
+    n: usize,
+    inv_sa: &[usize],
+    rmq: &LcpMin<R>,
+    params: &SearchParams,
+    matrix: &MatchMatrix,
+    shift: usize,
+) -> Vec<(usize, usize, usize)> {
+    let mut drs_at_this_shift = Vec::new();
+
+    let min_arm = params.min_len.max(shift.saturating_sub(params.max_gap));
+    let max_arm = params.max_len.min(shift);
+    let len = n - shift;
+    if min_arm > max_arm || len < min_arm {
+        return drs_at_this_shift;
+    }
+
+    let (i, j) = (0, n + 1 + shift);
+    let is_match = |offset: usize| matrix.match_u8(s[i + offset], s[j + offset]);
+
+    // Mismatch offsets, shifted by one and fenced by a sentinel on each side, so that the
+    // arm delimited by `locs[a]` and `locs[b]` spans the offsets `locs[a]..locs[b] - 1`.
+    let mismatch_locs = diagonal_mismatches(s, i, j, len, inv_sa, rmq, matrix);
+    let mut locs = Vec::with_capacity(mismatch_locs.len() + 2);
+    locs.push(0);
+    locs.extend(mismatch_locs.iter().map(|loc| loc + 1));
+    locs.push(len + 1);
+
+    // Get a list of valid start and end mismatch locations, that is, the ones an arm may
+    // begin right after, or end right before, without itself starting or ending on a mismatch.
+    let mut valid_start_locs = Vec::new();
+    let mut valid_end_locs = Vec::new();
+    let sz = locs.len();
+
+    for (id, loc) in locs.iter().enumerate() {
+        if id < sz - 1 && locs[id + 1] != *loc + 1 {
+            valid_start_locs.push((*loc, id));
+            valid_end_locs.push((locs[id + 1], id + 1));
+        }
+    }
+
+    let mut end_it_ptr = 0;
+
+    for (start_it_ptr, &(start, start_id)) in valid_start_locs.iter().enumerate() {
+        // The end at the same index is the one paired with this start, and holds no
+        // mismatch in between: it is always affordable, so the pointer never walks back.
+        end_it_ptr = end_it_ptr.max(start_it_ptr);
+
+        // While the mismatch difference stays within the budget, move the end to the right
+        while end_it_ptr + 1 < valid_end_locs.len()
+            && valid_end_locs[end_it_ptr + 1].1 - start_id - 1 <= params.mismatches
+        {
+            end_it_ptr += 1;
+        }
+
+        let mut end = valid_end_locs[end_it_ptr].0 - 1;
+
+        if end - start > max_arm {
+            // Repeat is too long, so truncate it, keeping the start. Unlike an inverted
+            // repeat it cannot be trimmed on both sides at once, since that would widen
+            // the gap. Trailing mismatches are dropped so that it does not end on one.
+            end = start + max_arm;
+            while end > start && !is_match(end - 1) {
+                end -= 1;
+            }
+        }
+
+        let arm_len = end - start;
+        if arm_len < min_arm {
+            continue;
+        }
+
+        debug_assert!(arm_len <= max_arm);
+        drs_at_this_shift.push((start, end + shift - 1, shift - arm_len));
+    }
+
+    drs_at_this_shift
 }

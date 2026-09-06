@@ -17,6 +17,41 @@ fn test_mirror_repeats() {
 }
 
 #[test]
+fn test_direct_repeats() {
+    let params = SearchParams::new(4, 4, 2, 0).unwrap();
+    let direct = params.clone().with_repeat_type(RepeatType::Direct);
+    let complement = params.with_repeat_type(RepeatType::Complement);
+
+    assert_eq!(
+        find_repeats(&direct, "aaccctaacc".as_bytes()).unwrap(),
+        vec![(0, 9, 2)]
+    );
+    assert_eq!(
+        find_repeats(&complement, "aaccctttgg".as_bytes()).unwrap(),
+        vec![(0, 9, 2)]
+    );
+    assert_eq!(
+        find_repeats(&direct, "aaccctttgg".as_bytes()).unwrap(),
+        vec![]
+    );
+}
+
+#[test]
+fn test_direct_repeats_do_not_overlap() {
+    // "acac" ... "acac" fits, and so does "ac" ... "ac" two apart, truncated to the shift.
+    // Nothing longer: the two arms of a repeat may not overlap.
+    let params = SearchParams::new(2, 100, 0, 0)
+        .unwrap()
+        .with_repeat_type(RepeatType::Direct);
+
+    let seq = "acacacac".as_bytes();
+    assert_eq!(
+        find_repeats(&params, seq).unwrap(),
+        vec![(0, 7, 0), (0, 3, 0)]
+    );
+}
+
+#[test]
 fn test_irs_default_params() {
     let params = SearchParams::default();
     let string = "AGUCSGTWGTGTGTWKMMMKKBDDN-NN*HAGTTWGuVVVNNAGuGTA".repeat(100);
